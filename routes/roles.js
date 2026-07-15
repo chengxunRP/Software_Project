@@ -7,7 +7,7 @@
 // and reads :eventId / :roleId directly from its own route pattern.
 const express = require("express");
 const router = express.Router();
-const db = require("../db");
+const db = require("../config/database");
 const { isOrganiser } = require("../middleware/auth");
 
 // Loads a volunteer role together with its parent event, and confirms the
