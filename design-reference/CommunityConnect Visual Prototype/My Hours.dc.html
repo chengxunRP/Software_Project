@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex" data-screen-label="Volunteer Hours">
+
+  <aside style="width:248px;flex-shrink:0;background:#1E2B22;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;padding:22px 22px 18px">
+      <div style="width:32px;height:32px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">C</div>
+      <div style="font-weight:700;font-size:16px;color:#FFFFFF;letter-spacing:-0.01em">CommunityConnect</div>
+    </a>
+    <div style="padding:0 22px 14px;font-size:11px;font-weight:700;color:#7E9184;text-transform:uppercase;letter-spacing:0.08em">Volunteer</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <a href="Volunteer Dashboard.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Dashboard</a>
+      <a href="Events.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Browse Events</a>
+      <a href="My Registrations.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">My Registrations</a>
+      <a href="My Hours.dc.html" style="padding:10px 12px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px">My Hours</a>
+    </nav>
+    <div style="margin-top:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:11px;background:#28382D">
+        <div style="width:34px;height:34px;border-radius:50%;background:#D99E2B;color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">WL</div>
+        <div style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13.5px;font-weight:600;color:#FFFFFF">Tan Wei Ling</span>
+          <span style="font-size:12px;color:#7E9184">Volunteer</span>
+        </div>
+      </div>
+      <a href="Landing.dc.html" style="text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;color:#C4D2C7;border:1px solid #3A4B3F" style-hover="background:#28382D;color:#FFFFFF">Log out</a>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="background:#FFFFFF;border-bottom:1px solid #E6E2D8;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between">
+      <h1 style="margin:0;font-size:19px;font-weight:700;color:#23271F">My Volunteer Hours</h1>
+      <button style="padding:9px 16px;border-radius:10px;border:1px solid #D8D4C8;background:#FDFCFA;color:#23271F;font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">Download record (PDF)</button>
+    </div>
+
+    <div style="padding:28px 32px 56px;display:flex;flex-direction:column;gap:24px;max-width:1000px">
+
+      <!-- Summary -->
+      <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px">
+        <div style="background:#1E2B22;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:13px;font-weight:600;color:#A9BCA9">Total completed hours</span>
+          <span style="font-size:42px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em;line-height:1">38.5</span>
+          <span style="font-size:13px;color:#7E9184">Across 11 attended events since January 2026</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:13px;font-weight:600;color:#6E7266">This month (July)</span>
+          <span style="font-size:32px;font-weight:800;color:#2E7D4F;line-height:1">6.0</span>
+          <span style="font-size:13px;color:#8B8778">2 events attended</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:13px;font-weight:600;color:#6E7266">Attendance rate</span>
+          <span style="font-size:32px;font-weight:800;color:#23271F;line-height:1">92%</span>
+          <span style="font-size:13px;color:#8B8778">11 attended · 1 absent</span>
+        </div>
+      </div>
+
+      <!-- Monthly contribution -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <span style="font-size:16px;font-weight:700;color:#23271F">Monthly contribution — 2026</span>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:14px;align-items:end;height:150px">
+          <sc-for list="{{ months }}" as="m" hint-placeholder-count="7">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end">
+              <span style="font-size:12px;font-weight:700;color:{{ m.valColor }}">{{ m.val }}</span>
+              <div style="width:100%;max-width:44px;height:{{ m.h }};border-radius:7px 7px 3px 3px;background:{{ m.color }}"></div>
+              <span style="font-size:12px;font-weight:600;color:#8B8778">{{ m.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- Event history table -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <div style="padding:18px 22px;border-bottom:1px solid #EDEAE0">
+          <span style="font-size:16px;font-weight:700;color:#23271F">Event history</span>
+        </div>
+        <div style="display:grid;grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr;padding:11px 22px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Event</span><span>Date</span><span>Location</span><span>Status</span><span style="text-align:right">Hours</span>
+        </div>
+        <sc-for list="{{ history }}" as="h" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr;padding:15px 22px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center">
+            <span style="font-weight:600;color:#23271F">{{ h.name }}</span>
+            <span style="color:#6E7266">{{ h.date }}</span>
+            <span style="color:#6E7266">{{ h.loc }}</span>
+            <span><span style="background:{{ h.bBg }};color:{{ h.bFg }};font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px">{{ h.status }}</span></span>
+            <span style="text-align:right;font-weight:700;color:#23271F">{{ h.hours }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:flex-end;padding:14px 22px;font-size:14px;font-weight:700;color:#23271F;background:#FBFAF6">Total &nbsp;<span style="color:#2E7D4F">38.5 hours</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const vals = [4.5, 5.0, 7.5, 4.0, 6.0, 5.5, 6.0];
+    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+    const max = Math.max(...vals);
+    const months = vals.map((v, i) => ({
+      val: v.toFixed(1),
+      h: Math.round((v / max) * 100) + "px",
+      label: labels[i],
+      color: i === vals.length - 1 ? "#2E7D4F" : "#C6DCCB",
+      valColor: i === vals.length - 1 ? "#2E7D4F" : "#8B8778",
+    }));
+    const att = { bBg: "#E7F2EA", bFg: "#1E4D33" };
+    const abs = { bBg: "#FBEAE8", bFg: "#B0433B" };
+    return {
+      months,
+      history: [
+        { name: "Weekend Tutoring — Primary Maths", date: "12/07/2026", loc: "Tampines CC", status: "Attended", hours: "3.0", ...att },
+        { name: "Community Garden Planting Day", date: "04/07/2026", loc: "Jurong Lake Gardens", status: "Attended", hours: "3.0", ...att },
+        { name: "Park Clean-Up & Recycling Drive", date: "27/06/2026", loc: "Bishan-AMK Park", status: "Attended", hours: "3.0", ...att },
+        { name: "Grocery Delivery for Seniors", date: "13/06/2026", loc: "Bedok CC", status: "Attended", hours: "3.5", ...att },
+        { name: "Charity Fun Run — Route Marshals", date: "24/05/2026", loc: "Jurong Lake Gardens", status: "Absent", hours: "0.0", ...abs },
+        { name: "Food Distribution Drive", date: "09/05/2026", loc: "Bedok CC", status: "Attended", hours: "4.0", ...att },
+        { name: "Elderly Befriending Visits", date: "22/04/2026", loc: "Tampines CC", status: "Attended", hours: "3.0", ...att },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex" data-screen-label="Manage Registrations">
+
+  <aside style="width:248px;flex-shrink:0;background:#1E2B22;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;padding:22px 22px 18px">
+      <div style="width:32px;height:32px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">C</div>
+      <div style="font-weight:700;font-size:16px;color:#FFFFFF;letter-spacing:-0.01em">CommunityConnect</div>
+    </a>
+    <div style="padding:0 22px 14px;font-size:11px;font-weight:700;color:#7E9184;text-transform:uppercase;letter-spacing:0.08em">Organiser</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <a href="Organiser Dashboard.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Dashboard</a>
+      <a href="Manage Events.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Manage Events</a>
+      <a href="Manage Registrations.dc.html" style="padding:10px 12px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px">Registrations</a>
+      <a href="Role Assignment.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Role Assignment</a>
+      <a href="Attendance.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Attendance</a>
+    </nav>
+    <div style="margin-top:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:11px;background:#28382D">
+        <div style="width:34px;height:34px;border-radius:50%;background:#7FA8D9;color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">ML</div>
+        <div style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13.5px;font-weight:600;color:#FFFFFF">Marcus Lim</span>
+          <span style="font-size:12px;color:#7E9184">Organiser · Green Team</span>
+        </div>
+      </div>
+      <a href="Landing.dc.html" style="text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;color:#C4D2C7;border:1px solid #3A4B3F" style-hover="background:#28382D;color:#FFFFFF">Log out</a>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="background:#FFFFFF;border-bottom:1px solid #E6E2D8;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between">
+      <h1 style="margin:0;font-size:19px;font-weight:700;color:#23271F">Manage Registrations</h1>
+      <select style="padding:9px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:13.5px;font-family:inherit;background:#FDFCFA;color:#23271F;font-weight:600">
+        <option>Food Distribution Drive — 01/08/2026</option>
+        <option>Coastal Clean-Up at East Coast Park — 25/07/2026</option>
+        <option>Park Clean-Up & Recycling Drive — 08/08/2026</option>
+      </select>
+    </div>
+
+    <div style="padding:28px 32px 56px;display:flex;flex-direction:column;gap:20px;max-width:1020px">
+
+      <!-- Capacity summary -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Capacity</span>
+          <span style="font-size:26px;font-weight:800;color:#23271F">25</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Confirmed</span>
+          <span style="font-size:26px;font-weight:800;color:#2E7D4F">25</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Waiting list</span>
+          <span style="font-size:26px;font-weight:800;color:#8A5E08">6</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Cancellations</span>
+          <span style="font-size:26px;font-weight:800;color:#6E7266">3</span>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:11px;background:#FBF3DF;border:1px solid #EAD9AC;border-radius:12px;padding:13px 16px">
+        <span style="width:22px;height:22px;border-radius:50%;background:#D99E2B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">!</span>
+        <span style="font-size:14px;color:#6B4E0A;font-weight:500">This event is at full capacity. If a confirmed volunteer cancels, the first person on the waiting list is offered the space automatically.</span>
+      </div>
+
+      <!-- Confirmed volunteers -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <div style="padding:16px 22px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:16px;font-weight:700;color:#23271F">Confirmed volunteers <span style="color:#8B8778;font-weight:600;font-size:14px">(showing 5 of 25)</span></span>
+          <button style="padding:8px 14px;border-radius:9px;border:1px solid #D8D4C8;background:#FDFCFA;color:#23271F;font-weight:600;font-size:12.5px;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">Export CSV</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr;padding:11px 22px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Volunteer</span><span>Contact</span><span>Registered on</span><span>Status</span><span style="text-align:right">Action</span>
+        </div>
+        <sc-for list="{{ confirmed }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr;padding:13px 22px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:32px;height:32px;border-radius:50%;background:{{ c.avBg }};color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">{{ c.initials }}</div>
+              <span style="font-weight:600;color:#23271F">{{ c.name }}</span>
+            </div>
+            <span style="color:#6E7266;font-size:13px">{{ c.contact }}</span>
+            <span style="color:#6E7266;font-size:13.5px">{{ c.date }}</span>
+            <span><span style="background:#E7F2EA;color:#1E4D33;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px">Confirmed</span></span>
+            <div style="display:flex;justify-content:flex-end">
+              <button onClick="{{ c.askRemove }}" style="padding:7px 12px;border-radius:8px;border:1px solid #E8C7C4;color:#B0433B;font-weight:600;font-size:12.5px;background:#FFFFFF;cursor:pointer;font-family:inherit" style-hover="background:#FBEAE8">Remove</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- Waiting list -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <div style="padding:16px 22px;border-bottom:1px solid #EDEAE0">
+          <span style="font-size:16px;font-weight:700;color:#23271F">Waiting list <span style="color:#8B8778;font-weight:600;font-size:14px">(in order of registration)</span></span>
+        </div>
+        <sc-for list="{{ waitlist }}" as="w" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid #F2EFE7;font-size:14px">
+            <span style="width:30px;height:30px;border-radius:9px;background:#FBF3DF;color:#8A5E08;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">{{ w.pos }}</span>
+            <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+              <div style="width:32px;height:32px;border-radius:50%;background:{{ w.avBg }};color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">{{ w.initials }}</div>
+              <div style="display:flex;flex-direction:column">
+                <span style="font-weight:600;color:#23271F">{{ w.name }}</span>
+                <span style="font-size:12.5px;color:#8B8778">Joined waitlist {{ w.date }}</span>
+              </div>
+            </div>
+            <span style="background:#FBF3DF;color:#8A5E08;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px">Waitlisted</span>
+            <button style="padding:7px 14px;border-radius:8px;border:1px solid #BFDCC9;color:#1E4D33;font-weight:600;font-size:12.5px;background:#E7F2EA;cursor:pointer;font-family:inherit" style-hover="background:#D5E8DC">Promote</button>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- Cancellations -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <div style="padding:16px 22px;border-bottom:1px solid #EDEAE0">
+          <span style="font-size:16px;font-weight:700;color:#23271F">Cancellation records</span>
+        </div>
+        <sc-for list="{{ cancelled }}" as="x" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid #F2EFE7;font-size:14px">
+            <div style="display:flex;flex-direction:column;flex:1">
+              <span style="font-weight:600;color:#23271F">{{ x.name }}</span>
+              <span style="font-size:12.5px;color:#8B8778">{{ x.detail }}</span>
+            </div>
+            <span style="background:#EDEAE0;color:#6E7266;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px">Cancelled</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </main>
+
+  <!-- Confirmation modal -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(30,43,34,0.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px">
+      <div style="background:#FFFFFF;border-radius:18px;width:460px;max-width:100%;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 16px 48px rgba(30,43,34,0.3)">
+        <div style="width:44px;height:44px;border-radius:50%;background:#FBEAE8;color:#B0433B;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800">!</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:19px;font-weight:800;color:#23271F">Remove this volunteer?</div>
+          <div style="font-size:14.5px;color:#6E7266;line-height:1.55"><b style="color:#3C4038">{{ modalName }}</b> will be removed from the confirmed list and notified by email. The first person on the waiting list will be offered the space.</div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+          <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:10px;border:1px solid #D8D4C8;background:#FFFFFF;color:#23271F;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">Keep volunteer</button>
+          <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:10px;border:none;background:#B0433B;color:#FFFFFF;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#96362F">Yes, remove</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { modalOpen: false, modalName: "" };
+  renderVals() {
+    const av = ["#D99E2B", "#7FA8D9", "#C08FBB", "#8FBF9A", "#D9A08F"];
+    const ini = (n) => n.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+    const person = (name, i) => ({ name, initials: ini(name), avBg: av[i % av.length] });
+    return {
+      confirmed: [
+        { ...person("Nurul Aisyah", 0), contact: "nurul.a@example.sg · 9123 0001", date: "02/07/2026" },
+        { ...person("David Ong", 1), contact: "david.ong@example.sg · 9123 0002", date: "02/07/2026" },
+        { ...person("Priya Nair", 2), contact: "priya.n@example.sg · 9123 0003", date: "03/07/2026" },
+        { ...person("Muhammad Irfan", 3), contact: "m.irfan@example.sg · 9123 0004", date: "03/07/2026" },
+        { ...person("Chloe Goh", 4), contact: "chloe.goh@example.sg · 9123 0005", date: "04/07/2026" },
+      ].map((c) => ({ ...c, askRemove: () => this.setState({ modalOpen: true, modalName: c.name }) })),
+      waitlist: [
+        { ...person("Rajesh Kumar", 1), pos: "1", date: "05/07/2026" },
+        { ...person("Sarah Chen", 2), pos: "2", date: "06/07/2026" },
+        { ...person("Tan Wei Ling", 0), pos: "3", date: "07/07/2026" },
+        { ...person("Farah Binte Rahman", 3), pos: "4", date: "09/07/2026" },
+      ],
+      cancelled: [
+        { name: "Jason Teo", detail: "Cancelled 08/07/2026 · Reason: schedule clash · Space reallocated to waitlist #1" },
+        { name: "Amanda Lee", detail: "Cancelled 06/07/2026 · Reason: not stated" },
+        { name: "Kumar Selvam", detail: "Removed by organiser 04/07/2026 · Duplicate registration" },
+      ],
+      modalOpen: this.state.modalOpen,
+      modalName: this.state.modalName,
+      closeModal: () => this.setState({ modalOpen: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

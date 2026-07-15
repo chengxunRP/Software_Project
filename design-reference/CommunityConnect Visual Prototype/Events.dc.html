@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Event Catalogue">
+  <header style="background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between">
+      <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">C</div>
+        <div style="font-weight:700;font-size:18px;color:#23271F;letter-spacing:-0.01em">CommunityConnect <span style="color:#2E7D4F">SG</span></div>
+      </a>
+      <nav style="display:flex;align-items:center;gap:28px;font-size:15px;font-weight:500">
+        <a href="Events.dc.html" style="color:#2E7D4F;font-weight:700">Browse Events</a>
+        <a href="Landing.dc.html#impact" style="color:#3C4038" style-hover="color:#2E7D4F">Our Impact</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="Login.dc.html" style="padding:9px 16px;border-radius:10px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:14px;background:#FFFFFF" style-hover="background:#F6F4EF;color:#23271F">Log in</a>
+        <a href="Register.dc.html" style="padding:9px 18px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px" style-hover="background:#256741;color:#FFFFFF">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="flex:1">
+    <div style="max-width:1180px;margin:0 auto;padding:40px 32px 72px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h1 style="margin:0;font-size:32px;font-weight:800;color:#23271F;letter-spacing:-0.01em">Event Catalogue</h1>
+        <p style="margin:0;font-size:15.5px;color:#6E7266">12 upcoming events across Singapore. Filter to find one near you.</p>
+      </div>
+
+      <!-- Filter bar -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:12px;align-items:end;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <label style="display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Search</span>
+          <input type="text" placeholder="Keyword, e.g. clean-up" style="padding:10px 12px;border-radius:9px;border:1px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Category</span>
+          <select style="padding:10px 12px;border-radius:9px;border:1px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>All categories</option><option>Environment</option><option>Food Support</option><option>Elderly Support</option><option>Education</option><option>Fundraising</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Date</span>
+          <select style="padding:10px 12px;border-radius:9px;border:1px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>Any date</option><option>This weekend</option><option>Next 7 days</option><option>Next 30 days</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Location</span>
+          <select style="padding:10px 12px;border-radius:9px;border:1px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>All areas</option><option>East</option><option>West</option><option>North</option><option>Central</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Availability</span>
+          <select style="padding:10px 12px;border-radius:9px;border:1px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>All events</option><option>Spaces available</option><option>Waitlist only</option>
+          </select>
+        </label>
+        <button style="padding:10px 20px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px;border:none;cursor:pointer;font-family:inherit" style-hover="background:#256741">Apply</button>
+      </div>
+
+      <!-- Event grid -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+        <sc-for list="{{ events }}" as="ev" hint-placeholder-count="6">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <div style="height:130px;background:repeating-linear-gradient(45deg,#ECE8DE 0 12px,#F3F0E8 12px 24px);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:ui-monospace,monospace;font-size:12px;color:#8B8778;background:#FFFFFF;padding:5px 10px;border-radius:6px;border:1px solid #E6E2D8">{{ ev.photo }}</span>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:11px;flex:1">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="background:{{ ev.catBg }};color:{{ ev.catFg }};font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px">{{ ev.category }}</span>
+                <sc-if value="{{ ev.full }}" hint-placeholder-val="{{ false }}">
+                  <span style="background:#FBEAE8;color:#B0433B;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px">FULL</span>
+                </sc-if>
+              </div>
+              <div style="font-size:16.5px;font-weight:700;color:#23271F;line-height:1.3">{{ ev.name }}</div>
+              <div style="display:flex;flex-direction:column;gap:4px;font-size:13.5px;color:#6E7266">
+                <span>{{ ev.when }}</span>
+                <span>{{ ev.where }}</span>
+              </div>
+              <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">{{ ev.capLabel }}</span><span style="color:{{ ev.capColor }}">{{ ev.capNote }}</span></div>
+                <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ ev.capPct }};height:100%;border-radius:999px;background:{{ ev.capColor }}"></div></div>
+                <a href="Event Details.dc.html" style="margin-top:10px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid #2E7D4F;color:#2E7D4F;font-weight:600;font-size:14px" style-hover="background:#E7F2EA;color:#1E4D33">View Details</a>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:8px;margin-top:8px">
+        <span style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px">1</span>
+        <a href="Events.dc.html" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:14px;background:#FFFFFF" style-hover="background:#E7F2EA;color:#1E4D33">2</a>
+        <a href="Events.dc.html" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:14px;background:#FFFFFF" style-hover="background:#E7F2EA;color:#1E4D33">→</a>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const cat = {
+      Environment: ["#E7F2EA", "#1E4D33"],
+      "Food Support": ["#FBF3DF", "#8A5E08"],
+      "Elderly Support": ["#F3E9F2", "#7A4472"],
+      Education: ["#E9EDF6", "#3B5384"],
+      Fundraising: ["#FBEAE8", "#9C4038"],
+    };
+    const mk = (name, category, when, where, photo, filled, capTotal) => {
+      const pct = Math.round((filled / capTotal) * 100);
+      const left = capTotal - filled;
+      const full = left <= 0;
+      return {
+        name, category, when, where, photo,
+        catBg: cat[category][0], catFg: cat[category][1],
+        full,
+        capLabel: filled + " of " + capTotal + " spaces filled",
+        capNote: full ? "Waitlist open" : left + " left",
+        capColor: full ? "#B0433B" : pct >= 80 ? "#D99E2B" : "#2E7D4F",
+        capPct: pct + "%",
+      };
+    };
+    return {
+      events: [
+        mk("Coastal Clean-Up at East Coast Park", "Environment", "Sat 25/07/2026 · 08:00–11:00", "East Coast Park, Area C", "photo: beach clean-up", 34, 40),
+        mk("Food Distribution Drive", "Food Support", "Sat 01/08/2026 · 09:00–13:00", "Bedok Community Centre", "photo: food packing", 25, 25),
+        mk("Weekend Tutoring — Primary Maths", "Education", "Sun 26/07/2026 · 10:00–12:00", "Tampines Community Club", "photo: tutoring session", 9, 20),
+        mk("Elderly Befriending Visits", "Elderly Support", "Wed 29/07/2026 · 14:00–17:00", "Tampines Community Club", "photo: befriending visit", 14, 18),
+        mk("Park Clean-Up & Recycling Drive", "Environment", "Sat 08/08/2026 · 07:30–10:30", "Bishan-Ang Mo Kio Park", "photo: park clean-up", 22, 50),
+        mk("Charity Fun Run — Route Marshals", "Fundraising", "Sun 16/08/2026 · 06:30–11:00", "Jurong Lake Gardens", "photo: fun run marshals", 41, 45),
+        mk("Community Garden Planting Day", "Environment", "Sat 15/08/2026 · 08:00–11:00", "Jurong Lake Gardens", "photo: garden planting", 12, 30),
+        mk("Grocery Delivery for Seniors", "Elderly Support", "Sat 22/08/2026 · 09:00–12:00", "Bedok Community Centre", "photo: grocery delivery", 16, 16),
+        mk("Fundraising Bake Sale Helpers", "Fundraising", "Sun 23/08/2026 · 11:00–16:00", "Tampines Community Club", "photo: bake sale", 7, 15),
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

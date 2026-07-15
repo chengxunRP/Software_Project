@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder,textarea::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex" data-screen-label="Create / Edit Event">
+
+  <aside style="width:248px;flex-shrink:0;background:#1E2B22;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;padding:22px 22px 18px">
+      <div style="width:32px;height:32px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">C</div>
+      <div style="font-weight:700;font-size:16px;color:#FFFFFF;letter-spacing:-0.01em">CommunityConnect</div>
+    </a>
+    <div style="padding:0 22px 14px;font-size:11px;font-weight:700;color:#7E9184;text-transform:uppercase;letter-spacing:0.08em">Organiser</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <a href="Organiser Dashboard.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Dashboard</a>
+      <a href="Manage Events.dc.html" style="padding:10px 12px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px">Manage Events</a>
+      <a href="Manage Registrations.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Registrations</a>
+      <a href="Role Assignment.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Role Assignment</a>
+      <a href="Attendance.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Attendance</a>
+    </nav>
+    <div style="margin-top:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:11px;background:#28382D">
+        <div style="width:34px;height:34px;border-radius:50%;background:#7FA8D9;color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">ML</div>
+        <div style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13.5px;font-weight:600;color:#FFFFFF">Marcus Lim</span>
+          <span style="font-size:12px;color:#7E9184">Organiser · Green Team</span>
+        </div>
+      </div>
+      <a href="Landing.dc.html" style="text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;color:#C4D2C7;border:1px solid #3A4B3F" style-hover="background:#28382D;color:#FFFFFF">Log out</a>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="background:#FFFFFF;border-bottom:1px solid #E6E2D8;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <a href="Manage Events.dc.html" style="font-size:13.5px;font-weight:600">← Manage Events</a>
+        <span style="color:#B9B5A8">/</span>
+        <h1 style="margin:0;font-size:19px;font-weight:700;color:#23271F">Edit Event</h1>
+      </div>
+      <div style="display:flex;gap:10px">
+        <a href="Manage Events.dc.html" style="padding:9px 16px;border-radius:10px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:13.5px;background:#FDFCFA" style-hover="background:#F6F4EF;color:#23271F">Discard changes</a>
+        <a href="Manage Events.dc.html" style="padding:9px 18px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:13.5px" style-hover="background:#256741;color:#FFFFFF">Save event</a>
+      </div>
+    </div>
+
+    <div style="padding:28px 32px 56px;display:grid;grid-template-columns:1fr 320px;gap:24px;max-width:1060px;align-items:start">
+
+      <!-- Form -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- Warning message -->
+        <div style="display:flex;align-items:flex-start;gap:11px;background:#FBF3DF;border:1px solid #EAD9AC;border-radius:12px;padding:13px 16px">
+          <span style="width:22px;height:22px;border-radius:50%;background:#D99E2B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">!</span>
+          <span style="font-size:14px;color:#6B4E0A;font-weight:500;line-height:1.5">This event already has 34 confirmed volunteers. Reducing the capacity below 34 will move the most recent registrations to the waiting list.</span>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:15px;font-weight:700;color:#23271F">Event details</span>
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:13.5px;font-weight:600;color:#23271F">Event name <span style="color:#B0433B">*</span></span>
+            <input type="text" value="Coastal Clean-Up at East Coast Park" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:15px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+          </label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:13.5px;font-weight:600;color:#23271F">Category <span style="color:#B0433B">*</span></span>
+              <select style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:15px;font-family:inherit;background:#FDFCFA;color:#23271F">
+                <option>Environment</option><option>Food Support</option><option>Elderly Support</option><option>Education</option><option>Fundraising</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:13.5px;font-weight:600;color:#23271F">Location <span style="color:#B0433B">*</span></span>
+              <input type="text" value="East Coast Park, Area C" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:15px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+            </label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:13.5px;font-weight:600;color:#23271F">Description <span style="color:#B0433B">*</span></span>
+            <textarea rows="5" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:15px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none;resize:vertical;line-height:1.6" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA">Join us for a Saturday morning shoreline clean-up along East Coast Park, Area C. Volunteers will work in small teams to collect and sort litter, record data for our marine waste audit, and help keep one of Singapore's favourite parks clean.</textarea>
+            <span style="font-size:12.5px;color:#8B8778">Shown on the public event page. Include what to bring and who the event suits.</span>
+          </label>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:15px;font-weight:700;color:#23271F">Schedule & capacity</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:13.5px;font-weight:600;color:#23271F">Start date & time <span style="color:#B0433B">*</span></span>
+              <input type="datetime-local" value="2026-07-25T08:00" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:13.5px;font-weight:600;color:#23271F">End date & time <span style="color:#B0433B">*</span></span>
+              <input type="datetime-local" value="2026-07-25T11:00" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+            </label>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:13.5px;font-weight:600;color:#23271F">Volunteer capacity <span style="color:#B0433B">*</span></span>
+              <input type="number" value="40" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:15px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+              <span style="font-size:12.5px;color:#8B8778">A waiting list opens automatically once capacity is reached.</span>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:13.5px;font-weight:600;color:#23271F">Registration deadline <span style="color:#B0433B">*</span></span>
+              <input type="datetime-local" value="2026-07-23T23:59" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+            </label>
+          </div>
+          <!-- Inline error example -->
+          <label style="display:flex;flex-direction:column;gap:6px;max-width:calc(50% - 8px)">
+            <span style="font-size:13.5px;font-weight:600;color:#23271F">Meeting point</span>
+            <input type="text" value="" placeholder="e.g. Carpark C2, next to kiosk" style="padding:11px 14px;border-radius:10px;border:1.5px solid #B0433B;font-size:15px;font-family:inherit;background:#FFFBFA;color:#23271F;outline:none" style-focus="box-shadow:0 0 0 3px #FBEAE8"></input>
+            <span style="font-size:12.5px;color:#B0433B;font-weight:600">Meeting point is required for outdoor events.</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Status side panel -->
+      <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:24px">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:15px;font-weight:700;color:#23271F">Event status</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;border:1.5px solid #2E7D4F;border-radius:10px;background:#E7F2EA;cursor:pointer">
+              <input type="radio" name="status" checked="checked" style="accent-color:#2E7D4F"></input>
+              <div style="display:flex;flex-direction:column">
+                <span style="font-size:14px;font-weight:700;color:#1E4D33">Published</span>
+                <span style="font-size:12px;color:#4E6B57">Visible in the catalogue, open for registration</span>
+              </div>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid #D8D4C8;border-radius:10px;cursor:pointer" style-hover="background:#FBFAF6">
+              <input type="radio" name="status" style="accent-color:#2E7D4F"></input>
+              <div style="display:flex;flex-direction:column">
+                <span style="font-size:14px;font-weight:700;color:#23271F">Draft</span>
+                <span style="font-size:12px;color:#8B8778">Hidden from volunteers</span>
+              </div>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid #D8D4C8;border-radius:10px;cursor:pointer" style-hover="background:#FBFAF6">
+              <input type="radio" name="status" style="accent-color:#2E7D4F"></input>
+              <div style="display:flex;flex-direction:column">
+                <span style="font-size:14px;font-weight:700;color:#23271F">Registration closed</span>
+                <span style="font-size:12px;color:#8B8778">Visible, but no new sign-ups</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:15px;font-weight:700;color:#23271F">Current sign-ups</span>
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span style="color:#6E7266">34 of 40 confirmed</span><span style="color:#8A5E08">6 left</span></div>
+          <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+          <a href="Manage Registrations.dc.html" style="font-size:13.5px;font-weight:600">Manage registrations →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>
