@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh" data-screen-label="Mobile Views">
+  <header style="background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+    <div style="max-width:2200px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between">
+      <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">C</div>
+        <div style="font-weight:700;font-size:18px;color:#23271F">CommunityConnect <span style="color:#2E7D4F">SG</span> — Mobile Mockups</div>
+      </a>
+      <nav style="display:flex;align-items:center;gap:24px;font-size:14px;font-weight:600">
+        <a href="Design System.dc.html">← Design system</a>
+        <a href="Landing.dc.html">Back to prototype</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width:2200px;margin:0 auto;padding:36px 32px 72px;display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <h1 style="margin:0;font-size:30px;font-weight:800;color:#23271F;letter-spacing:-0.015em">Mobile views</h1>
+      <p style="margin:0;font-size:15px;color:#6E7266;max-width:72ch">On mobile, the public top navigation collapses to a hamburger sheet and the signed-in sidebar becomes a bottom tab bar. Same palette, type scale and components as desktop.</p>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+      <!-- ============ 1. LANDING ============ -->
+      <div style="display:flex;flex-direction:column;gap:12px" data-screen-label="Mobile — Landing">
+        <span style="font-size:14px;font-weight:700;color:#23271F">Landing page <span style="font-weight:500;color:#8B8778">· public</span></span>
+        <div style="width:390px;height:844px;border-radius:46px;border:10px solid #1E2B22;background:#FFFFFF;overflow:hidden;box-shadow:0 14px 36px rgba(30,43,34,0.16);display:flex;flex-direction:column">
+          <div style="height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:700;color:#23271F;background:#FFFFFF"><span>9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="width:16px;height:9px;border:1px solid #23271F;border-radius:2px;display:inline-block"></span></span></div>
+          <div style="height:54px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="width:30px;height:30px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">C</div>
+              <div style="font-weight:700;font-size:16px;color:#23271F">CommunityConnect <span style="color:#2E7D4F">SG</span></div>
+            </div>
+            <div style="width:38px;height:38px;border-radius:10px;border:1px solid #E6E2D8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#FDFCFA">
+              <span style="width:16px;height:2px;background:#23271F;border-radius:2px"></span>
+              <span style="width:16px;height:2px;background:#23271F;border-radius:2px"></span>
+              <span style="width:16px;height:2px;background:#23271F;border-radius:2px"></span>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#F6F4EF">
+            <div style="background:#FFFFFF;padding:24px 20px 26px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:inline-flex;align-self:flex-start;align-items:center;gap:7px;background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px">
+                <span style="width:6px;height:6px;border-radius:50%;background:#2E7D4F"></span>
+                Serving 28 organisations islandwide
+              </div>
+              <h2 style="margin:0;font-size:27px;line-height:1.16;letter-spacing:-0.02em;color:#23271F;font-weight:800;text-wrap:balance">Lend a hand where it matters — right in your neighbourhood.</h2>
+              <p style="margin:0;font-size:14.5px;line-height:1.55;color:#6E7266;text-wrap:pretty">Find an event, sign up in minutes, and track every hour you contribute.</p>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:2px">
+                <span style="text-align:center;padding:13px 0;border-radius:12px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:15px">Browse Events</span>
+                <span style="text-align:center;padding:12px 0;border-radius:12px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:15px;background:#FFFFFF">Become a Volunteer</span>
+              </div>
+            </div>
+            <div style="background:#1E2B22;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px 20px">
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">1,240</span><span style="font-size:12.5px;color:#A9BCA9;font-weight:500">Active volunteers</span></div>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">386</span><span style="font-size:12.5px;color:#A9BCA9;font-weight:500">Events hosted</span></div>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">12,450</span><span style="font-size:12.5px;color:#A9BCA9;font-weight:500">Volunteer hours</span></div>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">28</span><span style="font-size:12.5px;color:#A9BCA9;font-weight:500">Partner organisations</span></div>
+            </div>
+            <div style="padding:20px 20px 0;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:17px;font-weight:700;color:#23271F">Featured events</span>
+                <span style="font-size:13px;font-weight:600;color:#2E7D4F">View all →</span>
+              </div>
+              <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+                <div style="height:84px;background:repeating-linear-gradient(45deg,#ECE8DE 0 12px,#F3F0E8 12px 24px);display:flex;align-items:center;justify-content:center">
+                  <span style="font-family:ui-monospace,monospace;font-size:11px;color:#8B8778;background:#FFFFFF;padding:4px 9px;border-radius:6px;border:1px solid #E6E2D8">photo: beach clean-up</span>
+                </div>
+                <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+                  <span style="align-self:flex-start;background:#E7F2EA;color:#1E4D33;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px">Environment</span>
+                  <span style="font-size:15px;font-weight:700;color:#23271F;line-height:1.3">Coastal Clean-Up at East Coast Park</span>
+                  <span style="font-size:12.5px;color:#6E7266">Sat 25/07/2026 · 08:00–11:00 · East Coast Park</span>
+                  <div style="display:flex;flex-direction:column;gap:5px">
+                    <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:600"><span style="color:#6E7266">34 of 40 filled</span><span style="color:#8A5E08">6 left</span></div>
+                    <div style="height:5px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 2. EVENT CATALOGUE ============ -->
+      <div style="display:flex;flex-direction:column;gap:12px" data-screen-label="Mobile — Event Catalogue">
+        <span style="font-size:14px;font-weight:700;color:#23271F">Event catalogue <span style="font-weight:500;color:#8B8778">· public</span></span>
+        <div style="width:390px;height:844px;border-radius:46px;border:10px solid #1E2B22;background:#F6F4EF;overflow:hidden;box-shadow:0 14px 36px rgba(30,43,34,0.16);display:flex;flex-direction:column">
+          <div style="height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:700;color:#23271F;background:#FFFFFF"><span>9:41</span><span style="width:16px;height:9px;border:1px solid #23271F;border-radius:2px"></span></div>
+          <div style="height:54px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="width:30px;height:30px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">C</div>
+              <div style="font-weight:700;font-size:16px;color:#23271F">CommunityConnect <span style="color:#2E7D4F">SG</span></div>
+            </div>
+            <div style="width:38px;height:38px;border-radius:10px;border:1px solid #E6E2D8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#FDFCFA">
+              <span style="width:16px;height:2px;background:#23271F;border-radius:2px"></span>
+              <span style="width:16px;height:2px;background:#23271F;border-radius:2px"></span>
+              <span style="width:16px;height:2px;background:#23271F;border-radius:2px"></span>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:18px 18px 0;display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <span style="font-size:23px;font-weight:800;color:#23271F;letter-spacing:-0.01em">Event Catalogue</span>
+              <span style="font-size:13px;color:#6E7266">12 upcoming events across Singapore</span>
+            </div>
+            <input type="text" placeholder="Search, e.g. clean-up" style="padding:12px 14px;border-radius:11px;border:1px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FFFFFF;color:#23271F;outline:none"></input>
+            <div style="display:flex;gap:8px;overflow:hidden">
+              <span style="flex-shrink:0;padding:7px 13px;border-radius:999px;background:#2E7D4F;color:#FFFFFF;font-size:12.5px;font-weight:600">All categories</span>
+              <span style="flex-shrink:0;padding:7px 13px;border-radius:999px;background:#FFFFFF;border:1px solid #D8D4C8;color:#3C4038;font-size:12.5px;font-weight:600">Any date ▾</span>
+              <span style="flex-shrink:0;padding:7px 13px;border-radius:999px;background:#FFFFFF;border:1px solid #D8D4C8;color:#3C4038;font-size:12.5px;font-weight:600">All areas ▾</span>
+              <span style="flex-shrink:0;padding:7px 13px;border-radius:999px;background:#FFFFFF;border:1px solid #D8D4C8;color:#3C4038;font-size:12.5px;font-weight:600">Availability ▾</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:9px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px">Environment</span>
+              </div>
+              <span style="font-size:15.5px;font-weight:700;color:#23271F;line-height:1.3">Coastal Clean-Up at East Coast Park</span>
+              <span style="font-size:12.5px;color:#6E7266">Sat 25/07/2026 · 08:00–11:00 · East Coast Park, Area C</span>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:600"><span style="color:#6E7266">34 of 40 filled</span><span style="color:#8A5E08">6 left</span></div>
+                <div style="height:5px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+              </div>
+              <span style="margin-top:4px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid #2E7D4F;color:#2E7D4F;font-weight:600;font-size:13.5px">View Details</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:9px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="background:#FBF3DF;color:#8A5E08;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px">Food Support</span>
+                <span style="background:#FBEAE8;color:#B0433B;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px">FULL</span>
+              </div>
+              <span style="font-size:15.5px;font-weight:700;color:#23271F;line-height:1.3">Food Distribution Drive</span>
+              <span style="font-size:12.5px;color:#6E7266">Sat 01/08/2026 · 09:00–13:00 · Bedok Community Centre</span>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:600"><span style="color:#6E7266">25 of 25 filled</span><span style="color:#B0433B">Waitlist open</span></div>
+                <div style="height:5px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:100%;height:100%;border-radius:999px;background:#B0433B"></div></div>
+              </div>
+              <span style="margin-top:4px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid #2E7D4F;color:#2E7D4F;font-weight:600;font-size:13.5px">View Details</span>
+            </div>
+            <div style="display:flex;justify-content:center;gap:8px;padding-bottom:16px">
+              <span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:13px">1</span>
+              <span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:13px;background:#FFFFFF">2</span>
+              <span style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:13px;background:#FFFFFF">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 3. EVENT DETAILS ============ -->
+      <div style="display:flex;flex-direction:column;gap:12px" data-screen-label="Mobile — Event Details">
+        <span style="font-size:14px;font-weight:700;color:#23271F">Event details <span style="font-weight:500;color:#8B8778">· public, sticky CTA</span></span>
+        <div style="width:390px;height:844px;border-radius:46px;border:10px solid #1E2B22;background:#F6F4EF;overflow:hidden;box-shadow:0 14px 36px rgba(30,43,34,0.16);display:flex;flex-direction:column;position:relative">
+          <div style="height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:700;color:#23271F;background:#FFFFFF"><span>9:41</span><span style="width:16px;height:9px;border:1px solid #23271F;border-radius:2px"></span></div>
+          <div style="height:54px;flex-shrink:0;display:flex;align-items:center;gap:12px;padding:0 18px;background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+            <span style="width:38px;height:38px;border-radius:10px;border:1px solid #E6E2D8;display:flex;align-items:center;justify-content:center;font-size:17px;color:#23271F;background:#FDFCFA">←</span>
+            <span style="font-size:15.5px;font-weight:700;color:#23271F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Event details</span>
+          </div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:150px;flex-shrink:0;background:repeating-linear-gradient(45deg,#ECE8DE 0 13px,#F3F0E8 13px 26px);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:ui-monospace,monospace;font-size:11px;color:#8B8778;background:#FFFFFF;padding:5px 10px;border-radius:6px;border:1px solid #E6E2D8">photo: shoreline clean-up</span>
+            </div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:13px">
+              <div style="display:flex;gap:8px">
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px">Environment</span>
+                <span style="background:#FBF3DF;color:#8A5E08;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px">Filling fast</span>
+              </div>
+              <span style="font-size:23px;font-weight:800;color:#23271F;letter-spacing:-0.015em;line-height:1.2">Coastal Clean-Up at East Coast Park</span>
+              <span style="font-size:12.5px;color:#6E7266">Organised by <span style="font-weight:600;color:#3C4038">CommunityConnect SG — Green Team</span></span>
+              <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#6E7266;font-weight:500">Date</span><span style="font-weight:600;color:#23271F">Sat 25/07/2026</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#6E7266;font-weight:500">Time</span><span style="font-weight:600;color:#23271F">08:00–11:00</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#6E7266;font-weight:500">Location</span><span style="font-weight:600;color:#23271F">East Coast Park, Area C</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#6E7266;font-weight:500">Registration closes</span><span style="font-weight:600;color:#23271F">23/07/2026, 23:59</span></div>
+                <div style="height:1px;background:#EDEAE0"></div>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:600"><span style="color:#6E7266">34 of 40 spaces filled</span><span style="color:#8A5E08">6 left</span></div>
+                  <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <span style="font-size:15.5px;font-weight:700;color:#23271F">About this event</span>
+                <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3C4038;text-wrap:pretty">Join us for a Saturday morning shoreline clean-up along East Coast Park, Area C. Volunteers work in small teams to collect and sort litter and record data for our marine waste audit. Gloves, tongs and trash bags provided…</p>
+              </div>
+            </div>
+          </div>
+          <div style="flex-shrink:0;background:#FFFFFF;border-top:1px solid #E6E2D8;padding:14px 18px 26px;display:flex;flex-direction:column;gap:6px">
+            <span style="text-align:center;padding:14px 0;border-radius:12px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:15.5px">Register for this event</span>
+            <span style="font-size:11.5px;color:#8B8778;text-align:center">You'll be asked to log in or create an account.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 4. VOLUNTEER DASHBOARD ============ -->
+      <div style="display:flex;flex-direction:column;gap:12px" data-screen-label="Mobile — Volunteer Dashboard">
+        <span style="font-size:14px;font-weight:700;color:#23271F">Volunteer dashboard <span style="font-weight:500;color:#8B8778">· signed in, bottom tab bar</span></span>
+        <div style="width:390px;height:844px;border-radius:46px;border:10px solid #1E2B22;background:#F6F4EF;overflow:hidden;box-shadow:0 14px 36px rgba(30,43,34,0.16);display:flex;flex-direction:column">
+          <div style="height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:700;color:#23271F;background:#FFFFFF"><span>9:41</span><span style="width:16px;height:9px;border:1px solid #23271F;border-radius:2px"></span></div>
+          <div style="height:54px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+            <span style="font-size:17px;font-weight:700;color:#23271F">Dashboard</span>
+            <div style="position:relative;width:38px;height:38px;border-radius:10px;border:1px solid #E6E2D8;display:flex;align-items:center;justify-content:center;font-size:15px;color:#6E7266;background:#FDFCFA">🔔<span style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#B0433B;color:#FFFFFF;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">3</span></div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:18px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="font-size:19px;font-weight:800;color:#23271F;letter-spacing:-0.01em">Good afternoon, Wei Ling 👋</span>
+              <span style="font-size:13px;color:#6E7266">You have 2 upcoming events this month.</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:12px;padding:13px 12px;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:11px;font-weight:600;color:#6E7266">Upcoming</span>
+                <span style="font-size:22px;font-weight:800;color:#23271F">2</span>
+              </div>
+              <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:12px;padding:13px 12px;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:11px;font-weight:600;color:#6E7266">Waitlist</span>
+                <span style="font-size:22px;font-weight:800;color:#8A5E08">1</span>
+              </div>
+              <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:12px;padding:13px 12px;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:11px;font-weight:600;color:#6E7266">Hours</span>
+                <span style="font-size:22px;font-weight:800;color:#2E7D4F">38.5</span>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+              <div style="padding:13px 16px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:14.5px;font-weight:700;color:#23271F">Upcoming registrations</span>
+                <span style="font-size:12px;font-weight:600;color:#2E7D4F">View all</span>
+              </div>
+              <div style="padding:12px 16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid #F2EFE7">
+                <div style="width:42px;height:42px;border-radius:10px;background:#E7F2EA;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                  <span style="font-size:9px;font-weight:700;color:#2E7D4F;text-transform:uppercase">Jul</span>
+                  <span style="font-size:16px;font-weight:800;color:#1E4D33;line-height:1">25</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                  <span style="font-size:13px;font-weight:700;color:#23271F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Coastal Clean-Up at East Coast Park</span>
+                  <span style="font-size:11.5px;color:#6E7266">08:00–11:00 · Beach Sweeper</span>
+                </div>
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;flex-shrink:0">Confirmed</span>
+              </div>
+              <div style="padding:12px 16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid #F2EFE7">
+                <div style="width:42px;height:42px;border-radius:10px;background:#E7F2EA;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                  <span style="font-size:9px;font-weight:700;color:#2E7D4F;text-transform:uppercase">Jul</span>
+                  <span style="font-size:16px;font-weight:800;color:#1E4D33;line-height:1">29</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                  <span style="font-size:13px;font-weight:700;color:#23271F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Elderly Befriending Visits</span>
+                  <span style="font-size:11.5px;color:#6E7266">14:00–17:00 · Befriender</span>
+                </div>
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;flex-shrink:0">Confirmed</span>
+              </div>
+              <div style="padding:12px 16px;display:flex;align-items:center;gap:11px">
+                <div style="width:42px;height:42px;border-radius:10px;background:#FBF3DF;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                  <span style="font-size:9px;font-weight:700;color:#8A5E08;text-transform:uppercase">Aug</span>
+                  <span style="font-size:16px;font-weight:800;color:#8A5E08;line-height:1">01</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                  <span style="font-size:13px;font-weight:700;color:#23271F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Food Distribution Drive</span>
+                  <span style="font-size:11.5px;color:#6E7266">09:00–13:00 · Bedok CC</span>
+                </div>
+                <span style="background:#FBF3DF;color:#8A5E08;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;flex-shrink:0">Waitlist #3</span>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+              <div style="padding:13px 16px;border-bottom:1px solid #EDEAE0">
+                <span style="font-size:14.5px;font-weight:700;color:#23271F">Recent notifications</span>
+              </div>
+              <div style="padding:12px 16px;display:flex;gap:9px">
+                <span style="width:7px;height:7px;border-radius:50%;background:#2E7D4F;margin-top:5px;flex-shrink:0"></span>
+                <div style="display:flex;flex-direction:column;gap:1px">
+                  <span style="font-size:12.5px;color:#23271F;line-height:1.45;font-weight:500">Your registration for <b>Coastal Clean-Up</b> is confirmed.</span>
+                  <span style="font-size:11px;color:#8B8778">Today, 09:14</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="flex-shrink:0;background:#1E2B22;padding:10px 8px 24px;display:grid;grid-template-columns:repeat(4,1fr)">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;border-radius:999px;background:#2E7D4F;display:flex;align-items:center;justify-content:center;font-size:13px">🏠</span>
+              <span style="font-size:10.5px;font-weight:700;color:#FFFFFF">Dashboard</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">🔍</span>
+              <span style="font-size:10.5px;font-weight:600;color:#7E9184">Events</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">🗂</span>
+              <span style="font-size:10.5px;font-weight:600;color:#7E9184">Registrations</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">⏱</span>
+              <span style="font-size:10.5px;font-weight:600;color:#7E9184">Hours</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 5. MY REGISTRATIONS ============ -->
+      <div style="display:flex;flex-direction:column;gap:12px" data-screen-label="Mobile — My Registrations">
+        <span style="font-size:14px;font-weight:700;color:#23271F">My registrations <span style="font-weight:500;color:#8B8778">· signed in, bottom tab bar</span></span>
+        <div style="width:390px;height:844px;border-radius:46px;border:10px solid #1E2B22;background:#F6F4EF;overflow:hidden;box-shadow:0 14px 36px rgba(30,43,34,0.16);display:flex;flex-direction:column">
+          <div style="height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:700;color:#23271F;background:#FFFFFF"><span>9:41</span><span style="width:16px;height:9px;border:1px solid #23271F;border-radius:2px"></span></div>
+          <div style="height:54px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+            <span style="font-size:17px;font-weight:700;color:#23271F">My Registrations</span>
+            <span style="padding:8px 13px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:12px">+ Find an event</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:16px 18px 0;display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;align-items:center;gap:9px;background:#E7F2EA;border:1px solid #BFDCC9;border-radius:11px;padding:11px 13px">
+              <span style="width:19px;height:19px;border-radius:50%;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">✓</span>
+              <span style="font-size:12px;color:#1E4D33;font-weight:500;line-height:1.4">Registration for <b>Coastal Clean-Up</b> confirmed.</span>
+            </div>
+            <div style="display:flex;gap:5px;background:#EDEAE0;padding:4px;border-radius:11px">
+              <span style="flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:12px;font-weight:600;background:#FFFFFF;color:#23271F;box-shadow:0 1px 2px rgba(35,39,31,0.08)">Confirmed</span>
+              <span style="flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:12px;font-weight:600;color:#6E7266">Waitlisted</span>
+              <span style="flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:12px;font-weight:600;color:#6E7266">Cancelled</span>
+              <span style="flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:12px;font-weight:600;color:#6E7266">Attended</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:15px;display:flex;flex-direction:column;gap:11px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+              <div style="display:flex;align-items:center;gap:11px">
+                <div style="width:46px;height:46px;border-radius:11px;background:#E7F2EA;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                  <span style="font-size:9.5px;font-weight:700;color:#1E4D33;text-transform:uppercase">Jul</span>
+                  <span style="font-size:17px;font-weight:800;color:#1E4D33;line-height:1">25</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                  <span style="font-size:14px;font-weight:700;color:#23271F;line-height:1.25">Coastal Clean-Up at East Coast Park</span>
+                  <span style="font-size:11.5px;color:#6E7266">Sat 25/07/2026 · 08:00–11:00 · Beach Sweeper</span>
+                </div>
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px;flex-shrink:0">Confirmed</span>
+              </div>
+              <div style="display:flex;gap:8px">
+                <span style="flex:1;text-align:center;padding:9px 0;border-radius:9px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:12.5px;background:#FDFCFA">View</span>
+                <span style="flex:1;text-align:center;padding:9px 0;border-radius:9px;border:1px solid #E8C7C4;color:#B0433B;font-weight:600;font-size:12.5px;background:#FFFFFF">Cancel</span>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:15px;display:flex;flex-direction:column;gap:11px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+              <div style="display:flex;align-items:center;gap:11px">
+                <div style="width:46px;height:46px;border-radius:11px;background:#E7F2EA;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                  <span style="font-size:9.5px;font-weight:700;color:#1E4D33;text-transform:uppercase">Jul</span>
+                  <span style="font-size:17px;font-weight:800;color:#1E4D33;line-height:1">29</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                  <span style="font-size:14px;font-weight:700;color:#23271F;line-height:1.25">Elderly Befriending Visits</span>
+                  <span style="font-size:11.5px;color:#6E7266">Wed 29/07/2026 · 14:00–17:00 · Befriender</span>
+                </div>
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px;flex-shrink:0">Confirmed</span>
+              </div>
+              <div style="display:flex;gap:8px">
+                <span style="flex:1;text-align:center;padding:9px 0;border-radius:9px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:12.5px;background:#FDFCFA">View</span>
+                <span style="flex:1;text-align:center;padding:9px 0;border-radius:9px;border:1px solid #E8C7C4;color:#B0433B;font-weight:600;font-size:12.5px;background:#FFFFFF">Cancel</span>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:15px;display:flex;align-items:center;gap:11px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+              <div style="width:46px;height:46px;border-radius:11px;background:#FBF3DF;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                <span style="font-size:9.5px;font-weight:700;color:#8A5E08;text-transform:uppercase">Aug</span>
+                <span style="font-size:17px;font-weight:800;color:#8A5E08;line-height:1">01</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                <span style="font-size:14px;font-weight:700;color:#23271F;line-height:1.25">Food Distribution Drive</span>
+                <span style="font-size:11.5px;color:#8A5E08;font-weight:600">Position 3 of 6 on the waiting list</span>
+              </div>
+              <span style="background:#FBF3DF;color:#8A5E08;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px;flex-shrink:0">Waitlist #3</span>
+            </div>
+          </div>
+          <div style="flex-shrink:0;background:#1E2B22;padding:10px 8px 24px;display:grid;grid-template-columns:repeat(4,1fr)">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">🏠</span>
+              <span style="font-size:10.5px;font-weight:600;color:#7E9184">Dashboard</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">🔍</span>
+              <span style="font-size:10.5px;font-weight:600;color:#7E9184">Events</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;border-radius:999px;background:#2E7D4F;display:flex;align-items:center;justify-content:center;font-size:13px">🗂</span>
+              <span style="font-size:10.5px;font-weight:700;color:#FFFFFF">Registrations</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+              <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">⏱</span>
+              <span style="font-size:10.5px;font-weight:600;color:#7E9184">Hours</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

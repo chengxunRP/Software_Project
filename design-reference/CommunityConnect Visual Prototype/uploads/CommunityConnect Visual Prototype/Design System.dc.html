@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh" data-screen-label="Design System">
+  <header style="background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+    <div style="max-width:1080px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between">
+      <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">C</div>
+        <div style="font-weight:700;font-size:18px;color:#23271F">CommunityConnect <span style="color:#2E7D4F">SG</span> — Design System</div>
+      </a>
+      <a href="Landing.dc.html" style="font-size:14px;font-weight:600">← Back to prototype</a>
+    </div>
+  </header>
+
+  <main style="max-width:1080px;margin:0 auto;padding:36px 32px 72px;display:flex;flex-direction:column;gap:36px">
+
+    <!-- Colours -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Colour palette</h2>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#2E7D4F"></div><span style="font-size:12.5px;font-weight:600;color:#23271F">Primary green</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#2E7D4F</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#1E4D33"></div><span style="font-size:12.5px;font-weight:600;color:#23271F">Deep green</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#1E4D33</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#1E2B22"></div><span style="font-size:12.5px;font-weight:600;color:#23271F">Sidebar charcoal</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#1E2B22</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#D99E2B"></div><span style="font-size:12.5px;font-weight:600;color:#23271F">Amber (warning)</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#D99E2B</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#B0433B"></div><span style="font-size:12.5px;font-weight:600;color:#23271F">Red (error/full)</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#B0433B</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#F6F4EF;border:1px solid #E6E2D8"></div><span style="font-size:12.5px;font-weight:600;color:#23271F">Warm background</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#F6F4EF</span></div>
+      </div>
+      <p style="margin:0;font-size:13.5px;color:#6E7266">Text ink #23271F / body #3C4038 / muted #6E7266 on white and #F6F4EF pass WCAG AA. White text on primary green and charcoal passes AA.</p>
+    </section>
+
+    <!-- Typography -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Typography — Figtree</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:34px;font-weight:800;color:#23271F;letter-spacing:-0.015em">Page title / 34 ExtraBold</span>
+        <span style="font-size:22px;font-weight:700;color:#23271F">Section heading / 22 Bold</span>
+        <span style="font-size:16px;font-weight:700;color:#23271F">Card heading / 16 Bold</span>
+        <span style="font-size:15px;color:#3C4038">Body text / 15 Regular — friendly, clear and readable at a glance.</span>
+        <span style="font-size:13.5px;color:#6E7266">Secondary text / 13.5 Regular muted</span>
+        <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">Table header / 12 Bold caps</span>
+      </div>
+    </section>
+
+    <!-- Buttons & forms -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Buttons & form controls</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button style="padding:11px 20px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px;border:none;cursor:pointer;font-family:inherit" style-hover="background:#256741">Primary</button>
+        <button style="padding:11px 20px;border-radius:10px;border:1px solid #D8D4C8;background:#FFFFFF;color:#23271F;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">Secondary</button>
+        <button style="padding:11px 20px;border-radius:10px;border:1px solid #2E7D4F;background:#FFFFFF;color:#2E7D4F;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#E7F2EA">Outline</button>
+        <button style="padding:11px 20px;border-radius:10px;border:none;background:#B0433B;color:#FFFFFF;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#96362F">Destructive</button>
+        <button style="padding:11px 20px;border-radius:10px;border:none;background:#EDEAE0;color:#A5A294;font-weight:600;font-size:14px;font-family:inherit;cursor:not-allowed">Disabled</button>
+        <input type="text" placeholder="Text input" style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none;width:180px" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #E7F2EA"></input>
+        <select style="padding:11px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F"><option>Select</option></select>
+      </div>
+    </section>
+
+    <!-- Badges & indicators -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Status badges & capacity indicators</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Confirmed</span>
+          <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Attended</span>
+          <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Waitlist #3</span>
+          <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Pending</span>
+          <span style="background:#FBEAE8;color:#B0433B;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Full</span>
+          <span style="background:#FBEAE8;color:#B0433B;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Absent</span>
+          <span style="background:#EDEAE0;color:#6E7266;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Cancelled</span>
+          <span style="background:#E9EDF6;color:#3B5384;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">Completed</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;max-width:760px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">9 of 20 filled</span><span style="color:#2E7D4F">11 left</span></div>
+            <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:45%;height:100%;border-radius:999px;background:#2E7D4F"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">34 of 40 filled</span><span style="color:#8A5E08">6 left</span></div>
+            <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">25 of 25 filled</span><span style="color:#B0433B">Full · waitlist open</span></div>
+            <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:100%;height:100%;border-radius:999px;background:#B0433B"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Messages -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Messages</h2>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:720px">
+        <div style="display:flex;align-items:center;gap:11px;background:#E7F2EA;border:1px solid #BFDCC9;border-radius:12px;padding:13px 16px">
+          <span style="width:22px;height:22px;border-radius:50%;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">✓</span>
+          <span style="font-size:14px;color:#1E4D33;font-weight:500">Success — Your registration is confirmed.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;background:#FBF3DF;border:1px solid #EAD9AC;border-radius:12px;padding:13px 16px">
+          <span style="width:22px;height:22px;border-radius:50%;background:#D99E2B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">!</span>
+          <span style="font-size:14px;color:#6B4E0A;font-weight:500">Warning — This event is nearly full.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;background:#FBEAE8;border:1px solid #E8C7C4;border-radius:12px;padding:13px 16px">
+          <span style="width:22px;height:22px;border-radius:50%;background:#B0433B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">✕</span>
+          <span style="font-size:14px;color:#7E2B25;font-weight:500">Error — Registration deadline has passed.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Waiting-list indicators -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Waiting-list indicators</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Full event — join waiting list</span>
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span style="color:#6E7266">25 of 25 spaces filled</span><span style="color:#B0433B">Full</span></div>
+          <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:100%;height:100%;border-radius:999px;background:#B0433B"></div></div>
+          <button style="text-align:center;padding:12px 0;border-radius:11px;border:1.5px solid #D99E2B;color:#8A5E08;font-weight:700;font-size:14.5px;background:#FBF3DF;cursor:pointer;font-family:inherit" style-hover="background:#F6E8C6">Join Waiting List</button>
+          <p style="margin:0;font-size:12.5px;color:#8B8778;text-align:center">6 people currently on the waiting list. You'll be notified if a space opens up.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Waitlisted registration — position note</span>
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid #E6E2D8;border-radius:12px">
+            <div style="width:46px;height:46px;border-radius:11px;background:#FBF3DF;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:9.5px;font-weight:700;color:#8A5E08;text-transform:uppercase">Aug</span>
+              <span style="font-size:17px;font-weight:800;color:#8A5E08;line-height:1">01</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+              <span style="font-size:14.5px;font-weight:700;color:#23271F">Food Distribution Drive</span>
+              <span style="font-size:12.5px;color:#8A5E08;font-weight:600">You are position 3 of 6 — we'll notify you if a space opens.</span>
+            </div>
+            <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;flex-shrink:0">Waitlist #3</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:11px;background:#FBF3DF;border:1px solid #EAD9AC;border-radius:12px;padding:13px 16px">
+            <span style="width:22px;height:22px;border-radius:50%;background:#D99E2B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">!</span>
+            <span style="font-size:14px;color:#6B4E0A;font-weight:500">You moved up to <b>position #3</b> on the waiting list.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Cards</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Event card</span>
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <div style="height:110px;background:repeating-linear-gradient(45deg,#ECE8DE 0 12px,#F3F0E8 12px 24px);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:ui-monospace,monospace;font-size:12px;color:#8B8778;background:#FFFFFF;padding:5px 10px;border-radius:6px;border:1px solid #E6E2D8">photo: beach clean-up</span>
+            </div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:10px">
+              <span style="align-self:flex-start;background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px">Environment</span>
+              <span style="font-size:16px;font-weight:700;color:#23271F;line-height:1.3">Coastal Clean-Up at East Coast Park</span>
+              <span style="font-size:13px;color:#6E7266">Sat 25/07/2026 · 08:00–11:00</span>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">34 of 40 filled</span><span style="color:#8A5E08">6 left</span></div>
+                <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+              </div>
+              <a href="Event Details.dc.html" style="margin-top:4px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid #2E7D4F;color:#2E7D4F;font-weight:600;font-size:14px" style-hover="background:#E7F2EA;color:#1E4D33">View Details</a>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Stat card</span>
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <span style="font-size:13px;font-weight:600;color:#6E7266">Completed hours</span>
+            <span style="font-size:30px;font-weight:800;color:#2E7D4F">38.5</span>
+            <span style="font-size:12.5px;color:#8B8778">Across 11 events since Jan 2026</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">List-row card</span>
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <div style="padding:16px 18px;display:flex;align-items:center;gap:13px;border-bottom:1px solid #F2EFE7">
+              <div style="width:48px;height:48px;border-radius:11px;background:#E7F2EA;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                <span style="font-size:10px;font-weight:700;color:#2E7D4F;text-transform:uppercase">Jul</span>
+                <span style="font-size:18px;font-weight:800;color:#1E4D33;line-height:1">25</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                <span style="font-size:14.5px;font-weight:700;color:#23271F">Coastal Clean-Up</span>
+                <span style="font-size:12.5px;color:#6E7266">08:00–11:00 · Beach Sweeper</span>
+              </div>
+              <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;flex-shrink:0">Confirmed</span>
+            </div>
+            <div style="padding:16px 18px;display:flex;align-items:center;gap:13px">
+              <div style="width:48px;height:48px;border-radius:11px;background:#FBF3DF;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                <span style="font-size:10px;font-weight:700;color:#8A5E08;text-transform:uppercase">Aug</span>
+                <span style="font-size:18px;font-weight:800;color:#8A5E08;line-height:1">01</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                <span style="font-size:14.5px;font-weight:700;color:#23271F">Food Distribution Drive</span>
+                <span style="font-size:12.5px;color:#6E7266">09:00–13:00 · Bedok CC</span>
+              </div>
+              <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;flex-shrink:0">Waitlist #3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tables -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Tables</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <div style="display:grid;grid-template-columns:2.2fr 1.4fr 1fr 1fr 1fr;padding:12px 22px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Event</span><span>Date</span><span>Capacity</span><span>Status</span><span style="text-align:right">Actions</span>
+        </div>
+        <div style="display:grid;grid-template-columns:2.2fr 1.4fr 1fr 1fr 1fr;padding:13px 22px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center">
+          <span style="font-weight:600;color:#23271F">Coastal Clean-Up at East Coast Park</span>
+          <span style="color:#6E7266">Sat 25/07/2026</span>
+          <span style="color:#6E7266">34 / 40</span>
+          <span><span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px">Open</span></span>
+          <span style="text-align:right"><a href="Event Details.dc.html" style="font-size:13.5px;font-weight:600">View</a></span>
+        </div>
+        <div style="display:grid;grid-template-columns:2.2fr 1.4fr 1fr 1fr 1fr;padding:13px 22px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center">
+          <span style="font-weight:600;color:#23271F">Food Distribution Drive</span>
+          <span style="color:#6E7266">Sat 01/08/2026</span>
+          <span style="color:#6E7266">25 / 25</span>
+          <span><span style="background:#FBEAE8;color:#B0433B;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px">Full</span></span>
+          <span style="text-align:right"><a href="Event Details.dc.html" style="font-size:13.5px;font-weight:600">View</a></span>
+        </div>
+        <div style="display:grid;grid-template-columns:2.2fr 1.4fr 1fr 1fr 1fr;padding:13px 22px;font-size:14px;align-items:center">
+          <span style="font-weight:600;color:#23271F">Weekend Tutoring — Primary Maths</span>
+          <span style="color:#6E7266">Sun 26/07/2026</span>
+          <span style="color:#6E7266">9 / 20</span>
+          <span><span style="background:#E9EDF6;color:#3B5384;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px">Completed</span></span>
+          <span style="text-align:right"><a href="Event Details.dc.html" style="font-size:13.5px;font-weight:600">View</a></span>
+        </div>
+      </div>
+      <p style="margin:0;font-size:13.5px;color:#6E7266">Header row: 12 bold caps on #FBFAF6. Data rows: 14px, 13px vertical padding, 1px #F2EFE7 dividers. Built as CSS grid columns matching User Management and Manage Events.</p>
+    </section>
+
+    <!-- Navigation components -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Navigation components</h2>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Public top navigation (white)</span>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">C</div>
+            <span style="font-weight:700;font-size:17px;color:#23271F">CommunityConnect <span style="color:#2E7D4F">SG</span></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:24px;font-size:14.5px;font-weight:500">
+            <span style="color:#2E7D4F;font-weight:700">Browse Events</span>
+            <span style="color:#3C4038">Our Impact</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="padding:8px 14px;border-radius:10px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:13.5px;background:#FFFFFF">Log in</span>
+            <span style="padding:8px 16px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:13.5px">Register</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Signed-in sidebar (charcoal, 248px)</span>
+          <div style="background:#1E2B22;border-radius:14px;display:flex;flex-direction:column;padding-bottom:14px">
+            <div style="display:flex;align-items:center;gap:10px;padding:20px 20px 16px">
+              <div style="width:30px;height:30px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">C</div>
+              <span style="font-weight:700;font-size:15px;color:#FFFFFF">CommunityConnect</span>
+            </div>
+            <div style="padding:0 20px 12px;font-size:11px;font-weight:700;color:#7E9184;text-transform:uppercase;letter-spacing:0.08em">Volunteer</div>
+            <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+              <span style="padding:10px 12px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px">Dashboard</span>
+              <span style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px">Browse Events</span>
+              <span style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px">My Registrations</span>
+              <span style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px">My Hours</span>
+            </div>
+            <div style="margin:14px 14px 0;display:flex;align-items:center;gap:10px;padding:11px;border-radius:11px;background:#28382D">
+              <div style="width:32px;height:32px;border-radius:50%;background:#D99E2B;color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">WL</div>
+              <div style="display:flex;flex-direction:column;min-width:0">
+                <span style="font-size:13px;font-weight:600;color:#FFFFFF">Tan Wei Ling</span>
+                <span style="font-size:11.5px;color:#7E9184">Volunteer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Tabs (segmented)</span>
+            <div style="display:flex;gap:6px;background:#EDEAE0;padding:5px;border-radius:12px;align-self:flex-start">
+              <span style="padding:8px 18px;border-radius:9px;font-size:13.5px;font-weight:600;background:#FFFFFF;color:#23271F;box-shadow:0 1px 2px rgba(35,39,31,0.08)">Confirmed (2)</span>
+              <span style="padding:8px 18px;border-radius:9px;font-size:13.5px;font-weight:600;color:#6E7266">Waitlisted (1)</span>
+              <span style="padding:8px 18px;border-radius:9px;font-size:13.5px;font-weight:600;color:#6E7266">Attended (3)</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Pagination</span>
+            <div style="display:flex;gap:8px">
+              <span style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px">1</span>
+              <span style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:14px;background:#FFFFFF">2</span>
+              <span style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:14px;background:#FFFFFF">→</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Mobile bottom tab bar</span>
+            <div style="background:#1E2B22;border-radius:14px;padding:10px 8px 14px;display:grid;grid-template-columns:repeat(4,1fr);max-width:390px">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="width:44px;height:26px;border-radius:999px;background:#2E7D4F;display:flex;align-items:center;justify-content:center;font-size:13px">🏠</span>
+                <span style="font-size:10.5px;font-weight:700;color:#FFFFFF">Dashboard</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">🔍</span>
+                <span style="font-size:10.5px;font-weight:600;color:#7E9184">Events</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">🗂</span>
+                <span style="font-size:10.5px;font-weight:600;color:#7E9184">Registrations</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="width:44px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.75">⏱</span>
+                <span style="font-size:10.5px;font-weight:600;color:#7E9184">Hours</span>
+              </div>
+            </div>
+            <p style="margin:0;font-size:13.5px;color:#6E7266">See the <a href="Mobile Views.dc.html" style="font-weight:600">mobile mockups</a> for full-screen mobile layouts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nav + notes -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Layout & responsive notes</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;line-height:1.65;color:#3C4038;max-width:76ch">
+        <span>• Public pages use a white top navigation bar; signed-in screens use a 248px charcoal sidebar with the user card pinned to the bottom.</span>
+        <span>• On mobile, the sidebar collapses to a bottom tab bar and the top nav to a hamburger sheet — see the <a href="Mobile Views.dc.html" style="font-weight:600">mobile mockups</a>.</span>
+        <span>• Spacing scale: 4 / 8 / 12 / 16 / 20 / 24 / 32. Cards: white, 1px #E6E2D8 border, 14px radius, subtle shadow.</span>
+        <span>• Dates DD/MM/YYYY, 24-hour times, Singapore English throughout.</span>
+        <span>• Implementation: works as Bootstrap 5 theme overrides (custom CSS variables for colours + radius) with EJS partials for navbar, sidebar, cards and badges.</span>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>
