@@ -95,9 +95,9 @@
                 </div>
               </div>
 
-              <form data-preview-only data-participation-form class="d-flex flex-column gap-3">
-                <input type="hidden" name="event_id" value="<%= event.id %>">
+              <%- include('partials/messages') %>
 
+              <form id="registrationForm" method="POST" action="/events/<%= event.id %>/register" data-participation-form class="d-flex flex-column gap-3">
                 <div>
                   <div class="form-label-cc mb-2">How would you like to join?</div>
                   <div class="d-flex flex-column gap-2">
@@ -122,7 +122,7 @@
                   <label class="form-label-cc" for="volunteer_role_id">Volunteer role</label>
                   <% if (roles && roles.length) { %>
                     <select class="form-select-cc" id="volunteer_role_id" name="volunteer_role_id" disabled>
-                      <option value="">Select a role</option>
+                      <option value="">Select a role (optional)</option>
                       <% roles.forEach(function (r) { %>
                         <option value="<%= r.volunteer_role_id %>"><%= r.name %></option>
                       <% }) %>
@@ -134,12 +134,11 @@
 
                 <div>
                   <label class="form-label-cc" for="notes">Notes (optional)</label>
-                  <textarea class="form-control-cc" id="notes" name="notes" rows="2" placeholder="Anything the organiser should know"></textarea>
+                  <textarea class="form-control-cc" id="notes" name="notes" rows="2" maxlength="500" placeholder="Anything the organiser should know"></textarea>
                 </div>
 
-                <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:13px 0;border-radius:11px;font-weight:700;font-size:15.5px" data-join-cta>Join as Participant</a>
+                <button type="submit" class="btn-cc btn-cc-primary btn-cc-block" style="padding:13px 0;border-radius:11px;font-weight:700;font-size:15.5px" data-join-cta>Join as Participant</button>
               </form>
-              <p class="mb-0 mt-2 text-center" style="font-size:12.5px;color:#8B8778">You'll be asked to log in or create an account. Preview only — no registration is saved yet.</p>
             </div>
           </div>
         </div>
@@ -147,9 +146,8 @@
     </div>
 
     <div class="mobile-sticky-cta">
-      <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:14px 0;border-radius:12px;font-weight:700;font-size:15.5px">Join as Participant</a>
-      <a href="/login" class="btn-cc btn-cc-secondary btn-cc-block" style="padding:12px 0;border-radius:12px;font-size:14.5px">Volunteer for This Event</a>
-      <span class="text-center" style="font-size:11.5px;color:#8B8778">You'll be asked to log in or create an account.</span>
+      <a href="#registrationForm" class="btn-cc btn-cc-primary btn-cc-block" style="padding:14px 0;border-radius:12px;font-weight:700;font-size:15.5px">Join as Participant</a>
+      <a href="#registrationForm" class="btn-cc btn-cc-secondary btn-cc-block" style="padding:12px 0;border-radius:12px;font-size:14.5px">Volunteer for This Event</a>
     </div>
   </main>
 </div>
