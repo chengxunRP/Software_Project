@@ -1,0 +1,84 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Admin Dashboard'; %>
+    <% topbarActions = '<span style="font-size:13px;color:#8B8778">Data as of ' + asOf + '</span>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1080">
+      <div class="stat-row-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div class="stat-card">
+          <span class="stat-label">Total users</span>
+          <span class="stat-value"><%= stats.totalUsers %></span>
+          <span class="stat-note green"><%= stats.usersDelta %></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Events (2026)</span>
+          <span class="stat-value"><%= stats.events2026 %></span>
+          <span class="stat-note"><%= stats.eventsNote %></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Registrations (2026)</span>
+          <span class="stat-value"><%= stats.registrations2026 %></span>
+          <span class="stat-note"><%= stats.registrationsNote %></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Volunteer hours (2026)</span>
+          <span class="stat-value green"><%= stats.hours2026 %></span>
+          <span class="stat-note green"><%= stats.hoursDelta %></span>
+        </div>
+      </div>
+
+      <div class="dashboard-split" style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px;align-items:start">
+        <div class="card-cc" style="padding:24px">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="h-card">Registrations per month — 2026</span>
+            <a href="/admin/reports" style="font-size:13.5px;font-weight:600">Full reports →</a>
+          </div>
+          <div class="bar-chart" style="height:170px">
+            <% months.forEach(function (m) { %>
+              <div class="bar-chart-item">
+                <span class="val <%= m.current ? 'current' : '' %>" style="font-size:11.5px"><%= m.val %></span>
+                <div class="bar <%= m.current ? 'current' : '' %>" style="height:<%= m.h %>px;max-width:46px"></div>
+                <span class="label"><%= m.label %></span>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+          <div class="card-cc" style="padding:22px">
+            <div class="h-card mb-3">Users by role</div>
+            <% userRoles.forEach(function (u) { %>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between" style="font-size:13.5px">
+                  <span style="font-weight:600;color:#3C4038"><%= u.label %></span>
+                  <span style="font-weight:700;color:#23271F"><%= u.count %></span>
+                </div>
+                <div class="cap-bar-track mt-1">
+                  <div class="cap-bar-fill" style="width:<%= u.pct %>%;background:<%= u.color %>"></div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+          <div class="card-cc" style="padding:22px">
+            <div class="h-card mb-3">Hours by category — July</div>
+            <% hoursByCat.forEach(function (h) { %>
+              <div class="d-flex align-items-center gap-2 mb-2" style="font-size:13.5px">
+                <span style="width:10px;height:10px;border-radius:3px;background:<%= h.color %>;flex-shrink:0"></span>
+                <span style="font-weight:600;color:#3C4038;flex:1"><%= h.label %></span>
+                <span style="font-weight:700;color:#23271F"><%= h.val %></span>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
