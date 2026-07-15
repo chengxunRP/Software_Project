@@ -15,22 +15,21 @@
         </select>
       </div>
 
-      <div class="stat-row-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
         <div class="stat-card" style="padding:18px 20px">
-          <span class="stat-label" style="font-size:12.5px">Capacity</span>
-          <span class="stat-value" style="font-size:26px"><%= summary.capacity %></span>
+          <span class="stat-label" style="font-size:12.5px">Confirmed participants</span>
+          <span class="stat-value green" style="font-size:26px"><%= summary.confirmedParticipants %></span>
+          <span class="stat-note">of <%= summary.participant_capacity %> capacity</span>
         </div>
         <div class="stat-card" style="padding:18px 20px">
-          <span class="stat-label" style="font-size:12.5px">Confirmed</span>
-          <span class="stat-value green" style="font-size:26px"><%= summary.confirmed %></span>
+          <span class="stat-label" style="font-size:12.5px">Confirmed volunteers</span>
+          <span class="stat-value green" style="font-size:26px"><%= summary.confirmedVolunteers %></span>
+          <span class="stat-note">of <%= summary.volunteer_capacity %> capacity</span>
         </div>
         <div class="stat-card" style="padding:18px 20px">
-          <span class="stat-label" style="font-size:12.5px">Waiting list</span>
-          <span class="stat-value amber" style="font-size:26px"><%= summary.waitlist %></span>
-        </div>
-        <div class="stat-card" style="padding:18px 20px">
-          <span class="stat-label" style="font-size:12.5px">Cancellations</span>
-          <span class="stat-value" style="font-size:26px;color:#6E7266"><%= summary.cancellations %></span>
+          <span class="stat-label" style="font-size:12.5px">Waiting lists</span>
+          <span class="stat-value amber" style="font-size:26px"><%= summary.participantWaitlist + summary.volunteerWaitlist %></span>
+          <span class="stat-note">P <%= summary.participantWaitlist %> · V <%= summary.volunteerWaitlist %> · <%= summary.cancellations %> cancellations</span>
         </div>
       </div>
 
@@ -38,14 +37,14 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Confirmed volunteers <span style="color:#8B8778;font-weight:600;font-size:14px">(showing <%= confirmed.length %> of <%= summary.confirmed %>)</span></span>
+          <span class="h-card">Participants <span style="color:#8B8778;font-weight:600;font-size:14px">(showing <%= confirmedParticipants.length %> of <%= summary.confirmedParticipants %>)</span></span>
           <button type="button" class="btn-cc btn-cc-secondary btn-cc-xs">Export CSV</button>
         </div>
         <div class="table-scroll">
           <div class="table-cc-head" style="grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr">
-            <span>Volunteer</span><span>Contact</span><span>Registered on</span><span>Status</span><span style="text-align:right">Action</span>
+            <span>Name</span><span>Contact</span><span>Registered on</span><span>Type</span><span style="text-align:right">Action</span>
           </div>
-          <% confirmed.forEach(function (c) { %>
+          <% confirmedParticipants.forEach(function (c) { %>
             <div class="table-cc-row" style="grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr">
               <div class="d-flex align-items-center gap-2">
                 <span class="avatar-cc sm" style="background:<%= c.avBg %>"><%= c.initials %></span>
@@ -53,7 +52,7 @@
               </div>
               <span class="text-muted-cc" style="font-size:13px"><%= c.contact %></span>
               <span class="text-muted-cc" style="font-size:13.5px"><%= c.date %></span>
-              <span><span class="badge-cc badge-cc-confirmed" style="font-size:11.5px;padding:4px 10px">Confirmed</span></span>
+              <span><span class="badge-cc" style="background:#E9EDF6;color:#3B5384;font-size:11.5px;padding:4px 10px">Participant</span></span>
               <div class="d-flex justify-content-end">
                 <button type="button" class="btn-cc btn-cc-danger-outline btn-cc-xs" data-open-modal data-event-name="<%= c.name %>">Remove</button>
               </div>
@@ -64,9 +63,58 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Waiting list <span style="color:#8B8778;font-weight:600;font-size:14px">(in order of registration)</span></span>
+          <span class="h-card">Volunteers <span style="color:#8B8778;font-weight:600;font-size:14px">(showing <%= confirmedVolunteers.length %> of <%= summary.confirmedVolunteers %>)</span></span>
+          <a href="/organiser/events/<%= event.id %>/roles" class="btn-cc btn-cc-secondary btn-cc-xs">Assign roles</a>
         </div>
-        <% waitlist.forEach(function (w) { %>
+        <div class="table-scroll">
+          <div class="table-cc-head" style="grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr">
+            <span>Name</span><span>Contact</span><span>Registered on</span><span>Type</span><span style="text-align:right">Action</span>
+          </div>
+          <% confirmedVolunteers.forEach(function (c) { %>
+            <div class="table-cc-row" style="grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr">
+              <div class="d-flex align-items-center gap-2">
+                <span class="avatar-cc sm" style="background:<%= c.avBg %>"><%= c.initials %></span>
+                <span style="font-weight:600;color:#23271F"><%= c.name %></span>
+              </div>
+              <span class="text-muted-cc" style="font-size:13px"><%= c.contact %></span>
+              <span class="text-muted-cc" style="font-size:13.5px"><%= c.date %></span>
+              <span><span class="badge-cc" style="background:#E7F2EA;color:#1E4D33;font-size:11.5px;padding:4px 10px">Volunteer</span></span>
+              <div class="d-flex justify-content-end">
+                <button type="button" class="btn-cc btn-cc-danger-outline btn-cc-xs" data-open-modal data-event-name="<%= c.name %>">Remove</button>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="table-cc">
+        <div class="panel-header">
+          <span class="h-card">Participant waiting list <span style="color:#8B8778;font-weight:600;font-size:14px">(<%= summary.participantWaitlist %>)</span></span>
+        </div>
+        <% if (!participantWaitlist.length) { %>
+          <div class="list-row text-muted-cc" style="font-size:13.5px">No one on the participant waiting list.</div>
+        <% } %>
+        <% participantWaitlist.forEach(function (w) { %>
+          <div class="list-row">
+            <span style="width:30px;height:30px;border-radius:9px;background:#FBF3DF;color:#8A5E08;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0"><%= w.pos %></span>
+            <span class="avatar-cc sm" style="background:<%= w.avBg %>"><%= w.initials %></span>
+            <div class="flex-fill">
+              <div style="font-weight:600;color:#23271F"><%= w.name %></div>
+              <div style="font-size:12.5px;color:#8B8778"><%= w.contact %> · joined <%= w.date %></div>
+            </div>
+            <span class="badge-cc badge-cc-waitlist">Waitlist #<%= w.pos %></span>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="table-cc">
+        <div class="panel-header">
+          <span class="h-card">Volunteer waiting list <span style="color:#8B8778;font-weight:600;font-size:14px">(<%= summary.volunteerWaitlist %>)</span></span>
+        </div>
+        <% if (!volunteerWaitlist.length) { %>
+          <div class="list-row text-muted-cc" style="font-size:13.5px">No one on the volunteer waiting list.</div>
+        <% } %>
+        <% volunteerWaitlist.forEach(function (w) { %>
           <div class="list-row">
             <span style="width:30px;height:30px;border-radius:9px;background:#FBF3DF;color:#8A5E08;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0"><%= w.pos %></span>
             <span class="avatar-cc sm" style="background:<%= w.avBg %>"><%= w.initials %></span>
@@ -86,8 +134,8 @@
   <div class="modal-cc-dialog">
     <div class="modal-icon">!</div>
     <div>
-      <div style="font-size:19px;font-weight:800;color:#23271F">Remove this volunteer?</div>
-      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">Removing <b id="modalEventName">this volunteer</b> will free a place for the waiting list. Preview only — no backend action.</div>
+      <div style="font-size:19px;font-weight:800;color:#23271F">Remove this registration?</div>
+      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">Removing <b id="modalEventName">this person</b> will free a place for the matching waiting list. Preview only — no backend action.</div>
     </div>
     <div class="d-flex gap-2 justify-content-end">
       <button type="button" class="btn-cc btn-cc-secondary" data-close-modal>Keep</button>

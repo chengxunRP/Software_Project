@@ -10,7 +10,7 @@
       <div class="d-flex gap-2 align-items-center flex-wrap">
         <input type="text" class="form-control-cc" style="max-width:340px;padding:10px 14px;border-radius:10px;font-size:14px;background:#fff" placeholder="Search by name or email…">
         <select class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
-          <option>All roles</option><option>Volunteer</option><option>Organiser</option><option>Admin</option>
+          <option>All roles</option><option>Community member</option><option>Organiser</option><option>Admin</option>
         </select>
         <select class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
           <option>All statuses</option><option>Active</option><option>Pending approval</option><option>Suspended</option>
@@ -25,7 +25,7 @@
           </div>
           <% users.forEach(function (u) { %>
             <%
-              const roleClass = u.role === 'Volunteer' ? 'badge-cc-confirmed' : (u.role === 'Organiser' ? 'badge-cc-organiser' : 'badge-cc-admin');
+              const roleClass = u.role === 'Community member' ? 'badge-cc-confirmed' : (u.role === 'Organiser' ? 'badge-cc-organiser' : 'badge-cc-admin');
               const stClass = u.status === 'Active' ? 'badge-cc-active' : (u.status === 'Pending' ? 'badge-cc-pending' : 'badge-cc-danger');
             %>
             <div class="table-cc-row" style="grid-template-columns:2fr 1.8fr 1fr 1.1fr 1fr 1.2fr">

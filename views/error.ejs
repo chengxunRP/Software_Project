@@ -1,0 +1,24 @@
+<%- include('partials/header') %>
+<div class="public-page">
+  <%- include('partials/navbar') %>
+
+  <main class="flex-fill">
+    <div class="section-wrap" style="padding-top:56px;max-width:720px">
+      <div class="card-cc" style="padding:36px 32px">
+        <div class="text-muted-cc" style="font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase"><%= statusCode || 404 %></div>
+        <h1 class="h-page mt-2 mb-2" style="font-size:32px"><%= errorTitle || 'Page not found' %></h1>
+        <p class="text-muted-cc mb-4" style="font-size:15.5px;line-height:1.6"><%= errorMessage || 'The page you requested could not be found.' %></p>
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="/events" class="btn-cc btn-cc-primary">Browse events</a>
+          <a href="/" class="btn-cc btn-cc-secondary">Back to home</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

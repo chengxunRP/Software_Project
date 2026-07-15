@@ -2,14 +2,23 @@
 -- CommunityConnect — Main database schema
 -- Database: community_event_manager
 --
+-- Application type: Community Event Participation and Volunteer Manager
+--
+-- Account roles (permanent): community_member | organiser | admin
+-- Participation types (per registration): Participant | Volunteer
+--
 -- This script is safe to re-run during initial development:
---   1. Creates the database if missing
---   2. Drops child tables first (foreign-key safe order)
---   3. Recreates all tables with InnoDB + utf8mb4
---   4. Inserts sample development records
+--   1. Creates the database if missing (utf8mb4)
+--   2. Disables foreign-key checks, drops tables in reverse dependency order
+--   3. Re-enables foreign-key checks
+--   4. Creates tables with InnoDB + utf8mb4 in valid dependency order
+--   5. Inserts sample development records in valid dependency order
 --
 -- Run this script FIRST (MySQL Workbench root/admin connection), then run
 -- database/local_user_setup.sql to create the local application user.
+--
+-- Contains no real production secrets. Sample passwords are bcrypt hashes of
+-- a documented test password only — change before any public deployment.
 -- =============================================================================
 
 CREATE DATABASE IF NOT EXISTS community_event_manager
@@ -36,7 +45,10 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- -----------------------------------------------------------------------------
 -- Table: users
--- Stores account credentials and roles (volunteer / organiser / admin).
+-- Stores account credentials and permanent account roles.
+-- Permanent roles: community_member | organiser | admin
+-- Do NOT use Participant or Volunteer as permanent account roles.
+-- Participation type is stored per event registration (see event_registrations).
 -- password stores bcrypt hashes only — never plain text.
 -- -----------------------------------------------------------------------------
 CREATE TABLE users (
@@ -44,7 +56,11 @@ CREATE TABLE users (
   name VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  role ENUM('volunteer', 'organiser', 'admin') NOT NULL DEFAULT 'volunteer',
+  role ENUM(
+    'community_member',
+    'organiser',
+    'admin'
+  ) NOT NULL DEFAULT 'community_member',
   account_status ENUM('Active', 'Suspended') NOT NULL DEFAULT 'Active',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -63,7 +79,10 @@ CREATE TABLE event_categories (
 
 -- -----------------------------------------------------------------------------
 -- Table: events
--- Organiser-owned community events with capacity and status control.
+-- Organiser-owned community events with SEPARATE participant and volunteer
+-- capacities. Do not use a single general "capacity" column.
+-- Participant confirmed places are counted against participant_capacity.
+-- Volunteer confirmed places are counted against volunteer_capacity.
 -- Status values match CLAUDE.md / project standards exactly.
 -- -----------------------------------------------------------------------------
 CREATE TABLE events (
@@ -75,7 +94,8 @@ CREATE TABLE events (
   start_datetime DATETIME NOT NULL,
   end_datetime DATETIME NOT NULL,
   location VARCHAR(255) NOT NULL,
-  capacity INT NOT NULL,
+  participant_capacity INT NOT NULL,
+  volunteer_capacity INT NOT NULL,
   registration_deadline DATETIME NOT NULL,
   status ENUM('Draft', 'Open', 'Full', 'Closed', 'Cancelled', 'Completed') NOT NULL DEFAULT 'Draft',
   image VARCHAR(255),
@@ -85,6 +105,10 @@ CREATE TABLE events (
     FOREIGN KEY (organiser_id) REFERENCES users(user_id),
   CONSTRAINT fk_events_category
     FOREIGN KEY (category_id) REFERENCES event_categories(category_id),
+  CONSTRAINT chk_events_participant_capacity
+    CHECK (participant_capacity > 0),
+  CONSTRAINT chk_events_volunteer_capacity
+    CHECK (volunteer_capacity > 0),
   INDEX idx_events_organiser_id (organiser_id),
   INDEX idx_events_category_id (category_id),
   INDEX idx_events_status (status),
@@ -94,6 +118,8 @@ CREATE TABLE events (
 -- -----------------------------------------------------------------------------
 -- Table: volunteer_roles
 -- Roles defined for a specific event (e.g. Beach Sweeper, Team Lead).
+-- Applies ONLY to registrations where participation_type = 'Volunteer'.
+-- Participant registrations must not be assigned volunteer roles.
 -- Unique (event_id, role_name) prevents duplicate role names per event.
 -- -----------------------------------------------------------------------------
 CREATE TABLE volunteer_roles (
@@ -110,14 +136,37 @@ CREATE TABLE volunteer_roles (
 
 -- -----------------------------------------------------------------------------
 -- Table: event_registrations
--- Volunteer sign-ups, waiting list and cancellation tracking.
--- Unique (event_id, user_id) prevents duplicate registration records.
--- waiting_position is NULL for Confirmed / Cancelled / Attended / Absent rows.
+-- Community members join an event as Participant OR Volunteer (per registration).
+--
+-- participation_type:
+--   'Participant' — ordinary community participant
+--   'Volunteer'   — assisting at the event
+--
+-- preferred_role_id:
+--   - NULL for Participant registrations (normally required by app rules)
+--   - May reference volunteer_roles for Volunteer registrations
+--   - Backend enforces these rules; column stays nullable at schema level
+--
+-- waiting_position:
+--   - Belongs to the waiting list matching participation_type
+--   - Participant waitlist and Volunteer waitlist are counted separately
+--   - NULL for Confirmed / Cancelled / Attended / Absent rows
+--
+-- Capacity counting (application logic):
+--   - Confirmed Participants count against events.participant_capacity
+--   - Confirmed Volunteers count against events.volunteer_capacity
+--
+-- Unique (event_id, user_id): one registration per community member per event
+-- (they choose either Participant or Volunteer for that event — not both).
 -- -----------------------------------------------------------------------------
 CREATE TABLE event_registrations (
   registration_id INT AUTO_INCREMENT PRIMARY KEY,
   event_id INT NOT NULL,
   user_id INT NOT NULL,
+  participation_type ENUM(
+    'Participant',
+    'Volunteer'
+  ) NOT NULL,
   preferred_role_id INT NULL,
   notes VARCHAR(500),
   status ENUM('Confirmed', 'Waitlisted', 'Cancelled', 'Attended', 'Absent') NOT NULL DEFAULT 'Confirmed',
@@ -135,13 +184,17 @@ CREATE TABLE event_registrations (
   INDEX idx_registrations_event_id (event_id),
   INDEX idx_registrations_user_id (user_id),
   INDEX idx_registrations_status (status),
+  INDEX idx_registrations_participation_type (participation_type),
   INDEX idx_registrations_waiting_position (waiting_position)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
 -- Table: volunteer_assignments
--- Links a confirmed registration to a volunteer role for an event.
+-- Links a registration to a volunteer role for an event.
+-- Applies ONLY to registrations where participation_type = 'Volunteer'.
+-- Do not create assignments for Participant registrations.
 -- One assignment per registration (registration_id UNIQUE).
+-- Backend validation will enforce Volunteer-only assignment later.
 -- -----------------------------------------------------------------------------
 CREATE TABLE volunteer_assignments (
   assignment_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -159,7 +212,14 @@ CREATE TABLE volunteer_assignments (
 
 -- -----------------------------------------------------------------------------
 -- Table: attendance
--- Check-in / check-out and volunteer hours for a registration.
+-- Check-in / check-out for a registration.
+-- Attendance may be recorded for BOTH Participants and Volunteers.
+--
+-- volunteer_hours:
+--   - Earned only when participation_type = 'Volunteer'
+--   - Must normally remain 0 for Participant registrations
+--   - Backend validation will enforce this later
+--
 -- One attendance record per registration (registration_id UNIQUE).
 -- -----------------------------------------------------------------------------
 CREATE TABLE attendance (
@@ -210,7 +270,6 @@ CREATE TABLE notifications (
 
 -- =============================================================================
 -- Sample development records
--- Replace production passwords before any public deployment.
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
@@ -218,6 +277,7 @@ CREATE TABLE notifications (
 -- Plain-text test password for ALL sample accounts below: Password123!
 -- Stored values are bcrypt hashes only (cost factor 10).
 -- PRODUCTION: change every account password — do not reuse these hashes.
+-- Roles: admin, organiser, community_member (not Participant/Volunteer).
 -- -----------------------------------------------------------------------------
 
 INSERT INTO users (name, email, password, role, account_status) VALUES
@@ -239,14 +299,42 @@ INSERT INTO users (name, email, password, role, account_status) VALUES
     'Tan Wei Ling',
     'weiling.tan@example.sg',
     '$2b$10$IV9FVftKtNK7pKFCNd5nh.IgDOEK.mVC9r4zCF85DmoWsBu4/xrnG',
-    'volunteer',
+    'community_member',
     'Active'
   ),
   (
     'Nurul Aisyah',
     'nurul.a@example.sg',
     '$2b$10$IV9FVftKtNK7pKFCNd5nh.IgDOEK.mVC9r4zCF85DmoWsBu4/xrnG',
-    'volunteer',
+    'community_member',
+    'Active'
+  ),
+  (
+    'David Ong',
+    'david.ong@example.sg',
+    '$2b$10$IV9FVftKtNK7pKFCNd5nh.IgDOEK.mVC9r4zCF85DmoWsBu4/xrnG',
+    'community_member',
+    'Active'
+  ),
+  (
+    'Priya Nair',
+    'priya.n@example.sg',
+    '$2b$10$IV9FVftKtNK7pKFCNd5nh.IgDOEK.mVC9r4zCF85DmoWsBu4/xrnG',
+    'community_member',
+    'Active'
+  ),
+  (
+    'Rajesh Kumar',
+    'rajesh.k@example.sg',
+    '$2b$10$IV9FVftKtNK7pKFCNd5nh.IgDOEK.mVC9r4zCF85DmoWsBu4/xrnG',
+    'community_member',
+    'Active'
+  ),
+  (
+    'Mei Ling Ho',
+    'meiling.ho@example.sg',
+    '$2b$10$IV9FVftKtNK7pKFCNd5nh.IgDOEK.mVC9r4zCF85DmoWsBu4/xrnG',
+    'community_member',
     'Active'
   );
 
@@ -260,7 +348,8 @@ INSERT INTO event_categories (category_name, description) VALUES
   ('Education', 'Tutoring, reading programmes and enrichment support for students');
 
 -- -----------------------------------------------------------------------------
--- Community events (5) — Singapore locations, future dates, organiser_id = 2
+-- Community events — separate participant_capacity and volunteer_capacity
+-- organiser_id = 2 (Marcus Lim)
 -- -----------------------------------------------------------------------------
 INSERT INTO events (
   organiser_id,
@@ -270,7 +359,8 @@ INSERT INTO events (
   start_datetime,
   end_datetime,
   location,
-  capacity,
+  participant_capacity,
+  volunteer_capacity,
   registration_deadline,
   status,
   image
@@ -279,11 +369,12 @@ INSERT INTO events (
     2,
     1,
     'East Coast Park Clean-Up',
-    'Join a Saturday morning shoreline clean-up along East Coast Park. Volunteers collect and sort litter and help with a simple marine waste audit. Gloves, tongs and bags are provided.',
+    'Join a Saturday morning shoreline clean-up along East Coast Park. Community members may attend as participants or assist as volunteers with litter collection and a simple marine waste audit. Gloves, tongs and bags are provided.',
     '2026-08-15 08:00:00',
     '2026-08-15 11:00:00',
     'East Coast Park, Area C',
-    40,
+    30,
+    12,
     '2026-08-13 23:59:00',
     'Open',
     NULL
@@ -291,12 +382,13 @@ INSERT INTO events (
   (
     2,
     3,
-    'Elderly Befriending Visit',
-    'Spend an afternoon visiting seniors in Tampines. Volunteers pair up for home visits that include conversation and light check-ins. Suitable for ages 16 and above.',
+    'Elderly Wellness and Social Day',
+    'An afternoon of conversation, light activities and companionship for seniors in Tampines. Participants join the social programme; volunteers assist with facilitation and check-ins.',
     '2026-08-22 14:00:00',
     '2026-08-22 17:00:00',
     'Tampines Community Club',
-    18,
+    50,
+    10,
     '2026-08-20 23:59:00',
     'Open',
     NULL
@@ -305,11 +397,12 @@ INSERT INTO events (
     2,
     2,
     'Community Food Distribution',
-    'Help pack and distribute food parcels to households registered with our partner organisations at Bedok Community Centre.',
+    'Pack and distribute food parcels to households registered with our partner organisations at Bedok Community Centre. Participants collect support; volunteers help with packing and handover.',
     '2026-09-05 09:00:00',
     '2026-09-05 13:00:00',
     'Bedok Community Centre',
-    25,
+    80,
+    20,
     '2026-09-03 23:59:00',
     'Open',
     NULL
@@ -318,11 +411,12 @@ INSERT INTO events (
     2,
     4,
     'Youth Tutoring Programme',
-    'Support Primary 4–6 students with maths revision in small groups at Tampines. Lesson materials are provided by partner tutors.',
+    'Support Primary 4–6 students with maths revision in small groups at Tampines. Participants are students and caregivers; volunteers tutor and assist in rooms.',
     '2026-09-13 10:00:00',
     '2026-09-13 12:00:00',
     'Tampines Community Club',
-    20,
+    25,
+    15,
     '2026-09-11 23:59:00',
     'Open',
     NULL
@@ -335,26 +429,224 @@ INSERT INTO events (
     '2026-09-19 08:00:00',
     '2026-09-19 11:00:00',
     'Jurong Lake Gardens',
-    30,
+    40,
+    20,
     '2026-09-17 23:59:00',
     'Draft',
     NULL
   );
 
 -- -----------------------------------------------------------------------------
--- Volunteer roles (several roles across the sample events)
--- No sample event_registrations / assignments / attendance yet — those are
--- created during Feature 4–5 development.
+-- Volunteer roles (apply only to Volunteer participation_type registrations)
+-- role_id values after insert: 1–11 in insertion order
 -- -----------------------------------------------------------------------------
 INSERT INTO volunteer_roles (event_id, role_name, description, required_volunteers) VALUES
-  (1, 'Beach Sweeper', 'Collect litter along the assigned shoreline zone', 28),
-  (1, 'Data Recorder', 'Log litter types for the marine waste audit', 8),
-  (1, 'Team Lead', 'Guide a team of 8–10 volunteers (prior experience preferred)', 4),
-  (2, 'Befriender', 'Visit seniors in pairs and provide companionship', 14),
-  (2, 'Coordinator', 'Help with briefing, route assignment and debrief', 4),
-  (3, 'Packing Helper', 'Pack and label food parcels for distribution', 15),
-  (3, 'Handover Helper', 'Assist families during parcel collection', 10),
-  (4, 'Tutor — Group A', 'Support Primary 4–5 maths revision', 10),
-  (4, 'Tutor — Group B', 'Support Primary 6 maths revision', 10),
-  (5, 'Garden Planter', 'Plant and water community garden plots', 20),
-  (5, 'Conservation Helper', 'Assist with light park conservation tasks', 10);
+  (1, 'Beach Sweeper', 'Collect litter along the assigned shoreline zone', 6),
+  (1, 'Data Recorder', 'Log litter types for the marine waste audit', 4),
+  (1, 'Team Lead', 'Guide a team of volunteers (prior experience preferred)', 2),
+  (2, 'Befriender', 'Support seniors during activities and conversation', 7),
+  (2, 'Coordinator', 'Help with briefing, seating and debrief', 3),
+  (3, 'Packing Helper', 'Pack and label food parcels for distribution', 12),
+  (3, 'Handover Helper', 'Assist families during parcel collection', 8),
+  (4, 'Tutor — Group A', 'Support Primary 4–5 maths revision', 8),
+  (4, 'Tutor — Group B', 'Support Primary 6 maths revision', 7),
+  (5, 'Garden Planter', 'Plant and water community garden plots', 12),
+  (5, 'Conservation Helper', 'Assist with light park conservation tasks', 8);
+
+-- -----------------------------------------------------------------------------
+-- Sample event registrations (Feature 4 preview data)
+-- Includes Confirmed / Waitlisted × Participant / Volunteer examples.
+-- Participant preferred_role_id = NULL
+-- Volunteer preferred_role_id references a valid volunteer_roles.role_id
+-- waiting_position is scoped to the matching participation_type waitlist
+-- Unique (event_id, user_id) — one place per member per event
+-- -----------------------------------------------------------------------------
+INSERT INTO event_registrations (
+  event_id,
+  user_id,
+  participation_type,
+  preferred_role_id,
+  notes,
+  status,
+  waiting_position,
+  cancelled_at
+) VALUES
+  -- Confirmed Participant (East Coast Park Clean-Up) — user_id 3 Tan Wei Ling
+  (
+    1,
+    3,
+    'Participant',
+    NULL,
+    'Attending with family members',
+    'Confirmed',
+    NULL,
+    NULL
+  ),
+  -- Confirmed Volunteer (East Coast Park Clean-Up) — user_id 4 Nurul Aisyah
+  -- preferred_role_id 1 = Beach Sweeper on event 1
+  (
+    1,
+    4,
+    'Volunteer',
+    1,
+    'Happy to bring sunscreen for the team',
+    'Confirmed',
+    NULL,
+    NULL
+  ),
+  -- Confirmed Volunteer (Elderly Wellness) — user_id 5 David Ong
+  -- preferred_role_id 4 = Befriender on event 2
+  (
+    2,
+    5,
+    'Volunteer',
+    4,
+    NULL,
+    'Confirmed',
+    NULL,
+    NULL
+  ),
+  -- Confirmed Participant (Elderly Wellness) — user_id 8 Mei Ling Ho
+  (
+    2,
+    8,
+    'Participant',
+    NULL,
+    'Prefers morning check-in help if available',
+    'Confirmed',
+    NULL,
+    NULL
+  ),
+  -- Waitlisted Participant (Community Food Distribution) — user_id 6 Priya Nair
+  -- Participant waiting list position 1 for event 3
+  (
+    3,
+    6,
+    'Participant',
+    NULL,
+    'Can collect for two households if places open',
+    'Waitlisted',
+    1,
+    NULL
+  ),
+  -- Waitlisted Volunteer (Community Food Distribution) — user_id 7 Rajesh Kumar
+  -- Volunteer waiting list position 1 for event 3
+  -- preferred_role_id 6 = Packing Helper on event 3
+  (
+    3,
+    7,
+    'Volunteer',
+    6,
+    'Available for the full morning shift',
+    'Waitlisted',
+    1,
+    NULL
+  ),
+  -- Confirmed Participant (Community Food Distribution) — user_id 3 Wei Ling
+  -- same member may join another event; type can differ per event
+  (
+    3,
+    3,
+    'Participant',
+    NULL,
+    NULL,
+    'Confirmed',
+    NULL,
+    NULL
+  ),
+  -- Confirmed Volunteer (Youth Tutoring) — user_id 4 Nurul
+  -- preferred_role_id 8 = Tutor — Group A on event 4
+  (
+    4,
+    4,
+    'Volunteer',
+    8,
+    NULL,
+    'Confirmed',
+    NULL,
+    NULL
+  );
+
+-- -----------------------------------------------------------------------------
+-- Sample volunteer assignments (Volunteer participation_type only)
+-- registration_id 2 = Nurul Confirmed Volunteer on East Coast (role Beach Sweeper)
+-- registration_id 3 = David Confirmed Volunteer on Elderly Wellness (role Befriender)
+-- registration_id 8 = Nurul Confirmed Volunteer on Youth Tutoring (role Tutor Group A)
+-- assigned_by = 2 (organiser Marcus Lim)
+-- -----------------------------------------------------------------------------
+INSERT INTO volunteer_assignments (registration_id, role_id, assigned_by) VALUES
+  (2, 1, 2),
+  (3, 4, 2),
+  (8, 8, 2);
+
+-- -----------------------------------------------------------------------------
+-- Sample attendance notes
+-- Participants may have attendance with volunteer_hours = 0
+-- Volunteers may earn volunteer_hours when attendance_status = Attended
+-- -----------------------------------------------------------------------------
+INSERT INTO attendance (
+  registration_id,
+  attendance_status,
+  check_in_time,
+  check_out_time,
+  volunteer_hours,
+  recorded_by,
+  notes
+) VALUES
+  -- Structure demo: Volunteer attendance with hours
+  (
+    2,
+    'Attended',
+    '2026-08-15 08:05:00',
+    '2026-08-15 11:00:00',
+    3.00,
+    2,
+    'Volunteer hours recorded for Beach Sweeper duty'
+  ),
+  -- Structure demo: Participant attendance — volunteer_hours remains 0
+  (
+    1,
+    'Attended',
+    '2026-08-15 08:10:00',
+    '2026-08-15 11:00:00',
+    0.00,
+    2,
+    'Participant attendance — volunteer_hours remains 0'
+  );
+
+-- -----------------------------------------------------------------------------
+-- Sample notifications
+-- -----------------------------------------------------------------------------
+INSERT INTO notifications (user_id, event_id, title, message, notification_type, is_read) VALUES
+  (
+    3,
+    1,
+    'Participant place confirmed',
+    'Your Participant place for East Coast Park Clean-Up is confirmed.',
+    'Registration',
+    FALSE
+  ),
+  (
+    4,
+    1,
+    'Volunteer place confirmed',
+    'Your Volunteer place for East Coast Park Clean-Up is confirmed (Beach Sweeper).',
+    'Registration',
+    FALSE
+  ),
+  (
+    6,
+    3,
+    'Participant waiting list',
+    'You are #1 on the Participant waiting list for Community Food Distribution.',
+    'WaitingList',
+    FALSE
+  ),
+  (
+    7,
+    3,
+    'Volunteer waiting list',
+    'You are #1 on the Volunteer waiting list for Community Food Distribution.',
+    'WaitingList',
+    FALSE
+  );
