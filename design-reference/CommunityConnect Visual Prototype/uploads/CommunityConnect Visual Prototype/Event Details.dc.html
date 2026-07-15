@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Event Details">
+  <header style="background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+    <div style="max-width:1120px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between">
+      <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">C</div>
+        <div style="font-weight:700;font-size:18px;color:#23271F;letter-spacing:-0.01em">CommunityConnect <span style="color:#2E7D4F">SG</span></div>
+      </a>
+      <nav style="display:flex;align-items:center;gap:28px;font-size:15px;font-weight:500">
+        <a href="Events.dc.html" style="color:#3C4038" style-hover="color:#2E7D4F">Browse Events</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="Login.dc.html" style="padding:9px 16px;border-radius:10px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:14px;background:#FFFFFF" style-hover="background:#F6F4EF;color:#23271F">Log in</a>
+        <a href="Register.dc.html" style="padding:9px 18px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px" style-hover="background:#256741;color:#FFFFFF">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="flex:1">
+    <div style="max-width:1120px;margin:0 auto;padding:32px 32px 72px;display:flex;flex-direction:column;gap:24px">
+      <div style="font-size:13.5px;color:#6E7266"><a href="Events.dc.html">Event Catalogue</a> <span style="margin:0 6px;color:#B9B5A8">/</span> Coastal Clean-Up at East Coast Park</div>
+
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start">
+
+        <!-- Left: event content -->
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div style="height:280px;border-radius:16px;border:1px solid #E6E2D8;background:repeating-linear-gradient(45deg,#ECE8DE 0 14px,#F3F0E8 14px 28px);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:ui-monospace,monospace;font-size:13px;color:#8B8778;background:#FFFFFF;padding:7px 12px;border-radius:8px;border:1px solid #E6E2D8">photo: East Coast Park shoreline clean-up</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="background:#E7F2EA;color:#1E4D33;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px">Environment</span>
+              <span style="background:#FBF3DF;color:#8A5E08;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px">Filling fast</span>
+            </div>
+            <h1 style="margin:0;font-size:34px;font-weight:800;color:#23271F;letter-spacing:-0.015em;line-height:1.15">Coastal Clean-Up at East Coast Park</h1>
+            <div style="font-size:14.5px;color:#6E7266">Organised by <span style="font-weight:600;color:#3C4038">CommunityConnect SG — Green Team</span></div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <h2 style="margin:0;font-size:18px;font-weight:700;color:#23271F">About this event</h2>
+            <p style="margin:0;font-size:15px;line-height:1.7;color:#3C4038;text-wrap:pretty">Join us for a Saturday morning shoreline clean-up along East Coast Park, Area C. Volunteers will work in small teams to collect and sort litter, record data for our marine waste audit, and help keep one of Singapore's favourite parks clean. Gloves, tongs and trash bags are provided — just bring a water bottle, sun protection and covered shoes. Suitable for ages 13 and up; volunteers under 16 must be accompanied by an adult.</p>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <h2 style="margin:0;font-size:18px;font-weight:700;color:#23271F">Volunteer roles</h2>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid #E6E2D8;border-radius:11px">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:15px;font-weight:700;color:#23271F">Beach Sweeper</span>
+                  <span style="font-size:13.5px;color:#6E7266">Collect litter along the assigned zone</span>
+                </div>
+                <span style="font-size:13px;font-weight:600;color:#2E7D4F;background:#E7F2EA;padding:5px 11px;border-radius:999px">24 of 28 filled</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid #E6E2D8;border-radius:11px">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:15px;font-weight:700;color:#23271F">Data Recorder</span>
+                  <span style="font-size:13.5px;color:#6E7266">Log litter types for the waste audit</span>
+                </div>
+                <span style="font-size:13px;font-weight:600;color:#8A5E08;background:#FBF3DF;padding:5px 11px;border-radius:999px">7 of 8 filled</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid #E6E2D8;border-radius:11px">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:15px;font-weight:700;color:#23271F">Team Lead</span>
+                  <span style="font-size:13.5px;color:#6E7266">Guide a team of 8–10 volunteers (experience required)</span>
+                </div>
+                <span style="font-size:13px;font-weight:600;color:#B0433B;background:#FBEAE8;padding:5px 11px;border-radius:999px">4 of 4 filled</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: registration panel -->
+        <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:24px">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 6px rgba(35,39,31,0.07)">
+            <div style="display:flex;flex-direction:column;gap:12px;font-size:14.5px">
+              <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Date</span><span style="font-weight:600;color:#23271F;text-align:right">Sat 25/07/2026</span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Time</span><span style="font-weight:600;color:#23271F;text-align:right">08:00–11:00</span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Location</span><span style="font-weight:600;color:#23271F;text-align:right">East Coast Park, Area C</span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Capacity</span><span style="font-weight:600;color:#23271F;text-align:right">40 volunteers</span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Registration closes</span><span style="font-weight:600;color:#23271F;text-align:right">23/07/2026, 23:59</span></div>
+            </div>
+            <div style="height:1px;background:#EDEAE0"></div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span style="color:#6E7266">34 of 40 spaces filled</span><span style="color:#8A5E08">6 left</span></div>
+              <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+            </div>
+            <a href="Login.dc.html" style="text-align:center;padding:13px 0;border-radius:11px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:15.5px" style-hover="background:#256741;color:#FFFFFF">Register for this event</a>
+            <p style="margin:0;font-size:12.5px;color:#8B8778;text-align:center">You'll be asked to log in or create an account.</p>
+          </div>
+
+          <!-- Waiting-list state (for full events) -->
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">When an event is full</div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span style="color:#6E7266">25 of 25 spaces filled</span><span style="color:#B0433B">Full</span></div>
+            <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:100%;height:100%;border-radius:999px;background:#B0433B"></div></div>
+            <a href="Login.dc.html" style="text-align:center;padding:12px 0;border-radius:11px;border:1.5px solid #D99E2B;color:#8A5E08;font-weight:700;font-size:14.5px;background:#FBF3DF" style-hover="background:#F6E8C6;color:#8A5E08">Join Waiting List</a>
+            <p style="margin:0;font-size:12.5px;color:#8B8778;text-align:center">6 people currently on the waiting list. You'll be notified if a space opens up.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

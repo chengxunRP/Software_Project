@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex" data-screen-label="System Reports">
+
+  <aside style="width:248px;flex-shrink:0;background:#1E2B22;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;padding:22px 22px 18px">
+      <div style="width:32px;height:32px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">C</div>
+      <div style="font-weight:700;font-size:16px;color:#FFFFFF;letter-spacing:-0.01em">CommunityConnect</div>
+    </a>
+    <div style="padding:0 22px 14px;font-size:11px;font-weight:700;color:#7E9184;text-transform:uppercase;letter-spacing:0.08em">Admin</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <a href="Admin Dashboard.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Dashboard</a>
+      <a href="User Management.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">User Management</a>
+      <a href="Categories.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Event Categories</a>
+      <a href="Reports.dc.html" style="padding:10px 12px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px">System Reports</a>
+    </nav>
+    <div style="margin-top:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:11px;background:#28382D">
+        <div style="width:34px;height:34px;border-radius:50%;background:#C08FBB;color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">SR</div>
+        <div style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13.5px;font-weight:600;color:#FFFFFF">Siti Rahman</span>
+          <span style="font-size:12px;color:#7E9184">Administrator</span>
+        </div>
+      </div>
+      <a href="Landing.dc.html" style="text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;color:#C4D2C7;border:1px solid #3A4B3F" style-hover="background:#28382D;color:#FFFFFF">Log out</a>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="background:#FFFFFF;border-bottom:1px solid #E6E2D8;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between">
+      <h1 style="margin:0;font-size:19px;font-weight:700;color:#23271F">System Reports</h1>
+      <div style="display:flex;gap:10px;align-items:center">
+        <select style="padding:9px 14px;border-radius:10px;border:1px solid #D8D4C8;font-size:13.5px;font-family:inherit;background:#FDFCFA;color:#23271F;font-weight:600">
+          <option>01/01/2026 – 15/07/2026</option>
+          <option>Last 30 days</option>
+          <option>Last quarter</option>
+        </select>
+        <button style="padding:9px 16px;border-radius:10px;border:1px solid #D8D4C8;background:#FDFCFA;color:#23271F;font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">Export CSV</button>
+      </div>
+    </div>
+
+    <div style="padding:28px 32px 56px;display:flex;flex-direction:column;gap:20px;max-width:1060px">
+
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Events completed</span>
+          <span style="font-size:26px;font-weight:800;color:#23271F">182</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Avg. fill rate</span>
+          <span style="font-size:26px;font-weight:800;color:#2E7D4F">87%</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Avg. attendance rate</span>
+          <span style="font-size:26px;font-weight:800;color:#23271F">89%</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:12.5px;font-weight:600;color:#6E7266">Cancellation rate</span>
+          <span style="font-size:26px;font-weight:800;color:#8A5E08">6.4%</span>
+        </div>
+      </div>
+
+      <!-- Category performance table -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+        <div style="padding:16px 22px;border-bottom:1px solid #EDEAE0">
+          <span style="font-size:16px;font-weight:700;color:#23271F">Performance by category</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.6fr 0.9fr 1.1fr 1.1fr 1.1fr 1.3fr;padding:11px 22px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:700;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Category</span><span>Events</span><span>Registrations</span><span>Attendance</span><span>Hours</span><span>Fill rate</span>
+        </div>
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:1.6fr 0.9fr 1.1fr 1.1fr 1.1fr 1.3fr;padding:14px 22px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="width:11px;height:11px;border-radius:4px;background:{{ c.color }};flex-shrink:0"></span>
+              <span style="font-weight:700;color:#23271F">{{ c.name }}</span>
+            </div>
+            <span style="color:#3C4038;font-weight:600">{{ c.events }}</span>
+            <span style="color:#3C4038;font-weight:600">{{ c.regs }}</span>
+            <span style="color:#3C4038;font-weight:600">{{ c.att }}</span>
+            <span style="color:#3C4038;font-weight:600">{{ c.hours }}</span>
+            <div style="display:flex;align-items:center;gap:9px;padding-right:8px">
+              <div style="flex:1;max-width:100px;height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ c.fill }};height:100%;border-radius:999px;background:{{ c.color }}"></div></div>
+              <span style="font-size:13px;font-weight:700;color:#23271F">{{ c.fill }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+        <!-- Top events -->
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <div style="padding:16px 22px;border-bottom:1px solid #EDEAE0">
+            <span style="font-size:16px;font-weight:700;color:#23271F">Most-attended events</span>
+          </div>
+          <sc-for list="{{ topEvents }}" as="t" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 22px;border-bottom:1px solid #F2EFE7;font-size:14px">
+              <span style="width:26px;height:26px;border-radius:8px;background:#E7F2EA;color:#1E4D33;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0">{{ t.rank }}</span>
+              <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+                <span style="font-weight:600;color:#23271F">{{ t.name }}</span>
+                <span style="font-size:12.5px;color:#8B8778">{{ t.date }}</span>
+              </div>
+              <span style="font-weight:700;color:#2E7D4F;flex-shrink:0">{{ t.count }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- Top volunteers -->
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <div style="padding:16px 22px;border-bottom:1px solid #EDEAE0">
+            <span style="font-size:16px;font-weight:700;color:#23271F">Top volunteers by hours</span>
+          </div>
+          <sc-for list="{{ topVols }}" as="v" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 22px;border-bottom:1px solid #F2EFE7;font-size:14px">
+              <div style="width:30px;height:30px;border-radius:50%;background:{{ v.avBg }};color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;flex-shrink:0">{{ v.initials }}</div>
+              <span style="font-weight:600;color:#23271F;flex:1">{{ v.name }}</span>
+              <span style="font-weight:700;color:#23271F;flex-shrink:0">{{ v.hours }} h</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const av = ["#D99E2B", "#7FA8D9", "#C08FBB", "#8FBF9A", "#D9A08F"];
+    const ini = (n) => n.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+    return {
+      cats: [
+        { name: "Environment", events: "68", regs: "2,140", att: "91%", hours: "3,912", fill: "92%", color: "#2E7D4F" },
+        { name: "Food Support", events: "47", regs: "1,486", att: "90%", hours: "3,150", fill: "95%", color: "#D99E2B" },
+        { name: "Elderly Support", events: "39", regs: "1,022", att: "88%", hours: "2,668", fill: "84%", color: "#C08FBB" },
+        { name: "Education", events: "34", regs: "812", att: "87%", hours: "1,930", fill: "78%", color: "#7FA8D9" },
+        { name: "Fundraising", events: "25", regs: "412", att: "82%", hours: "790", fill: "71%", color: "#D9A08F" },
+      ],
+      topEvents: [
+        { rank: "1", name: "Charity Fun Run — Route Marshals", date: "24/05/2026 · Jurong Lake Gardens", count: "44" },
+        { rank: "2", name: "Coastal Clean-Up at East Coast Park", date: "13/06/2026 · East Coast Park", count: "39" },
+        { rank: "3", name: "Food Distribution Drive", date: "09/05/2026 · Bedok CC", count: "25" },
+        { rank: "4", name: "Park Clean-Up & Recycling Drive", date: "27/06/2026 · Bishan-AMK Park", count: "24" },
+        { rank: "5", name: "Weekend Tutoring — Primary Maths", date: "12/07/2026 · Tampines CC", count: "18" },
+      ],
+      topVols: [
+        { name: "Nurul Aisyah", hours: "62.5", initials: ini("Nurul Aisyah"), avBg: av[0] },
+        { name: "David Ong", hours: "58.0", initials: ini("David Ong"), avBg: av[1] },
+        { name: "Priya Nair", hours: "51.5", initials: ini("Priya Nair"), avBg: av[2] },
+        { name: "Muhammad Irfan", hours: "44.0", initials: ini("Muhammad Irfan"), avBg: av[3] },
+        { name: "Tan Wei Ling", hours: "38.5", initials: ini("Tan Wei Ling"), avBg: av[4] },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex" data-screen-label="Admin Dashboard">
+
+  <aside style="width:248px;flex-shrink:0;background:#1E2B22;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;padding:22px 22px 18px">
+      <div style="width:32px;height:32px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">C</div>
+      <div style="font-weight:700;font-size:16px;color:#FFFFFF;letter-spacing:-0.01em">CommunityConnect</div>
+    </a>
+    <div style="padding:0 22px 14px;font-size:11px;font-weight:700;color:#7E9184;text-transform:uppercase;letter-spacing:0.08em">Admin</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <a href="Admin Dashboard.dc.html" style="padding:10px 12px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px">Dashboard</a>
+      <a href="User Management.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">User Management</a>
+      <a href="Categories.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Event Categories</a>
+      <a href="Reports.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">System Reports</a>
+    </nav>
+    <div style="margin-top:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:11px;background:#28382D">
+        <div style="width:34px;height:34px;border-radius:50%;background:#C08FBB;color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">SR</div>
+        <div style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13.5px;font-weight:600;color:#FFFFFF">Siti Rahman</span>
+          <span style="font-size:12px;color:#7E9184">Administrator</span>
+        </div>
+      </div>
+      <a href="Landing.dc.html" style="text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;color:#C4D2C7;border:1px solid #3A4B3F" style-hover="background:#28382D;color:#FFFFFF">Log out</a>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="background:#FFFFFF;border-bottom:1px solid #E6E2D8;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between">
+      <h1 style="margin:0;font-size:19px;font-weight:700;color:#23271F">Admin Dashboard</h1>
+      <span style="font-size:13px;color:#8B8778">Data as of 15/07/2026, 14:00</span>
+    </div>
+
+    <div style="padding:28px 32px 56px;display:flex;flex-direction:column;gap:24px;max-width:1080px">
+
+      <!-- Stat cards -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:13px;font-weight:600;color:#6E7266">Total users</span>
+          <span style="font-size:30px;font-weight:800;color:#23271F">1,318</span>
+          <span style="font-size:12.5px;color:#2E7D4F;font-weight:600">+46 this month</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:13px;font-weight:600;color:#6E7266">Events (2026)</span>
+          <span style="font-size:30px;font-weight:800;color:#23271F">213</span>
+          <span style="font-size:12.5px;color:#8B8778">31 upcoming · 182 completed</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:13px;font-weight:600;color:#6E7266">Registrations (2026)</span>
+          <span style="font-size:30px;font-weight:800;color:#23271F">5,872</span>
+          <span style="font-size:12.5px;color:#8B8778">312 currently waitlisted</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <span style="font-size:13px;font-weight:600;color:#6E7266">Volunteer hours (2026)</span>
+          <span style="font-size:30px;font-weight:800;color:#2E7D4F">12,450</span>
+          <span style="font-size:12.5px;color:#2E7D4F;font-weight:600">+1,204 this month</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px;align-items:start">
+
+        <!-- Monthly registrations chart -->
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:16px;font-weight:700;color:#23271F">Registrations per month — 2026</span>
+            <a href="Reports.dc.html" style="font-size:13.5px;font-weight:600">Full reports →</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:14px;align-items:end;height:170px">
+            <sc-for list="{{ months }}" as="m" hint-placeholder-count="7">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end">
+                <span style="font-size:11.5px;font-weight:700;color:{{ m.valColor }}">{{ m.val }}</span>
+                <div style="width:100%;max-width:46px;height:{{ m.h }};border-radius:7px 7px 3px 3px;background:{{ m.color }}"></div>
+                <span style="font-size:12px;font-weight:600;color:#8B8778">{{ m.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- Breakdown panels -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <span style="font-size:16px;font-weight:700;color:#23271F">Users by role</span>
+            <sc-for list="{{ userRoles }}" as="u" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font-size:13.5px"><span style="font-weight:600;color:#3C4038">{{ u.label }}</span><span style="font-weight:700;color:#23271F">{{ u.count }}</span></div>
+                <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ u.pct }};height:100%;border-radius:999px;background:{{ u.color }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <span style="font-size:16px;font-weight:700;color:#23271F">Hours by category — July</span>
+            <sc-for list="{{ hoursByCat }}" as="h" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:10px;font-size:13.5px">
+                <span style="width:10px;height:10px;border-radius:3px;background:{{ h.color }};flex-shrink:0"></span>
+                <span style="font-weight:600;color:#3C4038;flex:1">{{ h.label }}</span>
+                <span style="font-weight:700;color:#23271F">{{ h.val }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const vals = [620, 710, 890, 764, 902, 880, 1106];
+    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+    const max = Math.max(...vals);
+    return {
+      months: vals.map((v, i) => ({
+        val: v.toLocaleString(),
+        h: Math.round((v / max) * 120) + "px",
+        label: labels[i],
+        color: i === vals.length - 1 ? "#2E7D4F" : "#C6DCCB",
+        valColor: i === vals.length - 1 ? "#2E7D4F" : "#8B8778",
+      })),
+      userRoles: [
+        { label: "Volunteers", count: "1,240", pct: "94%", color: "#2E7D4F" },
+        { label: "Organisers", count: "72", pct: "6%", color: "#D99E2B" },
+        { label: "Admins", count: "6", pct: "2%", color: "#7FA8D9" },
+      ],
+      hoursByCat: [
+        { label: "Environment", val: "412 h", color: "#2E7D4F" },
+        { label: "Food Support", val: "318 h", color: "#D99E2B" },
+        { label: "Elderly Support", val: "226 h", color: "#C08FBB" },
+        { label: "Education", val: "158 h", color: "#7FA8D9" },
+        { label: "Fundraising", val: "90 h", color: "#D9A08F" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

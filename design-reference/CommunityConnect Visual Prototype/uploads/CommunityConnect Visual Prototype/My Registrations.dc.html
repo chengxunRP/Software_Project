@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex" data-screen-label="My Registrations">
+
+  <aside style="width:248px;flex-shrink:0;background:#1E2B22;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;padding:22px 22px 18px">
+      <div style="width:32px;height:32px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">C</div>
+      <div style="font-weight:700;font-size:16px;color:#FFFFFF;letter-spacing:-0.01em">CommunityConnect</div>
+    </a>
+    <div style="padding:0 22px 14px;font-size:11px;font-weight:700;color:#7E9184;text-transform:uppercase;letter-spacing:0.08em">Volunteer</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <a href="Volunteer Dashboard.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Dashboard</a>
+      <a href="Events.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">Browse Events</a>
+      <a href="My Registrations.dc.html" style="padding:10px 12px;border-radius:9px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px">My Registrations</a>
+      <a href="My Hours.dc.html" style="padding:10px 12px;border-radius:9px;color:#C4D2C7;font-weight:500;font-size:14px" style-hover="background:#28382D;color:#FFFFFF">My Hours</a>
+    </nav>
+    <div style="margin-top:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:11px;background:#28382D">
+        <div style="width:34px;height:34px;border-radius:50%;background:#D99E2B;color:#1E2B22;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">WL</div>
+        <div style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13.5px;font-weight:600;color:#FFFFFF">Tan Wei Ling</span>
+          <span style="font-size:12px;color:#7E9184">Volunteer</span>
+        </div>
+      </div>
+      <a href="Landing.dc.html" style="text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;color:#C4D2C7;border:1px solid #3A4B3F" style-hover="background:#28382D;color:#FFFFFF">Log out</a>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="background:#FFFFFF;border-bottom:1px solid #E6E2D8;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between">
+      <h1 style="margin:0;font-size:19px;font-weight:700;color:#23271F">My Registrations</h1>
+      <a href="Events.dc.html" style="padding:9px 16px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:13.5px" style-hover="background:#256741;color:#FFFFFF">+ Find an event</a>
+    </div>
+
+    <div style="padding:28px 32px 56px;display:flex;flex-direction:column;gap:20px;max-width:1000px">
+
+      <!-- Success message -->
+      <div style="display:flex;align-items:center;gap:11px;background:#E7F2EA;border:1px solid #BFDCC9;border-radius:12px;padding:13px 16px">
+        <span style="width:22px;height:22px;border-radius:50%;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">✓</span>
+        <span style="font-size:14px;color:#1E4D33;font-weight:500">Your registration for <b>Coastal Clean-Up at East Coast Park</b> was confirmed. A reminder will be sent one day before the event.</span>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:6px;background:#EDEAE0;padding:5px;border-radius:12px;align-self:flex-start">
+        <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="4">
+          <button onClick="{{ tab.select }}" style="padding:8px 18px;border-radius:9px;border:none;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;background:{{ tab.bg }};color:{{ tab.fg }};box-shadow:{{ tab.shadow }}">{{ tab.label }}</button>
+        </sc-for>
+      </div>
+
+      <!-- Registration list -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+            <div style="width:54px;height:54px;border-radius:12px;background:{{ r.dateBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:10.5px;font-weight:700;color:{{ r.dateFg }};text-transform:uppercase">{{ r.month }}</span>
+              <span style="font-size:20px;font-weight:800;color:{{ r.dateFg }};line-height:1">{{ r.day }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
+              <span style="font-size:15.5px;font-weight:700;color:#23271F">{{ r.name }}</span>
+              <span style="font-size:13.5px;color:#6E7266">{{ r.meta }}</span>
+              <sc-if value="{{ r.note }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:12.5px;color:#8A5E08;font-weight:600">{{ r.note }}</span>
+              </sc-if>
+            </div>
+            <span style="background:{{ r.badgeBg }};color:{{ r.badgeFg }};font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;flex-shrink:0">{{ r.badge }}</span>
+            <div style="display:flex;gap:8px;flex-shrink:0">
+              <a href="Event Details.dc.html" style="padding:8px 14px;border-radius:9px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:13px;background:#FDFCFA" style-hover="background:#F6F4EF;color:#23271F">View</a>
+              <sc-if value="{{ r.cancellable }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ r.askCancel }}" style="padding:8px 14px;border-radius:9px;border:1px solid #E8C7C4;color:#B0433B;font-weight:600;font-size:13px;background:#FFFFFF;cursor:pointer;font-family:inherit" style-hover="background:#FBEAE8">Cancel</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF;border:1px dashed #D8D4C8;border-radius:14px;padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+            <div style="width:52px;height:52px;border-radius:50%;background:#EDEAE0;display:flex;align-items:center;justify-content:center;font-size:22px">🗂</div>
+            <div style="font-size:16px;font-weight:700;color:#23271F">Nothing here yet</div>
+            <div style="font-size:14px;color:#6E7266;max-width:36ch">No registrations in this category. Browse the catalogue to find your next event.</div>
+            <a href="Events.dc.html" style="margin-top:6px;padding:10px 20px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px" style-hover="background:#256741;color:#FFFFFF">Browse Events</a>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </main>
+
+  <!-- Confirmation modal -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(30,43,34,0.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px">
+      <div style="background:#FFFFFF;border-radius:18px;width:440px;max-width:100%;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 16px 48px rgba(30,43,34,0.3)">
+        <div style="width:44px;height:44px;border-radius:50%;background:#FBEAE8;color:#B0433B;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800">!</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:19px;font-weight:800;color:#23271F">Cancel this registration?</div>
+          <div style="font-size:14.5px;color:#6E7266;line-height:1.55">You are about to cancel your place at <b style="color:#3C4038">{{ modalEvent }}</b>. Your space will be offered to the first person on the waiting list. This cannot be undone.</div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+          <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:10px;border:1px solid #D8D4C8;background:#FFFFFF;color:#23271F;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">Keep my place</button>
+          <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:10px;border:none;background:#B0433B;color:#FFFFFF;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#96362F">Yes, cancel registration</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: "Confirmed", modalOpen: false, modalEvent: "" };
+
+  renderVals() {
+    const data = {
+      Confirmed: [
+        { name: "Coastal Clean-Up at East Coast Park", meta: "Sat 25/07/2026 · 08:00–11:00 · East Coast Park, Area C · Role: Beach Sweeper", month: "Jul", day: "25", badge: "Confirmed", tone: "green", cancellable: true },
+        { name: "Elderly Befriending Visits", meta: "Wed 29/07/2026 · 14:00–17:00 · Tampines Community Club · Role: Befriender", month: "Jul", day: "29", badge: "Confirmed", tone: "green", cancellable: true },
+      ],
+      Waitlisted: [
+        { name: "Food Distribution Drive", meta: "Sat 01/08/2026 · 09:00–13:00 · Bedok Community Centre", month: "Aug", day: "01", badge: "Waitlist #3", tone: "amber", cancellable: true, note: "You are position 3 of 6 — we'll notify you if a space opens." },
+      ],
+      Cancelled: [
+        { name: "Fundraising Bake Sale Helpers", meta: "Sun 05/07/2026 · 11:00–16:00 · Tampines Community Club · Cancelled by you on 30/06/2026", month: "Jul", day: "05", badge: "Cancelled", tone: "grey", cancellable: false },
+      ],
+      Attended: [
+        { name: "Weekend Tutoring — Primary Maths", meta: "Sun 12/07/2026 · 10:00–12:00 · Tampines Community Club · 3.0 hours recorded", month: "Jul", day: "12", badge: "Attended", tone: "green", cancellable: false },
+        { name: "Park Clean-Up & Recycling Drive", meta: "Sat 27/06/2026 · 07:30–10:30 · Bishan-Ang Mo Kio Park · 3.0 hours recorded", month: "Jun", day: "27", badge: "Attended", tone: "green", cancellable: false },
+        { name: "Grocery Delivery for Seniors", meta: "Sat 13/06/2026 · 09:00–12:00 · Bedok Community Centre · 3.5 hours recorded", month: "Jun", day: "13", badge: "Attended", tone: "green", cancellable: false },
+      ],
+    };
+    const tones = {
+      green: { badgeBg: "#E7F2EA", badgeFg: "#1E4D33", dateBg: "#E7F2EA", dateFg: "#1E4D33" },
+      amber: { badgeBg: "#FBF3DF", badgeFg: "#8A5E08", dateBg: "#FBF3DF", dateFg: "#8A5E08" },
+      grey: { badgeBg: "#EDEAE0", badgeFg: "#6E7266", dateBg: "#EDEAE0", dateFg: "#6E7266" },
+    };
+    const cur = this.state.tab;
+    const rows = data[cur].map((r) => ({
+      ...r, ...tones[r.tone],
+      note: r.note || false,
+      askCancel: () => this.setState({ modalOpen: true, modalEvent: r.name }),
+    }));
+    return {
+      tabs: ["Confirmed", "Waitlisted", "Cancelled", "Attended"].map((label) => ({
+        label: label + " (" + data[label].length + ")",
+        bg: label === cur ? "#FFFFFF" : "transparent",
+        fg: label === cur ? "#23271F" : "#6E7266",
+        shadow: label === cur ? "0 1px 3px rgba(35,39,31,0.12)" : "none",
+        select: () => this.setState({ tab: label }),
+      })),
+      rows,
+      empty: rows.length === 0,
+      modalOpen: this.state.modalOpen,
+      modalEvent: this.state.modalEvent,
+      closeModal: () => this.setState({ modalOpen: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

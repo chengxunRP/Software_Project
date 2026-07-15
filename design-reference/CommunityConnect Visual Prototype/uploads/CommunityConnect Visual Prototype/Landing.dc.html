@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Landing Page">
+
+  <!-- Top navigation -->
+  <header style="background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+    <div style="max-width:1120px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between">
+      <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">C</div>
+        <div style="font-weight:700;font-size:18px;color:#23271F;letter-spacing:-0.01em">CommunityConnect <span style="color:#2E7D4F">SG</span></div>
+      </a>
+      <nav style="display:flex;align-items:center;gap:28px;font-size:15px;font-weight:500">
+        <a href="Events.dc.html" style="color:#3C4038" style-hover="color:#2E7D4F">Browse Events</a>
+        <a href="Landing.dc.html#impact" style="color:#3C4038" style-hover="color:#2E7D4F">Our Impact</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="Login.dc.html" style="padding:9px 16px;border-radius:10px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:14px;background:#FFFFFF" style-hover="background:#F6F4EF;color:#23271F">Log in</a>
+        <a href="Register.dc.html" style="padding:9px 18px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:14px" style-hover="background:#256741;color:#FFFFFF">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section style="background:#FFFFFF">
+    <div style="max-width:1120px;margin:0 auto;padding:64px 32px 72px;display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="display:inline-flex;align-self:flex-start;align-items:center;gap:8px;background:#E7F2EA;color:#1E4D33;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px">
+          <span style="width:7px;height:7px;border-radius:50%;background:#2E7D4F"></span>
+          {{ heroBadge }}
+        </div>
+        <h1 style="margin:0;font-size:46px;line-height:1.12;letter-spacing:-0.02em;color:#23271F;font-weight:800;text-wrap:balance">Lend a hand where it matters — right in your neighbourhood.</h1>
+        <p style="margin:0;font-size:18px;line-height:1.6;color:#6E7266;max-width:48ch;text-wrap:pretty">CommunityConnect SG links volunteers with community organisations across Singapore. Find an event, sign up in minutes, and track every hour you contribute.</p>
+        <div style="display:flex;gap:14px;margin-top:6px">
+          <a href="Events.dc.html" style="padding:13px 24px;border-radius:12px;background:#2E7D4F;color:#FFFFFF;font-weight:600;font-size:16px" style-hover="background:#256741;color:#FFFFFF">Browse Events</a>
+          <a href="Register.dc.html" style="padding:13px 24px;border-radius:12px;border:1px solid #D8D4C8;color:#23271F;font-weight:600;font-size:16px;background:#FFFFFF" style-hover="background:#F6F4EF;color:#23271F">Become a Volunteer</a>
+        </div>
+      </div>
+      <div style="border-radius:18px;overflow:hidden;border:1px solid #E6E2D8;background:repeating-linear-gradient(45deg,#ECE8DE 0 14px,#F3F0E8 14px 28px);min-height:360px;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:ui-monospace,monospace;font-size:13px;color:#8B8778;background:#FFFFFF;padding:8px 14px;border-radius:8px;border:1px solid #E6E2D8">photo: volunteers at East Coast Park clean-up</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact stats -->
+  <section id="impact" style="background:#1E2B22">
+    <div style="max-width:1120px;margin:0 auto;padding:44px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:32px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:36px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">1,240</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:500">Active volunteers</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:36px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">386</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:500">Events hosted</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:36px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">12,450</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:500">Volunteer hours recorded</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:36px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">28</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:500">Partner organisations</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured events -->
+  <section style="flex:1">
+    <div style="max-width:1120px;margin:0 auto;padding:56px 32px 72px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h2 style="margin:0;font-size:28px;font-weight:700;color:#23271F;letter-spacing:-0.01em">Featured upcoming events</h2>
+          <p style="margin:0;font-size:15px;color:#6E7266">Sign up early — popular events fill up fast.</p>
+        </div>
+        <a href="Events.dc.html" style="font-weight:600;font-size:15px">View all events →</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+
+        <!-- Card 1 -->
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <div style="height:140px;background:repeating-linear-gradient(45deg,#ECE8DE 0 12px,#F3F0E8 12px 24px);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:ui-monospace,monospace;font-size:12px;color:#8B8778;background:#FFFFFF;padding:5px 10px;border-radius:6px;border:1px solid #E6E2D8">photo: beach clean-up</span>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:12px;flex:1">
+            <span style="align-self:flex-start;background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px">Environment</span>
+            <div style="font-size:17px;font-weight:700;color:#23271F;line-height:1.3">Coastal Clean-Up at East Coast Park</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:13.5px;color:#6E7266">
+              <span>Sat 25/07/2026 · 08:00–11:00</span>
+              <span>East Coast Park, Area C</span>
+            </div>
+            <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">34 of 40 spaces filled</span><span style="color:#8A5E08">6 left</span></div>
+              <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+              <a href="Event Details.dc.html" style="margin-top:10px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid #2E7D4F;color:#2E7D4F;font-weight:600;font-size:14px" style-hover="background:#E7F2EA;color:#1E4D33">View Details</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <div style="height:140px;background:repeating-linear-gradient(45deg,#ECE8DE 0 12px,#F3F0E8 12px 24px);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:ui-monospace,monospace;font-size:12px;color:#8B8778;background:#FFFFFF;padding:5px 10px;border-radius:6px;border:1px solid #E6E2D8">photo: food packing</span>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:12px;flex:1">
+            <span style="align-self:flex-start;background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px">Food Support</span>
+            <div style="font-size:17px;font-weight:700;color:#23271F;line-height:1.3">Food Distribution Drive</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:13.5px;color:#6E7266">
+              <span>Sat 01/08/2026 · 09:00–13:00</span>
+              <span>Bedok Community Centre</span>
+            </div>
+            <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">25 of 25 spaces filled</span><span style="color:#B0433B">Full · waitlist open</span></div>
+              <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:100%;height:100%;border-radius:999px;background:#B0433B"></div></div>
+              <a href="Event Details.dc.html" style="margin-top:10px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid #2E7D4F;color:#2E7D4F;font-weight:600;font-size:14px" style-hover="background:#E7F2EA;color:#1E4D33">View Details</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(35,39,31,0.05)">
+          <div style="height:140px;background:repeating-linear-gradient(45deg,#ECE8DE 0 12px,#F3F0E8 12px 24px);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:ui-monospace,monospace;font-size:12px;color:#8B8778;background:#FFFFFF;padding:5px 10px;border-radius:6px;border:1px solid #E6E2D8">photo: tutoring session</span>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:12px;flex:1">
+            <span style="align-self:flex-start;background:#E9EDF6;color:#3B5384;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px">Education</span>
+            <div style="font-size:17px;font-weight:700;color:#23271F;line-height:1.3">Weekend Tutoring — Primary Maths</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:13.5px;color:#6E7266">
+              <span>Sun 26/07/2026 · 10:00–12:00</span>
+              <span>Tampines Community Club</span>
+            </div>
+            <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span style="color:#6E7266">9 of 20 spaces filled</span><span style="color:#2E7D4F">11 left</span></div>
+              <div style="height:6px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:45%;height:100%;border-radius:999px;background:#2E7D4F"></div></div>
+              <a href="Event Details.dc.html" style="margin-top:10px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid #2E7D4F;color:#2E7D4F;font-weight:600;font-size:14px" style-hover="background:#E7F2EA;color:#1E4D33">View Details</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:#FFFFFF;border-top:1px solid #E6E2D8">
+    <div style="max-width:1120px;margin:0 auto;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;font-size:13.5px;color:#6E7266">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:22px;height:22px;border-radius:6px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">C</div>
+        <span>© 2026 CommunityConnect SG · A community initiative</span>
+      </div>
+      <div style="display:flex;gap:20px">
+        <a href="Events.dc.html" style="color:#6E7266" style-hover="color:#2E7D4F">Events</a>
+        <a href="Login.dc.html" style="color:#6E7266" style-hover="color:#2E7D4F">Log in</a>
+        <a href="Design System.dc.html" style="color:#6E7266" style-hover="color:#2E7D4F">Design system</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroBadge&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Serving neighbourhoods across Singapore&quot;, &quot;tsType&quot;: &quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      heroBadge: this.props.heroBadge ?? "Serving neighbourhoods across Singapore",
+    };
+  }
+}
+</script>
+</body>
+</html>
