@@ -19,11 +19,11 @@
           <div>
             <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
               <span class="badge-cc badge-cc-cat" style="background:<%= event.badgeBg %>;color:<%= event.badgeFg %>"><%= event.category %></span>
-              <% if (!event.full && event.pct >= 80) { %>
-                <span class="badge-cc badge-cc-warning">Filling fast</span>
+              <% if (event.participants.full || event.volunteers.full) { %>
+                <span class="badge-cc badge-cc-warning">Capacity tight</span>
               <% } %>
               <% if (event.full) { %>
-                <span class="badge-cc badge-cc-full">Full</span>
+                <span class="badge-cc badge-cc-full">Both full</span>
               <% } %>
             </div>
             <h1 class="h-page mb-2" style="font-size:34px;line-height:1.15"><%= event.event_name %></h1>
@@ -41,6 +41,7 @@
           <div class="card-cc">
             <div class="card-cc-body" style="padding:24px">
               <h2 class="h-card mb-3" style="font-size:18px">Volunteer roles</h2>
+              <p class="text-muted-cc mb-3" style="font-size:13.5px">Shown when you choose to join as a Volunteer.</p>
               <div class="d-flex flex-column gap-3">
                 <% roles.forEach(function (r) { %>
                   <% const roleFull = r.filled >= r.capacity; %>
@@ -68,41 +69,77 @@
                 <div class="d-flex justify-content-between gap-2"><span class="text-muted-cc fw-medium">Date</span><span class="fw-semibold text-ink text-end"><%= event.dateLabel %></span></div>
                 <div class="d-flex justify-content-between gap-2"><span class="text-muted-cc fw-medium">Time</span><span class="fw-semibold text-ink text-end"><%= event.timeLabel %></span></div>
                 <div class="d-flex justify-content-between gap-2"><span class="text-muted-cc fw-medium">Location</span><span class="fw-semibold text-ink text-end"><%= event.location %></span></div>
-                <div class="d-flex justify-content-between gap-2"><span class="text-muted-cc fw-medium">Capacity</span><span class="fw-semibold text-ink text-end"><%= event.capacity %> volunteers</span></div>
                 <div class="d-flex justify-content-between gap-2"><span class="text-muted-cc fw-medium">Registration closes</span><span class="fw-semibold text-ink text-end"><%= event.deadlineLabel %></span></div>
               </div>
+
               <hr class="my-3" style="border-color:#EDEAE0;opacity:1">
-              <div class="cap-bar mb-3">
-                <div class="cap-bar-meta" style="font-size:13px">
-                  <span style="color:#6E7266"><%= event.capLabel %></span>
-                  <span style="color:<%= event.capColor %>"><%= event.full ? 'Full' : (event.left + ' left') %></span>
+
+              <div class="d-flex flex-column gap-3 mb-3">
+                <div>
+                  <div class="cap-bar-meta" style="font-size:13px">
+                    <span style="color:#6E7266">Participants: <%= event.participants_filled %> of <%= event.participant_capacity %> confirmed</span>
+                    <span style="color:<%= event.participants.capColor %>"><%= event.participants.full ? ('Full · waitlist' + (event.participantWaitlistCount ? ' (' + event.participantWaitlistCount + ')' : ' available')) : (event.participants.left + ' left') %></span>
+                  </div>
+                  <div class="cap-bar-track" style="height:7px">
+                    <div class="cap-bar-fill" style="width:<%= event.participants.pct %>%;background:<%= event.participants.capColor %>"></div>
+                  </div>
                 </div>
-                <div class="cap-bar-track" style="height:7px">
-                  <div class="cap-bar-fill" style="width:<%= event.pct %>%;background:<%= event.capColor %>"></div>
+                <div>
+                  <div class="cap-bar-meta" style="font-size:13px">
+                    <span style="color:#6E7266">Volunteers: <%= event.volunteers_filled %> of <%= event.volunteer_capacity %> confirmed</span>
+                    <span style="color:<%= event.volunteers.capColor %>"><%= event.volunteers.full ? ('Full · waitlist' + (event.volunteerWaitlistCount ? ' (' + event.volunteerWaitlistCount + ')' : ' available')) : (event.volunteers.left + ' left') %></span>
+                  </div>
+                  <div class="cap-bar-track" style="height:7px">
+                    <div class="cap-bar-fill" style="width:<%= event.volunteers.pct %>%;background:<%= event.volunteers.capColor %>"></div>
+                  </div>
                 </div>
               </div>
 
-              <% if (event.full) { %>
-                <a href="/login" class="btn-cc btn-cc-waitlist btn-cc-block" style="padding:12px 0;border-radius:11px;font-size:14.5px">Join Waiting List</a>
-                <p class="mb-0 mt-2 text-center" style="font-size:12.5px;color:#8B8778"><%= event.waitlistCount || 6 %> people currently on the waiting list. You'll be notified if a space opens up.</p>
-              <% } else { %>
-                <form data-preview-only class="d-flex flex-column gap-2">
-                  <input type="hidden" name="event_id" value="<%= event.id %>">
+              <form data-preview-only data-participation-form class="d-flex flex-column gap-3">
+                <input type="hidden" name="event_id" value="<%= event.id %>">
+
+                <div>
+                  <div class="form-label-cc mb-2">How would you like to join?</div>
+                  <div class="d-flex flex-column gap-2">
+                    <label class="status-option">
+                      <input type="radio" name="participation_type" value="Participant" checked data-participation-type>
+                      <div>
+                        <div style="font-size:14px;font-weight:700;color:#23271F">Join as Participant</div>
+                        <div style="font-size:12px;color:#8B8778"><%= event.participants.full ? 'Participant places are full — join the participant waiting list' : event.participants.left + ' participant spaces remaining' %></div>
+                      </div>
+                    </label>
+                    <label class="status-option">
+                      <input type="radio" name="participation_type" value="Volunteer" data-participation-type>
+                      <div>
+                        <div style="font-size:14px;font-weight:700;color:#23271F">Volunteer for This Event</div>
+                        <div style="font-size:12px;color:#8B8778"><%= event.volunteers.full ? 'Volunteer places are full — join the volunteer waiting list' : event.volunteers.left + ' volunteer spaces remaining' %></div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div data-volunteer-role-wrap style="display:none">
+                  <label class="form-label-cc" for="volunteer_role_id">Volunteer role</label>
                   <% if (roles && roles.length) { %>
-                    <select class="form-select-cc" name="volunteer_role_id">
+                    <select class="form-select-cc" id="volunteer_role_id" name="volunteer_role_id" disabled>
                       <option value="">Select a role</option>
                       <% roles.forEach(function (r) { %>
                         <option value="<%= r.volunteer_role_id %>"><%= r.name %></option>
                       <% }) %>
                     </select>
                   <% } else { %>
-                    <input type="hidden" name="volunteer_role_id" value="">
+                    <input type="hidden" id="volunteer_role_id" name="volunteer_role_id" value="" disabled>
                   <% } %>
-                  <textarea class="form-control-cc" name="notes" rows="2" placeholder="Notes (optional)"></textarea>
-                  <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:13px 0;border-radius:11px;font-weight:700;font-size:15.5px">Register for this event</a>
-                </form>
-                <p class="mb-0 mt-2 text-center" style="font-size:12.5px;color:#8B8778">You'll be asked to log in or create an account.</p>
-              <% } %>
+                </div>
+
+                <div>
+                  <label class="form-label-cc" for="notes">Notes (optional)</label>
+                  <textarea class="form-control-cc" id="notes" name="notes" rows="2" placeholder="Anything the organiser should know"></textarea>
+                </div>
+
+                <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:13px 0;border-radius:11px;font-weight:700;font-size:15.5px" data-join-cta>Join as Participant</a>
+              </form>
+              <p class="mb-0 mt-2 text-center" style="font-size:12.5px;color:#8B8778">You'll be asked to log in or create an account. Preview only — no registration is saved yet.</p>
             </div>
           </div>
         </div>
@@ -110,11 +147,8 @@
     </div>
 
     <div class="mobile-sticky-cta">
-      <% if (event.full) { %>
-        <a href="/login" class="btn-cc btn-cc-waitlist btn-cc-block" style="padding:14px 0;border-radius:12px;font-size:15.5px">Join Waiting List</a>
-      <% } else { %>
-        <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:14px 0;border-radius:12px;font-weight:700;font-size:15.5px">Register for this event</a>
-      <% } %>
+      <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:14px 0;border-radius:12px;font-weight:700;font-size:15.5px">Join as Participant</a>
+      <a href="/login" class="btn-cc btn-cc-secondary btn-cc-block" style="padding:12px 0;border-radius:12px;font-size:14.5px">Volunteer for This Event</a>
       <span class="text-center" style="font-size:11.5px;color:#8B8778">You'll be asked to log in or create an account.</span>
     </div>
   </main>

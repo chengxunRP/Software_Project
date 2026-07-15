@@ -38,7 +38,7 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Volunteer check-in <span style="color:#8B8778;font-weight:600;font-size:14px">(showing <%= rows.length %> of <%= summary.registered %>)</span></span>
+          <span class="h-card">Check-in <span style="color:#8B8778;font-weight:600;font-size:14px">(showing <%= rows.length %> of <%= summary.registered %>)</span></span>
           <button type="button" class="btn-cc btn-cc-primary btn-cc-xs">Finalise attendance</button>
         </div>
         <% rows.forEach(function (r) { %>
@@ -46,7 +46,7 @@
             <span class="avatar-cc sm" style="background:<%= r.avBg %>"><%= r.initials %></span>
             <div class="flex-fill min-w-0">
               <div style="font-weight:600;color:#23271F"><%= r.name %></div>
-              <div style="font-size:12.5px;color:#8B8778"><%= r.role %></div>
+              <div style="font-size:12.5px;color:#8B8778"><%= r.participation_type %><%= r.role !== '—' ? ' · ' + r.role : '' %></div>
             </div>
             <span class="badge-cc <%= r.status === 'Attended' ? 'badge-cc-attended' : (r.status === 'Absent' ? 'badge-cc-absent' : 'badge-cc-pending') %>" data-attendance-badge style="font-size:11.5px;padding:4px 11px"><%= r.status %></span>
             <div class="d-flex gap-2">

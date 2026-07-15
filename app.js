@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const pool = require("./config/database");
+const publicEvents = require("./lib/publicEvents");
 
 const rolesRoutes = require("./routes/roles");
 
@@ -78,6 +80,34 @@ function capacityMeta(filled, capacity) {
     capNote: full ? "Full · waitlist open" : left + " left",
     capColor: full ? "#B0433B" : pct >= 80 ? "#D99E2B" : "#2E7D4F",
     statusLabel: full ? "Full" : "Open"
+  };
+}
+
+function dualCapacityMeta(pFilled, pCap, vFilled, vCap, pWait, vWait) {
+  const participants = capacityMeta(pFilled, pCap);
+  const volunteers = capacityMeta(vFilled, vCap);
+  const combined = capacityMeta(pFilled + vFilled, pCap + vCap);
+  return {
+    participant_capacity: pCap,
+    volunteer_capacity: vCap,
+    participants_filled: pFilled,
+    volunteers_filled: vFilled,
+    participants: participants,
+    volunteers: volunteers,
+    filled: pFilled + vFilled,
+    capacity: pCap + vCap,
+    pct: combined.pct,
+    left: participants.left + volunteers.left,
+    full: participants.full && volunteers.full,
+    capLabel: "Participants " + pFilled + "/" + pCap + " · Volunteers " + vFilled + "/" + vCap,
+    capNote: participants.full && volunteers.full
+      ? "Both full · waitlists open"
+      : (!participants.full ? participants.left + " participant spaces left" : volunteers.left + " volunteer spaces left"),
+    capColor: participants.full && volunteers.full
+      ? "#B0433B"
+      : (participants.full || volunteers.full || combined.pct >= 80 ? "#D99E2B" : "#2E7D4F"),
+    participantWaitlistCount: pWait || 0,
+    volunteerWaitlistCount: vWait || 0
   };
 }
 
@@ -339,10 +369,24 @@ const events = [
   }
 ];
 
+const eventCapacities = {
+  1: { pF: 42, pC: 50, vF: 10, vC: 10, pW: 0, vW: 4 },
+  2: { pF: 40, pC: 40, vF: 25, vC: 25, pW: 5, vW: 6 },
+  3: { pF: 12, pC: 30, vF: 9, vC: 20, pW: 0, vW: 0 },
+  4: { pF: 8, pC: 20, vF: 14, vC: 18, pW: 0, vW: 0 },
+  5: { pF: 30, pC: 60, vF: 22, vC: 50, pW: 0, vW: 0 },
+  6: { pF: 80, pC: 100, vF: 41, vC: 45, pW: 0, vW: 0 },
+  7: { pF: 18, pC: 40, vF: 12, vC: 30, pW: 0, vW: 0 },
+  8: { pF: 20, pC: 20, vF: 16, vC: 16, pW: 3, vW: 4 },
+  9: { pF: 25, pC: 40, vF: 7, vC: 15, pW: 0, vW: 0 },
+  10: { pF: 0, pC: 50, vF: 0, vC: 40, pW: 0, vW: 0 },
+  11: { pF: 25, pC: 25, vF: 20, vC: 20, pW: 0, vW: 0 }
+};
+
 events.forEach(function (ev) {
-  const meta = capacityMeta(ev.filled, ev.capacity);
-  Object.assign(ev, meta);
-  const cat = categories.find(function (c) { return c.category_id === ev.category_id; });
+  const c = eventCapacities[ev.id] || { pF: 0, pC: 20, vF: 0, vC: 10, pW: 0, vW: 0 };
+  Object.assign(ev, dualCapacityMeta(c.pF, c.pC, c.vF, c.vC, c.pW, c.vW));
+  const cat = categories.find(function (item) { return item.category_id === ev.category_id; });
   if (cat) {
     ev.badgeBg = cat.badgeBg;
     ev.badgeFg = cat.badgeFg;
@@ -350,18 +394,14 @@ events.forEach(function (ev) {
   }
 });
 
-const impactStats = {
-  activeVolunteers: "1,240",
-  eventsHosted: "386",
-  volunteerHours: "12,450",
-  partnerOrgs: "28"
-};
+// Note: Temporary events / categories / impactStats above remain for member,
+// organiser and admin preview pages only. Public routes load MySQL data.
 
-const volunteerUser = {
+const memberUser = {
   name: "Tan Wei Ling",
   firstName: "Wei Ling",
   initials: "WL",
-  role: "Volunteer",
+  role: "Community member",
   email: "weiling.tan@example.sg",
   mobile: "9123 4567",
   joined: "14/01/2026",
@@ -390,32 +430,33 @@ const adminUser = {
   avatarBg: "#C08FBB"
 };
 
-const volunteerRegistrations = {
+const memberRegistrations = {
   Confirmed: [
-    { eventId: 1, name: "Coastal Clean-Up at East Coast Park", meta: "Sat 25/07/2026 · 08:00–11:00 · East Coast Park, Area C · Role: Beach Sweeper", month: "Jul", day: "25", badge: "Confirmed", tone: "green", cancellable: true },
-    { eventId: 4, name: "Elderly Befriending Visits", meta: "Wed 29/07/2026 · 14:00–17:00 · Tampines Community Club · Role: Befriender", month: "Jul", day: "29", badge: "Confirmed", tone: "green", cancellable: true }
+    { eventId: 1, name: "Coastal Clean-Up at East Coast Park", participation_type: "Volunteer", meta: "Sat 25/07/2026 · 08:00–11:00 · East Coast Park, Area C · Role: Beach Sweeper", month: "Jul", day: "25", badge: "Confirmed", tone: "green", cancellable: true, waiting_position: null },
+    { eventId: 4, name: "Elderly Befriending Visits", participation_type: "Participant", meta: "Wed 29/07/2026 · 14:00–17:00 · Tampines Community Club", month: "Jul", day: "29", badge: "Confirmed", tone: "green", cancellable: true, waiting_position: null }
   ],
   Waitlisted: [
-    { eventId: 2, name: "Food Distribution Drive", meta: "Sat 01/08/2026 · 09:00–13:00 · Bedok Community Centre", month: "Aug", day: "01", badge: "Waitlist #3", tone: "amber", cancellable: true, note: "You are position 3 of 6 — we'll notify you if a space opens." }
+    { eventId: 2, name: "Food Distribution Drive", participation_type: "Volunteer", meta: "Sat 01/08/2026 · 09:00–13:00 · Bedok Community Centre", month: "Aug", day: "01", badge: "Waitlist #3", tone: "amber", cancellable: true, waiting_position: 3, note: "Volunteer waitlist — position 3 of 6. We'll notify you if a space opens." },
+    { eventId: 8, name: "Grocery Delivery for Seniors", participation_type: "Participant", meta: "Sat 22/08/2026 · 09:00–12:00 · Bedok Community Centre", month: "Aug", day: "22", badge: "Waitlist #2", tone: "amber", cancellable: true, waiting_position: 2, note: "Participant waitlist — position 2 of 3." }
   ],
   Cancelled: [
-    { eventId: 9, name: "Fundraising Bake Sale Helpers", meta: "Sun 05/07/2026 · 11:00–16:00 · Tampines Community Club · Cancelled by you on 30/06/2026", month: "Jul", day: "05", badge: "Cancelled", tone: "grey", cancellable: false }
+    { eventId: 9, name: "Fundraising Bake Sale Helpers", participation_type: "Volunteer", meta: "Sun 05/07/2026 · 11:00–16:00 · Tampines Community Club · Cancelled by you on 30/06/2026", month: "Jul", day: "05", badge: "Cancelled", tone: "grey", cancellable: false, waiting_position: null }
   ],
   Attended: [
-    { eventId: 11, name: "Weekend Tutoring — Primary Maths", meta: "Sun 12/07/2026 · 10:00–12:00 · Tampines Community Club · 3.0 hours recorded", month: "Jul", day: "12", badge: "Attended", tone: "green", cancellable: false },
-    { eventId: 5, name: "Park Clean-Up & Recycling Drive", meta: "Sat 27/06/2026 · 07:30–10:30 · Bishan-Ang Mo Kio Park · 3.0 hours recorded", month: "Jun", day: "27", badge: "Attended", tone: "green", cancellable: false },
-    { eventId: 8, name: "Grocery Delivery for Seniors", meta: "Sat 13/06/2026 · 09:00–12:00 · Bedok Community Centre · 3.5 hours recorded", month: "Jun", day: "13", badge: "Attended", tone: "green", cancellable: false }
+    { eventId: 11, name: "Weekend Tutoring — Primary Maths", participation_type: "Volunteer", meta: "Sun 12/07/2026 · 10:00–12:00 · Tampines Community Club · 3.0 hours recorded", month: "Jul", day: "12", badge: "Attended", tone: "green", cancellable: false, waiting_position: null },
+    { eventId: 5, name: "Park Clean-Up & Recycling Drive", participation_type: "Participant", meta: "Sat 27/06/2026 · 07:30–10:30 · Bishan-Ang Mo Kio Park", month: "Jun", day: "27", badge: "Attended", tone: "green", cancellable: false, waiting_position: null },
+    { eventId: 8, name: "Grocery Delivery for Seniors", participation_type: "Volunteer", meta: "Sat 13/06/2026 · 09:00–12:00 · Bedok Community Centre · 3.5 hours recorded", month: "Jun", day: "13", badge: "Attended", tone: "green", cancellable: false, waiting_position: null }
   ]
 };
 
-const volunteerNotifications = [
-  { type: "success", text: "Your registration for <b>Coastal Clean-Up</b> is confirmed.", time: "Today, 09:14" },
-  { type: "warning", text: "You moved up to <b>position #3</b> on the Food Distribution Drive waiting list.", time: "Yesterday, 16:40" },
-  { type: "success", text: "<b>3.0 hours</b> recorded for Weekend Tutoring on 12/07/2026.", time: "12/07/2026, 13:05" },
-  { type: "muted", text: "Reminder: Elderly Befriending Visits starts in 3 days.", time: "11/07/2026, 08:00" }
+const memberNotifications = [
+  { type: "success", text: "Your <b>Volunteer</b> place for <b>Coastal Clean-Up</b> is confirmed.", time: "Today, 09:14" },
+  { type: "warning", text: "You moved up to <b>position #3</b> on the Food Distribution volunteer waiting list.", time: "Yesterday, 16:40" },
+  { type: "success", text: "<b>3.0 hours</b> recorded for tutoring where you volunteered on 12/07/2026.", time: "12/07/2026, 13:05" },
+  { type: "muted", text: "Reminder: Elderly Befriending Visits (Participant) starts in 3 days.", time: "11/07/2026, 08:00" }
 ];
 
-const volunteerHoursSummary = {
+const memberHoursSummary = {
   totalHours: "38.5",
   eventCount: 11,
   monthHours: "6.0",
@@ -425,7 +466,7 @@ const volunteerHoursSummary = {
   absent: 1
 };
 
-const volunteerMonthlyHours = [
+const memberMonthlyHours = [
   { label: "Jan", val: "4.5", h: 60, current: false },
   { label: "Feb", val: "5.0", h: 67, current: false },
   { label: "Mar", val: "7.5", h: 100, current: false },
@@ -435,7 +476,7 @@ const volunteerMonthlyHours = [
   { label: "Jul", val: "6.0", h: 80, current: true }
 ];
 
-const volunteerHourHistory = [
+const memberHourHistory = [
   { name: "Weekend Tutoring — Primary Maths", date: "12/07/2026", loc: "Tampines CC", status: "Attended", hours: "3.0" },
   { name: "Community Garden Planting Day", date: "04/07/2026", loc: "Jurong Lake Gardens", status: "Attended", hours: "3.0" },
   { name: "Park Clean-Up & Recycling Drive", date: "27/06/2026", loc: "Bishan-AMK Park", status: "Attended", hours: "3.0" },
@@ -449,14 +490,16 @@ const organiserStats = {
   totalEvents: 24,
   completed: 18,
   upcoming: 6,
+  confirmedParticipants: 286,
   confirmedVolunteers: 138,
-  waitlisted: 14,
+  participantWaitlist: 22,
+  volunteerWaitlist: 14,
   avgAttendance: "89%"
 };
 
 const organiserAlerts = [
-  { tone: "danger", text: "Food Distribution Drive is full with 6 on the waiting list", link: "/organiser/events/2/registrations", linkText: "Review waiting list →" },
-  { tone: "warning", text: "Coastal Clean-Up: 3 Team Lead roles still unassigned", link: "/organiser/events/1/roles", linkText: "Assign roles →" },
+  { tone: "danger", text: "Food Distribution Drive: volunteer and participant places are full (waitlists open)", link: "/organiser/events/2/registrations", linkText: "Review registrations →" },
+  { tone: "warning", text: "Coastal Clean-Up: 3 Team Lead volunteer roles still unassigned", link: "/organiser/events/1/roles", linkText: "Assign roles →" },
   { tone: "warning", text: "Attendance for Weekend Tutoring (12/07) not yet finalised", link: "/organiser/events/11/attendance", linkText: "Record attendance →" }
 ];
 
@@ -467,31 +510,41 @@ const organiserAttendanceSummary = [
 ];
 
 const manageEventRows = [
-  { id: 1, name: "Coastal Clean-Up at East Coast Park", loc: "East Coast Park, Area C", cat: "Environment", when: "25/07/2026 · 08:00", filled: 34, capacity: 40, status: "Published", cancellable: true },
-  { id: 2, name: "Food Distribution Drive", loc: "Bedok Community Centre", cat: "Food Support", when: "01/08/2026 · 09:00", filled: 25, capacity: 25, status: "Full", cancellable: true },
-  { id: 5, name: "Park Clean-Up & Recycling Drive", loc: "Bishan-Ang Mo Kio Park", cat: "Environment", when: "08/08/2026 · 07:30", filled: 22, capacity: 50, status: "Published", cancellable: true },
-  { id: 7, name: "Community Garden Planting Day", loc: "Jurong Lake Gardens", cat: "Environment", when: "15/08/2026 · 08:00", filled: 12, capacity: 30, status: "Published", cancellable: true },
-  { id: 10, name: "Coastal Clean-Up — September", loc: "East Coast Park, Area F", cat: "Environment", when: "12/09/2026 · 08:00", filled: 0, capacity: 40, status: "Draft", cancellable: false },
-  { id: 11, name: "Weekend Tutoring — Primary Maths", loc: "Tampines Community Club", cat: "Education", when: "12/07/2026 · 10:00", filled: 20, capacity: 20, status: "Completed", cancellable: false }
+  { id: 1, name: "Coastal Clean-Up at East Coast Park", loc: "East Coast Park, Area C", cat: "Environment", when: "25/07/2026 · 08:00", participants_filled: 42, participant_capacity: 50, volunteers_filled: 10, volunteer_capacity: 10, status: "Published", cancellable: true },
+  { id: 2, name: "Food Distribution Drive", loc: "Bedok Community Centre", cat: "Food Support", when: "01/08/2026 · 09:00", participants_filled: 40, participant_capacity: 40, volunteers_filled: 25, volunteer_capacity: 25, status: "Full", cancellable: true },
+  { id: 5, name: "Park Clean-Up & Recycling Drive", loc: "Bishan-Ang Mo Kio Park", cat: "Environment", when: "08/08/2026 · 07:30", participants_filled: 30, participant_capacity: 60, volunteers_filled: 22, volunteer_capacity: 50, status: "Published", cancellable: true },
+  { id: 7, name: "Community Garden Planting Day", loc: "Jurong Lake Gardens", cat: "Environment", when: "15/08/2026 · 08:00", participants_filled: 18, participant_capacity: 40, volunteers_filled: 12, volunteer_capacity: 30, status: "Published", cancellable: true },
+  { id: 10, name: "Coastal Clean-Up — September", loc: "East Coast Park, Area F", cat: "Environment", when: "12/09/2026 · 08:00", participants_filled: 0, participant_capacity: 50, volunteers_filled: 0, volunteer_capacity: 40, status: "Draft", cancellable: false },
+  { id: 11, name: "Weekend Tutoring — Primary Maths", loc: "Tampines Community Club", cat: "Education", when: "12/07/2026 · 10:00", participants_filled: 25, participant_capacity: 25, volunteers_filled: 20, volunteer_capacity: 20, status: "Completed", cancellable: false }
 ];
 
 manageEventRows.forEach(function (row) {
-  Object.assign(row, capacityMeta(row.filled, row.capacity));
+  Object.assign(row, dualCapacityMeta(row.participants_filled, row.participant_capacity, row.volunteers_filled, row.volunteer_capacity));
 });
 
-const confirmedRegistrants = [
-  { name: "Nurul Aisyah", initials: "NA", contact: "nurul.a@example.sg · 9122 1188", date: "18/07/2026", avBg: "#C08FBB" },
-  { name: "David Ong", initials: "DO", contact: "david.ong@example.sg · 9788 0021", date: "19/07/2026", avBg: "#7FA8D9" },
-  { name: "Priya Nair", initials: "PN", contact: "priya.n@example.sg · 9011 4455", date: "20/07/2026", avBg: "#D99E2B" },
-  { name: "Rajesh Kumar", initials: "RK", contact: "rajesh.k@example.sg · 9333 6701", date: "21/07/2026", avBg: "#8FBF9A" },
-  { name: "Aisha Abdullah", initials: "AA", contact: "aisha.a@example.sg · 9555 2010", date: "22/07/2026", avBg: "#D9A08F" }
+const confirmedParticipants = [
+  { name: "Mei Ling Ho", initials: "MH", contact: "meiling.ho@example.sg · 9011 2200", date: "18/07/2026", avBg: "#7FA8D9", participation_type: "Participant" },
+  { name: "Farhan Ismail", initials: "FI", contact: "farhan.i@example.sg · 9333 1100", date: "19/07/2026", avBg: "#C08FBB", participation_type: "Participant" },
+  { name: "Grace Chua", initials: "GC", contact: "grace.chua@example.sg · 9555 0099", date: "20/07/2026", avBg: "#8FBF9A", participation_type: "Participant" }
 ];
 
-const waitlistRegistrants = [
-  { pos: 1, name: "Tan Wei Ling", initials: "WL", contact: "weiling.tan@example.sg", date: "23/07/2026", avBg: "#D99E2B" },
-  { pos: 2, name: "Jason Teo", initials: "JT", contact: "jason.teo@example.sg", date: "23/07/2026", avBg: "#B9C98F" },
-  { pos: 3, name: "Mei Ling Ho", initials: "MH", contact: "meiling.ho@example.sg", date: "24/07/2026", avBg: "#7FA8D9" },
-  { pos: 4, name: "Farhan Ismail", initials: "FI", contact: "farhan.i@example.sg", date: "24/07/2026", avBg: "#C08FBB" }
+const confirmedVolunteers = [
+  { name: "Nurul Aisyah", initials: "NA", contact: "nurul.a@example.sg · 9122 1188", date: "18/07/2026", avBg: "#C08FBB", participation_type: "Volunteer" },
+  { name: "David Ong", initials: "DO", contact: "david.ong@example.sg · 9788 0021", date: "19/07/2026", avBg: "#7FA8D9", participation_type: "Volunteer" },
+  { name: "Priya Nair", initials: "PN", contact: "priya.n@example.sg · 9011 4455", date: "20/07/2026", avBg: "#D99E2B", participation_type: "Volunteer" },
+  { name: "Rajesh Kumar", initials: "RK", contact: "rajesh.k@example.sg · 9333 6701", date: "21/07/2026", avBg: "#8FBF9A", participation_type: "Volunteer" },
+  { name: "Aisha Abdullah", initials: "AA", contact: "aisha.a@example.sg · 9555 2010", date: "22/07/2026", avBg: "#D9A08F", participation_type: "Volunteer" }
+];
+
+const participantWaitlist = [
+  { pos: 1, name: "Ethan Wong", initials: "EW", contact: "ethan.w@example.sg", date: "23/07/2026", avBg: "#D9A08F", participation_type: "Participant" },
+  { pos: 2, name: "Siti Aminah", initials: "SA", contact: "siti.a@example.sg", date: "24/07/2026", avBg: "#B9C98F", participation_type: "Participant" }
+];
+
+const volunteerWaitlist = [
+  { pos: 1, name: "Tan Wei Ling", initials: "WL", contact: "weiling.tan@example.sg", date: "23/07/2026", avBg: "#D99E2B", participation_type: "Volunteer" },
+  { pos: 2, name: "Jason Teo", initials: "JT", contact: "jason.teo@example.sg", date: "23/07/2026", avBg: "#B9C98F", participation_type: "Volunteer" },
+  { pos: 3, name: "Lucas Tan", initials: "LT", contact: "lucas.t@example.sg", date: "24/07/2026", avBg: "#7FA8D9", participation_type: "Volunteer" }
 ];
 
 const roleAssignmentData = {
@@ -546,14 +599,14 @@ const roleAssignmentData = {
 };
 
 const attendanceRows = [
-  { name: "Nurul Aisyah", initials: "NA", role: "Tutor — Group A", status: "Attended", avBg: "#D99E2B" },
-  { name: "David Ong", initials: "DO", role: "Tutor — Group A", status: "Attended", avBg: "#7FA8D9" },
-  { name: "Priya Nair", initials: "PN", role: "Tutor — Group B", status: "Attended", avBg: "#C08FBB" },
-  { name: "Rajesh Kumar", initials: "RK", role: "Tutor — Group B", status: "Absent", avBg: "#8FBF9A" },
-  { name: "Aisha Abdullah", initials: "AA", role: "Helper", status: "Attended", avBg: "#D9A08F" },
-  { name: "Mei Ling Ho", initials: "MH", role: "Helper", status: "Pending", avBg: "#B9C98F" },
-  { name: "Farhan Ismail", initials: "FI", role: "Helper", status: "Pending", avBg: "#7FA8D9" },
-  { name: "Ethan Wong", initials: "EW", role: "Helper", status: "Pending", avBg: "#C08FBB" }
+  { name: "Nurul Aisyah", initials: "NA", participation_type: "Volunteer", role: "Tutor — Group A", status: "Attended", avBg: "#D99E2B" },
+  { name: "David Ong", initials: "DO", participation_type: "Volunteer", role: "Tutor — Group A", status: "Attended", avBg: "#7FA8D9" },
+  { name: "Priya Nair", initials: "PN", participation_type: "Volunteer", role: "Tutor — Group B", status: "Attended", avBg: "#C08FBB" },
+  { name: "Rajesh Kumar", initials: "RK", participation_type: "Volunteer", role: "Tutor — Group B", status: "Absent", avBg: "#8FBF9A" },
+  { name: "Mei Ling Ho", initials: "MH", participation_type: "Participant", role: "—", status: "Attended", avBg: "#B9C98F" },
+  { name: "Farhan Ismail", initials: "FI", participation_type: "Participant", role: "—", status: "Pending", avBg: "#7FA8D9" },
+  { name: "Aisha Abdullah", initials: "AA", participation_type: "Volunteer", role: "Helper", status: "Attended", avBg: "#D9A08F" },
+  { name: "Ethan Wong", initials: "EW", participation_type: "Participant", role: "—", status: "Pending", avBg: "#C08FBB" }
 ];
 
 const adminStats = {
@@ -578,7 +631,7 @@ const adminMonthlyRegs = [
 ];
 
 const adminUserRoles = [
-  { label: "Volunteers", count: "1,240", pct: 94, color: "#2E7D4F" },
+  { label: "Community members", count: "1,240", pct: 94, color: "#2E7D4F" },
   { label: "Organisers", count: "72", pct: 6, color: "#D99E2B" },
   { label: "Admins", count: "6", pct: 2, color: "#7FA8D9" }
 ];
@@ -592,12 +645,12 @@ const adminHoursByCat = [
 ];
 
 const adminUsers = [
-  { name: "Tan Wei Ling", email: "weiling.tan@example.sg", role: "Volunteer", joined: "14/01/2026", status: "Active", initials: "WL", avBg: "#D99E2B" },
+  { name: "Tan Wei Ling", email: "weiling.tan@example.sg", role: "Community member", joined: "14/01/2026", status: "Active", initials: "WL", avBg: "#D99E2B" },
   { name: "Marcus Lim", email: "marcus.lim@example.sg", role: "Organiser", joined: "03/11/2025", status: "Active", initials: "ML", avBg: "#7FA8D9" },
-  { name: "Nurul Aisyah", email: "nurul.a@example.sg", role: "Volunteer", joined: "22/02/2026", status: "Active", initials: "NA", avBg: "#C08FBB" },
+  { name: "Nurul Aisyah", email: "nurul.a@example.sg", role: "Community member", joined: "22/02/2026", status: "Active", initials: "NA", avBg: "#C08FBB" },
   { name: "Grace Chua", email: "grace.chua@example.sg", role: "Organiser", joined: "12/07/2026", status: "Pending", initials: "GC", avBg: "#8FBF9A" },
-  { name: "Rajesh Kumar", email: "rajesh.k@example.sg", role: "Volunteer", joined: "08/03/2026", status: "Active", initials: "RK", avBg: "#D9A08F" },
-  { name: "Jason Teo", email: "jason.teo@example.sg", role: "Volunteer", joined: "19/05/2026", status: "Suspended", initials: "JT", avBg: "#B9C98F" },
+  { name: "Rajesh Kumar", email: "rajesh.k@example.sg", role: "Community member", joined: "08/03/2026", status: "Active", initials: "RK", avBg: "#D9A08F" },
+  { name: "Jason Teo", email: "jason.teo@example.sg", role: "Community member", joined: "19/05/2026", status: "Suspended", initials: "JT", avBg: "#B9C98F" },
   { name: "Siti Rahman", email: "siti.r@communityconnect.sg", role: "Admin", joined: "01/09/2025", status: "Active", initials: "SR", avBg: "#C08FBB" }
 ];
 
@@ -658,19 +711,32 @@ function appLocals(role, user, activeNav, extra) {
   }, extra || {});
 }
 
-// ---------- Public GET preview routes ----------
+// ---------- Public GET routes (MySQL-backed) ----------
 
-app.get("/", function (req, res) {
-  const featured = events.filter(function (ev) {
-    return [1, 2, 3].indexOf(ev.id) !== -1;
-  });
-  res.render("index", publicLocals({
-    activeNav: "home",
-    pageTitle: "CommunityConnect SG",
-    impactStats: impactStats,
-    featuredEvents: featured,
-    heroBadge: "Serving neighbourhoods across Singapore"
-  }));
+app.get("/", async function (req, res) {
+  try {
+    const [impactStats, featuredEvents] = await Promise.all([
+      publicEvents.getLandingStats(),
+      publicEvents.getFeaturedEvents(3)
+    ]);
+
+    res.render("index", publicLocals({
+      activeNav: "home",
+      pageTitle: "CommunityConnect SG",
+      impactStats: impactStats,
+      featuredEvents: featuredEvents,
+      heroBadge: "Serving neighbourhoods across Singapore"
+    }));
+  } catch (err) {
+    console.error("Landing page query failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "home",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load the latest community events. Please try again shortly."
+    }));
+  }
 });
 
 app.get("/login", function (req, res) {
@@ -687,90 +753,170 @@ app.get("/register", function (req, res) {
   }));
 });
 
-app.get("/events", function (req, res) {
-  const catalogue = events.filter(function (ev) {
-    return ev.status === "Published" || ev.status === "Full";
-  });
-  res.render("events", publicLocals({
-    activeNav: "events",
-    pageTitle: "Event Catalogue · CommunityConnect SG",
-    events: catalogue,
-    categories: categories.filter(function (c) { return c.status === "Active"; })
-  }));
+app.get("/events", async function (req, res) {
+  try {
+    const search = (req.query.search || req.query.q || "").trim();
+    const category = (req.query.category || req.query.category_id || "").trim();
+    const date = (req.query.date || "").trim();
+    const location = (req.query.location || "").trim();
+    const availability = (req.query.availability || "").trim();
+
+    const filters = {
+      search: search,
+      category: category,
+      date: date,
+      location: location,
+      availability: availability
+    };
+
+    const hasFilters = Boolean(
+      search
+      || category
+      || (date && date !== "Any date")
+      || (location && location !== "All areas")
+      || (availability && availability !== "All events")
+    );
+
+    const [catalogue, dbCategories, totalEventsInDatabase] = await Promise.all([
+      publicEvents.getCatalogueEvents(filters),
+      publicEvents.getPublicCategories(),
+      publicEvents.countEvents()
+    ]);
+
+    res.render("events", publicLocals({
+      activeNav: "events",
+      pageTitle: "Event Catalogue · CommunityConnect SG",
+      events: catalogue.events,
+      categories: dbCategories,
+      filters: filters,
+      hasFilters: hasFilters,
+      totalEventsInDatabase: totalEventsInDatabase
+    }));
+  } catch (err) {
+    console.error("Event catalogue query failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "events",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load the event catalogue. Please try again shortly."
+    }));
+  }
 });
 
-app.get("/events/:id", function (req, res) {
-  const event = findEvent(req.params.id) || events[0];
-  const roles = volunteerRoles.filter(function (r) { return r.event_id === event.id; });
-  res.render("event-details", publicLocals({
-    activeNav: "events",
-    pageTitle: event.event_name + " · CommunityConnect SG",
-    event: event,
-    roles: roles.length ? roles : volunteerRoles
-  }));
+app.get("/events/:id", async function (req, res) {
+  try {
+    const event = await publicEvents.getEventById(req.params.id);
+    if (!event) {
+      return res.status(404).render("error", publicLocals({
+        activeNav: "events",
+        pageTitle: "Event not found · CommunityConnect SG",
+        statusCode: 404,
+        errorTitle: "Event not found",
+        errorMessage: "This event does not exist or is no longer available."
+      }));
+    }
+
+    const roles = await publicEvents.getVolunteerRolesForEvent(event.event_id);
+    res.render("event-details", publicLocals({
+      activeNav: "events",
+      pageTitle: event.event_name + " · CommunityConnect SG",
+      event: event,
+      roles: roles
+    }));
+  } catch (err) {
+    console.error("Event details query failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "events",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load this event. Please try again shortly."
+    }));
+  }
 });
 
-// ---------- Volunteer GET preview routes ----------
+// ---------- Community member GET preview routes ----------
 
-app.get("/volunteer/dashboard", function (req, res) {
-  const upcoming = volunteerRegistrations.Confirmed.concat(volunteerRegistrations.Waitlisted).map(withTone);
+app.get("/member/dashboard", function (req, res) {
+  const asParticipant = memberRegistrations.Confirmed
+    .filter(function (r) { return r.participation_type === "Participant"; })
+    .map(withTone);
+  const asVolunteer = memberRegistrations.Confirmed
+    .filter(function (r) { return r.participation_type === "Volunteer"; })
+    .map(withTone);
+  const participantWaitlist = memberRegistrations.Waitlisted
+    .filter(function (r) { return r.participation_type === "Participant"; })
+    .map(withTone);
+  const volunteerWaitlistRows = memberRegistrations.Waitlisted
+    .filter(function (r) { return r.participation_type === "Volunteer"; })
+    .map(withTone);
   const recommended = [events[4], events[6]];
-  res.render("volunteer/dashboard", appLocals("volunteer", volunteerUser, "dashboard", {
-    pageTitle: "Dashboard · Volunteer",
-    upcoming: upcoming,
+  res.render("member/dashboard", appLocals("member", memberUser, "dashboard", {
+    pageTitle: "Dashboard · Community member",
+    asParticipant: asParticipant,
+    asVolunteer: asVolunteer,
+    participantWaitlist: participantWaitlist,
+    volunteerWaitlist: volunteerWaitlistRows,
     recommended: recommended,
-    notifications: volunteerNotifications,
+    notifications: memberNotifications,
     stats: {
-      upcoming: 2,
-      waitlist: 1,
-      hours: "38.5",
-      nextDate: "Sat 25/07/2026",
-      waitlistNote: "Position #3 of 6",
-      hoursNote: "Across 11 events since Jan 2026"
+      participantUpcoming: asParticipant.length,
+      volunteerUpcoming: asVolunteer.length,
+      participantWaitlist: participantWaitlist.length,
+      volunteerWaitlist: volunteerWaitlistRows.length,
+      hours: memberHoursSummary.totalHours,
+      hoursNote: "Across " + memberHoursSummary.eventCount + " volunteer events since Jan 2026"
     }
   }));
 });
 
-app.get("/volunteer/registrations", function (req, res) {
+app.get("/member/registrations", function (req, res) {
   const tab = req.query.tab || "Confirmed";
   const tabs = ["Confirmed", "Waitlisted", "Cancelled", "Attended"];
   const safeTab = tabs.indexOf(tab) !== -1 ? tab : "Confirmed";
-  const rows = (volunteerRegistrations[safeTab] || []).map(withTone);
-  res.render("volunteer/my-registrations", appLocals("volunteer", volunteerUser, "registrations", {
-    pageTitle: "My Registrations · Volunteer",
+  const rows = (memberRegistrations[safeTab] || []).map(withTone);
+  res.render("member/my-registrations", appLocals("member", memberUser, "registrations", {
+    pageTitle: "My Registrations · Community member",
     tabs: tabs,
     activeTab: safeTab,
     tabCounts: {
-      Confirmed: volunteerRegistrations.Confirmed.length,
-      Waitlisted: volunteerRegistrations.Waitlisted.length,
-      Cancelled: volunteerRegistrations.Cancelled.length,
-      Attended: volunteerRegistrations.Attended.length
+      Confirmed: memberRegistrations.Confirmed.length,
+      Waitlisted: memberRegistrations.Waitlisted.length,
+      Cancelled: memberRegistrations.Cancelled.length,
+      Attended: memberRegistrations.Attended.length
     },
     rows: rows,
     messages: [{
       type: "success",
-      text: "Your registration for <b>Coastal Clean-Up at East Coast Park</b> was confirmed. A reminder will be sent one day before the event."
+      text: "Your <b>Volunteer</b> place for <b>Coastal Clean-Up at East Coast Park</b> was confirmed. A reminder will be sent one day before the event."
     }]
   }));
 });
 
-app.get("/volunteer/hours", function (req, res) {
-  res.render("volunteer/volunteer-hours", appLocals("volunteer", volunteerUser, "hours", {
-    pageTitle: "My Hours · Volunteer",
-    summary: volunteerHoursSummary,
-    months: volunteerMonthlyHours,
-    history: volunteerHourHistory
+app.get("/member/volunteer-hours", function (req, res) {
+  res.render("member/volunteer-hours", appLocals("member", memberUser, "hours", {
+    pageTitle: "Volunteer Hours · Community member",
+    summary: memberHoursSummary,
+    months: memberMonthlyHours,
+    history: memberHourHistory
   }));
 });
 
-app.get("/volunteer/profile", function (req, res) {
-  res.render("volunteer/profile", appLocals("volunteer", volunteerUser, "profile", {
-    pageTitle: "My Profile · Volunteer",
-    profile: volunteerUser,
-    hours: volunteerHoursSummary.totalHours,
-    attendedEvents: volunteerHoursSummary.eventCount
+app.get("/member/profile", function (req, res) {
+  res.render("member/profile", appLocals("member", memberUser, "profile", {
+    pageTitle: "My Profile · Community member",
+    profile: memberUser,
+    hours: memberHoursSummary.totalHours,
+    attendedEvents: memberHoursSummary.eventCount
   }));
 });
+
+// Compatibility redirects from former volunteer paths
+app.get("/volunteer/dashboard", function (req, res) { res.redirect("/member/dashboard"); });
+app.get("/volunteer/registrations", function (req, res) { res.redirect("/member/registrations"); });
+app.get("/volunteer/hours", function (req, res) { res.redirect("/member/volunteer-hours"); });
+app.get("/volunteer/profile", function (req, res) { res.redirect("/member/profile"); });
 
 // ---------- Organiser GET preview routes ----------
 
@@ -804,7 +950,8 @@ app.get("/organiser/events/new", function (req, res) {
       start_datetime: "",
       end_datetime: "",
       location: "",
-      capacity: "",
+      participant_capacity: "",
+      volunteer_capacity: "",
       registration_deadline: "",
       status: "Draft"
     },
@@ -822,7 +969,7 @@ app.get("/organiser/events/:id/edit", function (req, res) {
     categories: categories.filter(function (c) { return c.status === "Active"; }),
     messages: [{
       type: "warning",
-      text: "This event already has " + event.filled + " confirmed volunteers. Reducing the capacity below " + event.filled + " will move the most recent registrations to the waiting list."
+      text: "This event has " + event.participants_filled + " confirmed participants and " + event.volunteers_filled + " confirmed volunteers. Reducing a capacity below its confirmed count will move the most recent matching registrations to that waiting list."
     }]
   }));
 });
@@ -833,17 +980,22 @@ app.get("/organiser/events/:id/registrations", function (req, res) {
     pageTitle: "Manage Registrations · Organiser",
     event: event,
     eventOptions: manageEventRows.filter(function (r) { return r.status !== "Draft"; }),
-    confirmed: confirmedRegistrants,
-    waitlist: waitlistRegistrants,
+    confirmedParticipants: confirmedParticipants,
+    confirmedVolunteers: confirmedVolunteers,
+    participantWaitlist: participantWaitlist,
+    volunteerWaitlist: volunteerWaitlist,
     summary: {
-      capacity: event.capacity,
-      confirmed: event.filled,
-      waitlist: event.waitlistCount || waitlistRegistrants.length,
+      participant_capacity: event.participant_capacity,
+      volunteer_capacity: event.volunteer_capacity,
+      confirmedParticipants: event.participants_filled,
+      confirmedVolunteers: event.volunteers_filled,
+      participantWaitlist: event.participantWaitlistCount || participantWaitlist.length,
+      volunteerWaitlist: event.volunteerWaitlistCount || volunteerWaitlist.length,
       cancellations: 3
     },
-    messages: event.full ? [{
+    messages: (event.participants.full || event.volunteers.full) ? [{
       type: "warning",
-      text: "This event is at full capacity. If a confirmed volunteer cancels, the first person on the waiting list is offered the space automatically."
+      text: "One or both capacities are full. If a confirmed registration cancels, the earliest matching waitlisted person is offered the space automatically."
     }] : []
   }));
 });
@@ -923,6 +1075,19 @@ app.get("/admin/reports", function (req, res) {
   }));
 });
 
-app.listen(PORT, function () {
-  console.log("CommunityConnect running at http://localhost:" + PORT);
-});
+async function startServer() {
+  try {
+    await pool.query("SELECT 1 AS connection_test");
+    console.log("Connected to CommunityConnect MySQL database");
+
+    app.listen(PORT, function () {
+      console.log("CommunityConnect running at http://localhost:" + PORT);
+    });
+  } catch (err) {
+    console.error("Database connection failed. CommunityConnect could not start.");
+    console.error(err.message);
+    process.exit(1);
+  }
+}
+
+startServer();

@@ -7,26 +7,26 @@
     <%- include('../partials/navbar') %>
 
     <div class="app-content max-1080">
-      <div class="stat-row-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
         <div class="stat-card">
           <span class="stat-label">Total events</span>
           <span class="stat-value"><%= stats.totalEvents %></span>
           <span class="stat-note"><%= stats.completed %> completed · <%= stats.upcoming %> upcoming</span>
         </div>
         <div class="stat-card">
+          <span class="stat-label">Confirmed participants</span>
+          <span class="stat-value green"><%= stats.confirmedParticipants %></span>
+          <span class="stat-note">Across upcoming events</span>
+        </div>
+        <div class="stat-card">
           <span class="stat-label">Confirmed volunteers</span>
           <span class="stat-value green"><%= stats.confirmedVolunteers %></span>
-          <span class="stat-note">Across <%= stats.upcoming %> upcoming events</span>
+          <span class="stat-note">Across upcoming events</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">On waiting lists</span>
-          <span class="stat-value amber"><%= stats.waitlisted %></span>
-          <span class="stat-note">2 events currently full</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Avg. attendance</span>
-          <span class="stat-value"><%= stats.avgAttendance %></span>
-          <span class="stat-note">Last 10 completed events</span>
+          <span class="stat-label">Waiting lists</span>
+          <span class="stat-value amber"><%= stats.participantWaitlist + stats.volunteerWaitlist %></span>
+          <span class="stat-note">P <%= stats.participantWaitlist %> · V <%= stats.volunteerWaitlist %> · avg attendance <%= stats.avgAttendance %></span>
         </div>
       </div>
 
@@ -44,11 +44,15 @@
               </div>
               <div class="flex-fill min-w-0">
                 <div style="font-size:14.5px;font-weight:700;color:#23271F"><%= u.event_name %></div>
-                <div class="d-flex align-items-center gap-2 mt-1">
-                  <div class="cap-bar-track flex-fill" style="max-width:170px">
-                    <div class="cap-bar-fill" style="width:<%= u.pct %>%;background:<%= u.capColor %>"></div>
+                <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+                  <span style="font-size:12px;font-weight:600;color:#6E7266">P <%= u.participants_filled %>/<%= u.participant_capacity %></span>
+                  <div class="cap-bar-track flex-fill" style="max-width:90px">
+                    <div class="cap-bar-fill" style="width:<%= u.participants.pct %>%;background:<%= u.participants.capColor %>"></div>
                   </div>
-                  <span style="font-size:12.5px;font-weight:600;color:#6E7266"><%= u.filled %>/<%= u.capacity %></span>
+                  <span style="font-size:12px;font-weight:600;color:#6E7266">V <%= u.volunteers_filled %>/<%= u.volunteer_capacity %></span>
+                  <div class="cap-bar-track flex-fill" style="max-width:90px">
+                    <div class="cap-bar-fill" style="width:<%= u.volunteers.pct %>%;background:<%= u.volunteers.capColor %>"></div>
+                  </div>
                 </div>
               </div>
               <a href="/organiser/events/<%= u.id %>/registrations" style="font-size:13px;font-weight:600;flex-shrink:0">Registrations →</a>

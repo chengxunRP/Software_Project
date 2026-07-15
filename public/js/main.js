@@ -78,6 +78,38 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Event details: toggle volunteer_role_id when participation_type changes
+  document.querySelectorAll("[data-participation-form]").forEach(function (form) {
+    var radios = form.querySelectorAll("[data-participation-type]");
+    var roleWrap = form.querySelector("[data-volunteer-role-wrap]");
+    var roleField = form.querySelector("#volunteer_role_id");
+    var joinCta = form.querySelector("[data-join-cta]");
+
+    function syncParticipationType() {
+      var selected = form.querySelector("[data-participation-type]:checked");
+      var type = selected ? selected.value : "Participant";
+      var isVolunteer = type === "Volunteer";
+
+      if (roleWrap) {
+        roleWrap.style.display = isVolunteer ? "" : "none";
+      }
+      if (roleField) {
+        roleField.disabled = !isVolunteer;
+        if (!isVolunteer) {
+          roleField.value = "";
+        }
+      }
+      if (joinCta) {
+        joinCta.textContent = isVolunteer ? "Volunteer for This Event" : "Join as Participant";
+      }
+    }
+
+    radios.forEach(function (radio) {
+      radio.addEventListener("change", syncParticipationType);
+    });
+    syncParticipationType();
+  });
+
   // Attendance toggle preview styling
   document.querySelectorAll("[data-attendance-toggle]").forEach(function (btn) {
     btn.addEventListener("click", function (e) {

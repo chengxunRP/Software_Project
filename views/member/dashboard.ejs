@@ -1,0 +1,176 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Dashboard'; %>
+    <% topbarActions = '<div class="bell-btn" title="Notifications">🔔<span class="count">3</span></div>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1080">
+      <div>
+        <div style="font-size:22px;font-weight:800;color:#23271F;letter-spacing:-0.01em">Good afternoon, <%= currentUser.firstName %> 👋</div>
+        <div class="text-muted-cc" style="font-size:14.5px">Join events as a Participant or Volunteer — your choice applies per event.</div>
+      </div>
+
+      <div class="row g-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <div class="stat-card">
+          <span class="stat-label">Upcoming as Participant</span>
+          <span class="stat-value"><%= stats.participantUpcoming %></span>
+          <span class="stat-note">Confirmed places</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Upcoming as Volunteer</span>
+          <span class="stat-value green"><%= stats.volunteerUpcoming %></span>
+          <span class="stat-note">Confirmed places</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Completed volunteer hours</span>
+          <span class="stat-value"><%= stats.hours %></span>
+          <span class="stat-note"><%= stats.hoursNote %></span>
+        </div>
+      </div>
+
+      <div class="row g-3" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+        <div class="stat-card">
+          <span class="stat-label">Participant waiting lists</span>
+          <span class="stat-value amber"><%= stats.participantWaitlist %></span>
+          <span class="stat-note"><%= stats.participantWaitlist ? 'Positions shown below' : 'None right now' %></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Volunteer waiting lists</span>
+          <span class="stat-value amber"><%= stats.volunteerWaitlist %></span>
+          <span class="stat-note"><%= stats.volunteerWaitlist ? 'Positions shown below' : 'None right now' %></span>
+        </div>
+      </div>
+
+      <div class="dashboard-split" style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:start">
+        <div class="d-flex flex-column gap-3">
+          <div class="card-cc overflow-hidden">
+            <div class="panel-header">
+              <span class="h-card">Upcoming as Participant</span>
+              <a href="/member/registrations" style="font-size:13.5px;font-weight:600">View all</a>
+            </div>
+            <% if (!asParticipant.length) { %>
+              <div class="list-row text-muted-cc" style="font-size:13.5px">No upcoming participant places.</div>
+            <% } %>
+            <% asParticipant.forEach(function (r) { %>
+              <div class="list-row">
+                <div class="date-chip">
+                  <span class="month"><%= r.month %></span>
+                  <span class="day"><%= r.day %></span>
+                </div>
+                <div class="flex-fill min-w-0">
+                  <div style="font-size:15px;font-weight:700;color:#23271F"><%= r.name %></div>
+                  <div style="font-size:13px;color:#6E7266"><%= r.meta %></div>
+                </div>
+                <span class="badge-cc" style="background:#E9EDF6;color:#3B5384">Participant</span>
+              </div>
+            <% }) %>
+          </div>
+
+          <div class="card-cc overflow-hidden">
+            <div class="panel-header">
+              <span class="h-card">Upcoming as Volunteer</span>
+              <a href="/member/registrations" style="font-size:13.5px;font-weight:600">View all</a>
+            </div>
+            <% if (!asVolunteer.length) { %>
+              <div class="list-row text-muted-cc" style="font-size:13.5px">No upcoming volunteer places.</div>
+            <% } %>
+            <% asVolunteer.forEach(function (r) { %>
+              <div class="list-row">
+                <div class="date-chip">
+                  <span class="month"><%= r.month %></span>
+                  <span class="day"><%= r.day %></span>
+                </div>
+                <div class="flex-fill min-w-0">
+                  <div style="font-size:15px;font-weight:700;color:#23271F"><%= r.name %></div>
+                  <div style="font-size:13px;color:#6E7266"><%= r.meta %></div>
+                </div>
+                <span class="badge-cc" style="background:#E7F2EA;color:#1E4D33">Volunteer</span>
+              </div>
+            <% }) %>
+          </div>
+
+          <div class="card-cc overflow-hidden">
+            <div class="panel-header">
+              <span class="h-card">Waiting-list positions</span>
+            </div>
+            <% participantWaitlist.forEach(function (r) { %>
+              <div class="list-row">
+                <div class="date-chip amber">
+                  <span class="month"><%= r.month %></span>
+                  <span class="day"><%= r.day %></span>
+                </div>
+                <div class="flex-fill min-w-0">
+                  <div style="font-size:15px;font-weight:700;color:#23271F"><%= r.name %></div>
+                  <div style="font-size:13px;color:#6E7266">Participant · <%= r.note || r.meta %></div>
+                </div>
+                <span class="badge-cc" style="background:<%= r.badgeBg %>;color:<%= r.badgeFg %>"><%= r.badge %></span>
+              </div>
+            <% }) %>
+            <% volunteerWaitlist.forEach(function (r) { %>
+              <div class="list-row">
+                <div class="date-chip amber">
+                  <span class="month"><%= r.month %></span>
+                  <span class="day"><%= r.day %></span>
+                </div>
+                <div class="flex-fill min-w-0">
+                  <div style="font-size:15px;font-weight:700;color:#23271F"><%= r.name %></div>
+                  <div style="font-size:13px;color:#6E7266">Volunteer · <%= r.note || r.meta %></div>
+                </div>
+                <span class="badge-cc" style="background:<%= r.badgeBg %>;color:<%= r.badgeFg %>"><%= r.badge %></span>
+              </div>
+            <% }) %>
+            <% if (!participantWaitlist.length && !volunteerWaitlist.length) { %>
+              <div class="list-row text-muted-cc" style="font-size:13.5px">You are not on any waiting lists.</div>
+            <% } %>
+          </div>
+
+          <div class="card-cc overflow-hidden">
+            <div class="panel-header">
+              <span class="h-card">Recommended for you</span>
+              <a href="/events" style="font-size:13.5px;font-weight:600">Browse all</a>
+            </div>
+            <% recommended.forEach(function (ev) { %>
+              <div class="list-row">
+                <span class="badge-cc badge-cc-cat" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>
+                <div class="flex-fill min-w-0">
+                  <div style="font-size:14px;font-weight:600;color:#23271F"><%= ev.event_name %></div>
+                  <div style="font-size:12.5px;color:#6E7266"><%= ev.when.split(' · ')[0] %> · P <%= ev.participants.left %> left · V <%= ev.volunteers.left %> left</div>
+                </div>
+                <a href="/events/<%= ev.id %>" style="font-size:13px;font-weight:600;flex-shrink:0">View →</a>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="card-cc overflow-hidden">
+          <div class="panel-header">
+            <span class="h-card">Recent notifications</span>
+          </div>
+          <% notifications.forEach(function (n) { %>
+            <div class="list-row align-items-start">
+              <span class="notif-dot <%= n.type %>"></span>
+              <div>
+                <div style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:500"><%- n.text %></div>
+                <div style="font-size:12px;color:#8B8778"><%= n.time %></div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="mobile-tabbar">
+  <a href="/member/dashboard" class="active"><span class="tab-icon">🏠</span>Dashboard</a>
+  <a href="/events"><span class="tab-icon">🔍</span>Events</a>
+  <a href="/member/registrations"><span class="tab-icon">🗂</span>Registrations</a>
+  <a href="/member/volunteer-hours"><span class="tab-icon">⏱</span>Hours</a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
