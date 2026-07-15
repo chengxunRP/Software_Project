@@ -1,5 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
+const session = require("express-session");
+
+const rolesRoutes = require("./routes/roles");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -7,6 +11,40 @@ const PORT = process.env.PORT || 3000;
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
+
+if (!process.env.SESSION_SECRET) {
+  throw new Error(
+    "SESSION_SECRET is not set. Add it to your .env file, then restart the server " +
+    "(dotenv only reads .env once, at startup — editing it while the server is still running has no effect)."
+  );
+}
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// TODO: Remove this before final CA2 submission! (Temporary Auth Mock)
+// Must run after the session middleware above (needs req.session to exist)
+// and before any protected routes below.
+app.use(function (req, res, next) {
+  if (!req.session.user) {
+    req.session.user = {
+      user_id: 2, // Assume an Organiser exists with ID 1
+      name: "Marcus Lim",
+      initials: "ML",
+      avatarBg: "#7FA8D9",
+      role: "organiser", // must be lowercase — matches the users.role ENUM and isOrganiser's check
+    };
+  }
+  next();
+});
+
+app.use(rolesRoutes);
 
 // Temporary sample data for frontend preview only
 // Replace with MySQL results during backend implementation

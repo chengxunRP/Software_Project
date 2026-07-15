@@ -1,0 +1,49 @@
+<%- include('../partials/header') %> 
+
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Volunteer Roles for: <span class="text-primary"><%= event.event_name %></span></h2>
+        <a href="/organiser/events/<%= event.event_id %>/roles/new" class="btn btn-success">+ Create New Role</a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <% if (roles.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Role Name</th>
+                                <th>Description</th>
+                                <th class="text-center">Required Volunteers</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% roles.forEach(role => { %>
+                                <tr>
+                                    <td class="fw-bold"><%= role.role_name %></td>
+                                    <td class="text-muted"><%= role.description || 'No description provided.' %></td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary rounded-pill fs-6"><%= role.required_volunteers %></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-primary">Edit</button>
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <p class="text-muted fs-5">No volunteer roles have been created for this event yet.</p>
+                    <a href="/organiser/events/<%= event.event_id %>/roles/new" class="btn btn-outline-success mt-2">Create the first role</a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
