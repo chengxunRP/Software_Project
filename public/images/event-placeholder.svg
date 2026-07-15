@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400" role="img" aria-label="CommunityConnect event placeholder">
+  <defs>
+    <pattern id="stripes" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="12" height="24" fill="#ECE8DE"/>
+      <rect x="12" width="12" height="24" fill="#F3F0E8"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="400" fill="url(#stripes)"/>
+  <rect x="250" y="175" width="300" height="50" rx="8" fill="#FFFFFF" stroke="#E6E2D8"/>
+  <text x="400" y="206" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14" fill="#8B8778">CommunityConnect SG</text>
+</svg>

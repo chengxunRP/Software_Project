@@ -1,0 +1,57 @@
+<% const isPublic = typeof layout === 'undefined' || layout === 'public'; %>
+<% if (isPublic) { %>
+<header class="public-header <%= typeof activeNav !== 'undefined' && activeNav === 'events' ? 'wide' : '' %>">
+  <div class="public-header-inner">
+    <a href="/" class="d-flex align-items-center gap-2 text-decoration-none">
+      <span class="brand-mark">C</span>
+      <span class="brand-name">CommunityConnect <span class="sg">SG</span></span>
+    </a>
+
+    <% if (typeof activeNav !== 'undefined' && (activeNav === 'login' || activeNav === 'register')) { %>
+      <div class="hide-mobile" style="font-size:14px;color:#6E7266">
+        <% if (activeNav === 'login') { %>
+          New here? <a href="/register" style="font-weight:600">Create an account</a>
+        <% } else { %>
+          Already have an account? <a href="/login" style="font-weight:600">Log in</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <nav class="public-nav">
+        <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Browse Events</a>
+        <a href="/#impact">Our Impact</a>
+      </nav>
+      <div class="public-actions">
+        <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
+        <a href="/register" class="btn-cc btn-cc-primary btn-cc-sm">Register</a>
+      </div>
+    <% } %>
+
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="public-mobile-sheet" id="publicMobileSheet">
+    <a href="/events">Browse Events</a>
+    <a href="/#impact">Our Impact</a>
+    <a href="/login">Log in</a>
+    <a href="/register">Register</a>
+    <div class="sheet-actions">
+      <a href="/volunteer/dashboard" class="btn-cc btn-cc-secondary btn-cc-block">Preview as Volunteer</a>
+      <a href="/organiser/dashboard" class="btn-cc btn-cc-secondary btn-cc-block">Preview as Organiser</a>
+      <a href="/admin/dashboard" class="btn-cc btn-cc-secondary btn-cc-block">Preview as Admin</a>
+    </div>
+  </div>
+</header>
+<% } else { %>
+<div class="app-topbar">
+  <div class="d-flex align-items-center gap-2">
+    <button type="button" class="sidebar-open-btn" id="sidebarOpenBtn" aria-label="Open menu">☰</button>
+    <h1><%= typeof topbarTitle !== 'undefined' ? topbarTitle : (typeof pageTitle !== 'undefined' ? pageTitle.split(' · ')[0] : 'Dashboard') %></h1>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <% if (typeof topbarActions !== 'undefined') { %>
+      <%- topbarActions %>
+    <% } %>
+  </div>
+</div>
+<% } %>

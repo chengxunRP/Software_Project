@@ -1,0 +1,102 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Dashboard'; %>
+    <% topbarActions = '<div class="bell-btn" title="Notifications">🔔<span class="count">3</span></div>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1080">
+      <div>
+        <div style="font-size:22px;font-weight:800;color:#23271F;letter-spacing:-0.01em">Good afternoon, <%= currentUser.firstName %> 👋</div>
+        <div class="text-muted-cc" style="font-size:14.5px">You have <%= stats.upcoming %> upcoming events this month. Thank you for serving your community!</div>
+      </div>
+
+      <div class="row g-3 stat-row-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <div class="stat-card">
+          <span class="stat-label">Upcoming events</span>
+          <span class="stat-value"><%= stats.upcoming %></span>
+          <span class="stat-note">Next: <%= stats.nextDate %></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">On waiting list</span>
+          <span class="stat-value amber"><%= stats.waitlist %></span>
+          <span class="stat-note"><%= stats.waitlistNote %></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Completed hours</span>
+          <span class="stat-value green"><%= stats.hours %></span>
+          <span class="stat-note"><%= stats.hoursNote %></span>
+        </div>
+      </div>
+
+      <div class="dashboard-split" style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:start">
+        <div class="d-flex flex-column gap-3">
+          <div class="card-cc overflow-hidden">
+            <div class="panel-header">
+              <span class="h-card">Upcoming registrations</span>
+              <a href="/volunteer/registrations" style="font-size:13.5px;font-weight:600">View all</a>
+            </div>
+            <% upcoming.forEach(function (r) { %>
+              <div class="list-row">
+                <div class="date-chip <%= r.tone === 'amber' ? 'amber' : '' %>">
+                  <span class="month"><%= r.month %></span>
+                  <span class="day"><%= r.day %></span>
+                </div>
+                <div class="flex-fill min-w-0">
+                  <div style="font-size:15px;font-weight:700;color:#23271F"><%= r.name %></div>
+                  <div style="font-size:13px;color:#6E7266"><%= r.meta %></div>
+                </div>
+                <span class="badge-cc" style="background:<%= r.badgeBg %>;color:<%= r.badgeFg %>"><%= r.badge %></span>
+              </div>
+            <% }) %>
+          </div>
+
+          <div class="card-cc overflow-hidden">
+            <div class="panel-header">
+              <span class="h-card">Recommended for you</span>
+              <a href="/events" style="font-size:13.5px;font-weight:600">Browse all</a>
+            </div>
+            <% recommended.forEach(function (ev) { %>
+              <div class="list-row">
+                <span class="badge-cc badge-cc-cat" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>
+                <div class="flex-fill min-w-0">
+                  <div style="font-size:14px;font-weight:600;color:#23271F"><%= ev.event_name %></div>
+                  <div style="font-size:12.5px;color:#6E7266"><%= ev.when.split(' · ')[0] %> · <%= ev.location %> · <%= ev.left %> spaces left</div>
+                </div>
+                <a href="/events/<%= ev.id %>" style="font-size:13px;font-weight:600;flex-shrink:0">View →</a>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="card-cc overflow-hidden">
+          <div class="panel-header">
+            <span class="h-card">Recent notifications</span>
+          </div>
+          <% notifications.forEach(function (n) { %>
+            <div class="list-row align-items-start">
+              <span class="notif-dot <%= n.type %>"></span>
+              <div>
+                <div style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:500"><%- n.text %></div>
+                <div style="font-size:12px;color:#8B8778"><%= n.time %></div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="mobile-tabbar">
+  <a href="/volunteer/dashboard" class="active"><span class="tab-icon">🏠</span>Dashboard</a>
+  <a href="/events"><span class="tab-icon">🔍</span>Events</a>
+  <a href="/volunteer/registrations"><span class="tab-icon">🗂</span>Registrations</a>
+  <a href="/volunteer/hours"><span class="tab-icon">⏱</span>Hours</a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

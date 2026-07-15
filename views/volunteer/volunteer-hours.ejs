@@ -1,0 +1,79 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'My Volunteer Hours'; %>
+    <% topbarActions = '<button type="button" class="btn-cc btn-cc-secondary btn-cc-sm">Download record (PDF)</button>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1000">
+      <div class="dashboard-split" style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px">
+        <div style="background:#1E2B22;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:13px;font-weight:600;color:#A9BCA9">Total completed hours</span>
+          <span style="font-size:42px;font-weight:800;color:#fff;letter-spacing:-0.02em;line-height:1"><%= summary.totalHours %></span>
+          <span style="font-size:13px;color:#7E9184">Across <%= summary.eventCount %> attended events since January 2026</span>
+        </div>
+        <div class="stat-card" style="border-radius:16px;padding:24px">
+          <span class="stat-label">This month (July)</span>
+          <span class="stat-value green" style="font-size:32px"><%= summary.monthHours %></span>
+          <span class="stat-note"><%= summary.monthEvents %> events attended</span>
+        </div>
+        <div class="stat-card" style="border-radius:16px;padding:24px">
+          <span class="stat-label">Attendance rate</span>
+          <span class="stat-value" style="font-size:32px"><%= summary.attendanceRate %></span>
+          <span class="stat-note"><%= summary.attended %> attended · <%= summary.absent %> absent</span>
+        </div>
+      </div>
+
+      <div class="card-cc" style="padding:24px">
+        <div class="h-card mb-3">Monthly contribution — 2026</div>
+        <div class="bar-chart">
+          <% months.forEach(function (m) { %>
+            <div class="bar-chart-item">
+              <span class="val <%= m.current ? 'current' : '' %>"><%= m.val %></span>
+              <div class="bar <%= m.current ? 'current' : '' %>" style="height:<%= m.h %>px"></div>
+              <span class="label"><%= m.label %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="table-cc">
+        <div class="panel-header">
+          <span class="h-card">Event history</span>
+        </div>
+        <div class="table-scroll">
+          <div class="table-cc-head" style="grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr">
+            <span>Event</span><span>Date</span><span>Location</span><span>Status</span><span style="text-align:right">Hours</span>
+          </div>
+          <% history.forEach(function (h) { %>
+            <div class="table-cc-row" style="grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr">
+              <span style="font-weight:600;color:#23271F"><%= h.name %></span>
+              <span class="text-muted-cc"><%= h.date %></span>
+              <span class="text-muted-cc"><%= h.loc %></span>
+              <span>
+                <span class="badge-cc <%= h.status === 'Absent' ? 'badge-cc-absent' : 'badge-cc-attended' %>" style="font-size:11.5px;padding:4px 10px"><%= h.status %></span>
+              </span>
+              <span style="text-align:right;font-weight:700;color:#23271F"><%= h.hours %></span>
+            </div>
+          <% }) %>
+          <div class="d-flex justify-content-end p-3" style="font-size:14px;font-weight:700;color:#23271F;background:#FBFAF6">
+            Total &nbsp;<span style="color:#2E7D4F"><%= summary.totalHours %> hours</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="mobile-tabbar">
+  <a href="/volunteer/dashboard"><span class="tab-icon">🏠</span>Dashboard</a>
+  <a href="/events"><span class="tab-icon">🔍</span>Events</a>
+  <a href="/volunteer/registrations"><span class="tab-icon">🗂</span>Registrations</a>
+  <a href="/volunteer/hours" class="active"><span class="tab-icon">⏱</span>Hours</a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

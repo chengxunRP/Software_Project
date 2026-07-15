@@ -1,0 +1,97 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Organiser Dashboard'; %>
+    <% topbarActions = '<a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1080">
+      <div class="stat-row-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div class="stat-card">
+          <span class="stat-label">Total events</span>
+          <span class="stat-value"><%= stats.totalEvents %></span>
+          <span class="stat-note"><%= stats.completed %> completed · <%= stats.upcoming %> upcoming</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Confirmed volunteers</span>
+          <span class="stat-value green"><%= stats.confirmedVolunteers %></span>
+          <span class="stat-note">Across <%= stats.upcoming %> upcoming events</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">On waiting lists</span>
+          <span class="stat-value amber"><%= stats.waitlisted %></span>
+          <span class="stat-note">2 events currently full</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Avg. attendance</span>
+          <span class="stat-value"><%= stats.avgAttendance %></span>
+          <span class="stat-note">Last 10 completed events</span>
+        </div>
+      </div>
+
+      <div class="dashboard-split" style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px;align-items:start">
+        <div class="card-cc overflow-hidden">
+          <div class="panel-header">
+            <span class="h-card">Upcoming events</span>
+            <a href="/organiser/events" style="font-size:13.5px;font-weight:600">Manage all</a>
+          </div>
+          <% upcoming.forEach(function (u) { %>
+            <div class="list-row">
+              <div class="date-chip">
+                <span class="month"><%= u.month %></span>
+                <span class="day" style="font-size:18px"><%= u.day %></span>
+              </div>
+              <div class="flex-fill min-w-0">
+                <div style="font-size:14.5px;font-weight:700;color:#23271F"><%= u.event_name %></div>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                  <div class="cap-bar-track flex-fill" style="max-width:170px">
+                    <div class="cap-bar-fill" style="width:<%= u.pct %>%;background:<%= u.capColor %>"></div>
+                  </div>
+                  <span style="font-size:12.5px;font-weight:600;color:#6E7266"><%= u.filled %>/<%= u.capacity %></span>
+                </div>
+              </div>
+              <a href="/organiser/events/<%= u.id %>/registrations" style="font-size:13px;font-weight:600;flex-shrink:0">Registrations →</a>
+            </div>
+          <% }) %>
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+          <div class="card-cc overflow-hidden">
+            <div class="panel-header">
+              <span class="h-card">Needs attention</span>
+            </div>
+            <% alerts.forEach(function (a) { %>
+              <div class="list-row align-items-start">
+                <span class="attention-icon <%= a.tone === 'danger' ? 'danger' : 'warning' %>">!</span>
+                <div>
+                  <div style="font-size:13.5px;font-weight:600;color:#23271F;line-height:1.45"><%= a.text %></div>
+                  <a href="<%= a.link %>" style="font-size:12.5px;font-weight:600"><%= a.linkText %></a>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+          <div class="card-cc" style="padding:20px">
+            <div class="h-card mb-3">Attendance — last 3 events</div>
+            <% attendance.forEach(function (a) { %>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between" style="font-size:13px">
+                  <span style="font-weight:600;color:#3C4038"><%= a.name %></span>
+                  <span style="font-weight:700;color:#2E7D4F"><%= a.rate %></span>
+                </div>
+                <div class="cap-bar-track mt-1">
+                  <div class="cap-bar-fill" style="width:<%= a.rate %>;background:#2E7D4F"></div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

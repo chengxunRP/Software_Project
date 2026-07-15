@@ -1,0 +1,65 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Event Category Management'; %>
+    <% topbarActions = ''; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1040">
+      <div class="details-grid" style="grid-template-columns:1fr 340px">
+        <div class="table-cc">
+          <div class="table-scroll">
+            <div class="table-cc-head" style="grid-template-columns:1.6fr 2.2fr 0.9fr 0.9fr 1.1fr">
+              <span>Category</span><span>Description</span><span>Events</span><span>Status</span><span style="text-align:right">Actions</span>
+            </div>
+            <% categories.forEach(function (c) { %>
+              <div class="table-cc-row" style="grid-template-columns:1.6fr 2.2fr 0.9fr 0.9fr 1.1fr">
+                <div class="d-flex align-items-center gap-2">
+                  <span style="width:12px;height:12px;border-radius:4px;background:<%= c.color %>;flex-shrink:0"></span>
+                  <span style="font-weight:700;color:#23271F"><%= c.name %></span>
+                </div>
+                <span class="text-muted-cc" style="font-size:13px;padding-right:14px"><%= c.desc %></span>
+                <span style="font-weight:600;color:#3C4038"><%= c.eventCount %></span>
+                <span>
+                  <span class="badge-cc <%= c.status === 'Active' ? 'badge-cc-active' : 'badge-cc-archived' %>" style="font-size:11.5px;padding:4px 10px"><%= c.status %></span>
+                </span>
+                <div class="d-flex gap-1 justify-content-end">
+                  <button type="button" class="btn-cc btn-cc-secondary btn-cc-xs">Edit</button>
+                  <button type="button" class="btn-cc btn-cc-secondary btn-cc-xs"><%= c.status === 'Active' ? 'Archive' : 'Restore' %></button>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <form class="card-cc sticky-panel" style="border-radius:16px;padding:24px" data-preview-only>
+          <div class="h-card mb-3" style="font-size:15.5px">Add new category</div>
+          <div class="mb-3">
+            <label class="form-label-cc">Category name <span class="req">*</span></label>
+            <input class="form-control-cc" type="text" name="category_name" placeholder="e.g. Animal Welfare">
+          </div>
+          <div class="mb-3">
+            <label class="form-label-cc">Description</label>
+            <textarea class="form-control-cc" name="description" rows="3" placeholder="Short description shown to organisers"></textarea>
+          </div>
+          <div class="mb-3">
+            <div class="form-label-cc">Badge colour</div>
+            <div class="d-flex gap-2">
+              <span class="color-swatch selected" style="background:#2E7D4F"></span>
+              <span class="color-swatch" style="background:#D99E2B"></span>
+              <span class="color-swatch" style="background:#7FA8D9"></span>
+              <span class="color-swatch" style="background:#C08FBB"></span>
+              <span class="color-swatch" style="background:#D9A08F"></span>
+            </div>
+          </div>
+          <button type="submit" class="btn-cc btn-cc-primary btn-cc-block">Add category</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

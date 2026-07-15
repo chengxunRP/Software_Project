@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+<div class="public-page">
+  <%- include('partials/navbar') %>
+
+  <main class="auth-main">
+    <div class="auth-card-wrap wide">
+      <div class="text-center">
+        <h1 class="h-page" style="font-size:28px">Create your account</h1>
+        <p class="mb-0 text-muted-cc">Join 1,240 volunteers serving communities across Singapore.</p>
+      </div>
+
+      <form class="auth-card" data-preview-only>
+        <div class="form-grid-2">
+          <div>
+            <label class="form-label-cc" for="full_name">Full name</label>
+            <input class="form-control-cc" type="text" id="full_name" name="full_name" placeholder="Tan Wei Ling">
+          </div>
+          <div>
+            <label class="form-label-cc" for="mobile">Mobile number</label>
+            <input class="form-control-cc" type="tel" id="mobile" name="mobile" placeholder="9123 4567">
+          </div>
+        </div>
+        <div>
+          <label class="form-label-cc" for="email">Email address</label>
+          <input class="form-control-cc" type="email" id="email" name="email" placeholder="you@example.sg">
+        </div>
+        <div class="form-grid-2">
+          <div>
+            <label class="form-label-cc" for="password">Password</label>
+            <input class="form-control-cc" type="password" id="password" name="password" placeholder="Min. 8 characters">
+          </div>
+          <div>
+            <label class="form-label-cc" for="confirm_password">Confirm password</label>
+            <input class="form-control-cc" type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password">
+          </div>
+        </div>
+        <div>
+          <label class="form-label-cc" for="join_as">I want to join as</label>
+          <select class="form-select-cc" id="join_as" name="join_as">
+            <option>Volunteer</option>
+            <option>Organiser (requires approval)</option>
+          </select>
+        </div>
+        <label class="form-check-cc" style="font-size:13.5px;line-height:1.5">
+          <input type="checkbox" name="terms">
+          <span>I agree to the <a href="/register" style="font-weight:600">Terms of Use</a> and consent to being contacted about events I register for.</span>
+        </label>
+        <a href="/volunteer/dashboard" class="btn-cc btn-cc-primary btn-cc-block" style="padding:12px 0;border-radius:11px;font-size:15px">Create account</a>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
