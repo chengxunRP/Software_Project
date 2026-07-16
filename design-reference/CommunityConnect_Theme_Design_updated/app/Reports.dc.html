@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="System Reports">
+  <dc-import name="Nav" role="admin" active="reports" userName="Siti Rahman" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 84px;position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Platform administration</div>
+        <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">System Reports</h1>
+        <p style="margin:0;font-size:16px;color:#C6E2D0">Community impact across all events and categories.</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-shrink:0">
+        <select style="padding:12px 15px;border-radius:11px;border:none;font-size:13.5px;font-family:inherit;background:#FFFFFF;color:#23271F;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,0.2)">
+          <option>01/01/2026 – 15/07/2026</option>
+          <option>Last 30 days</option>
+          <option>Last quarter</option>
+        </select>
+        <button style="padding:12px 18px;border-radius:11px;border:1.5px solid rgba(255,255,255,0.45);background:rgba(255,255,255,0.12);color:#FFFFFF;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit" style-hover="background:rgba(255,255,255,0.22)">⬇ Export CSV</button>
+      </div>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:20px">
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:-46px;position:relative">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:18px">📅</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#23271F;line-height:1.1">182</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Events completed</span></div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#E3F1EE;display:flex;align-items:center;justify-content:center;font-size:18px">📈</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#2E7D4F;line-height:1.1">87%</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Avg. fill rate</span></div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#E9F1F8;display:flex;align-items:center;justify-content:center;font-size:18px">✓</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#23271F;line-height:1.1">89%</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Avg. attendance rate</span></div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#FBF3DF;display:flex;align-items:center;justify-content:center;font-size:18px">↩</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#C8862B;line-height:1.1">6.4%</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Cancellation rate</span></div>
+        </div>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+        <div style="padding:18px 24px;border-bottom:1px solid #EDEAE0">
+          <span style="font-size:17px;font-weight:800;color:#23271F">Performance by category</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.7fr 0.8fr 1.1fr 1.1fr 1fr 1.3fr;padding:12px 24px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Category</span><span>Events</span><span>Registrations</span><span>Attendance</span><span>Hours</span><span>Fill rate</span>
+        </div>
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:1.7fr 0.8fr 1.1fr 1.1fr 1fr 1.3fr;padding:14px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center;transition:background 0.15s" style-hover="background:#FBFAF6">
+            <div style="display:flex;align-items:center;gap:11px">
+              <span style="width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;background:{{ c.bg }};flex-shrink:0">{{ c.icon }}</span>
+              <span style="font-weight:800;color:#23271F">{{ c.name }}</span>
+            </div>
+            <span style="color:#3C4038;font-weight:700">{{ c.events }}</span>
+            <span style="color:#3C4038;font-weight:700">{{ c.regs }}</span>
+            <span style="color:#3C4038;font-weight:700">{{ c.att }}</span>
+            <span style="color:#3C4038;font-weight:700">{{ c.hours }}</span>
+            <div style="display:flex;align-items:center;gap:10px;padding-right:8px">
+              <div style="flex:1;max-width:110px;height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ c.fill }};height:100%;border-radius:999px;background:{{ c.color }}"></div></div>
+              <span style="font-size:13px;font-weight:800;color:#23271F">{{ c.fill }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <div style="padding:18px 24px;border-bottom:1px solid #EDEAE0">
+            <span style="font-size:17px;font-weight:800;color:#23271F">Most-attended events</span>
+          </div>
+          <sc-for list="{{ topEvents }}" as="t" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;transition:background 0.15s" style-hover="background:#FBFAF6">
+              <span style="width:28px;height:28px;border-radius:9px;background:{{ t.rankBg }};color:{{ t.rankFg }};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12.5px;flex-shrink:0">{{ t.rank }}</span>
+              <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+                <span style="font-weight:700;color:#23271F">{{ t.name }}</span>
+                <span style="font-size:12.5px;color:#8B8778;font-weight:500">{{ t.date }}</span>
+              </div>
+              <span style="font-weight:800;color:#2E7D4F;flex-shrink:0">{{ t.count }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <div style="padding:18px 24px;border-bottom:1px solid #EDEAE0">
+            <span style="font-size:17px;font-weight:800;color:#23271F">Top volunteers by hours</span>
+          </div>
+          <sc-for list="{{ topVols }}" as="v" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:13px;padding:13px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;transition:background 0.15s" style-hover="background:#FBFAF6">
+              <div style="width:34px;height:34px;border-radius:50%;background:{{ v.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">{{ v.initials }}</div>
+              <span style="font-weight:700;color:#23271F;flex:1">{{ v.name }}</span>
+              <div style="display:flex;align-items:center;gap:10px;flex:1">
+                <div style="flex:1;height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ v.pct }};height:100%;border-radius:999px;background:linear-gradient(90deg,#2E7D4F,#1F8A7A)"></div></div>
+                <span style="font-weight:800;color:#23271F;flex-shrink:0">{{ v.hours }} h</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const av = ["#C8862B", "#4A8FC2", "#8E6FA8", "#2E7D4F", "#E0704F"];
+    const ini = (n) => n.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+    return {
+      cats: [
+        { name: "Environment", events: "68", regs: "2,140", att: "91%", hours: "3,912", fill: "92%", color: "#2E7D4F", icon: "🌿", bg: "#E7F2EA" },
+        { name: "Food Support", events: "47", regs: "1,486", att: "90%", hours: "3,150", fill: "95%", color: "#C8862B", icon: "🥫", bg: "#FBF3DF" },
+        { name: "Elderly Support", events: "39", regs: "1,022", att: "88%", hours: "2,668", fill: "84%", color: "#8E6FA8", icon: "🫶", bg: "#F1EBF6" },
+        { name: "Education", events: "34", regs: "812", att: "87%", hours: "1,930", fill: "78%", color: "#4A8FC2", icon: "📚", bg: "#E9F1F8" },
+        { name: "Fundraising", events: "25", regs: "412", att: "82%", hours: "790", fill: "71%", color: "#E0704F", icon: "❤️", bg: "#FBEAE3" },
+      ],
+      topEvents: [
+        { rank: "1", name: "Charity Fun Run — Route Marshals", date: "24/05/2026 · Jurong Lake Gardens", count: "44", rankBg: "#E3A93C", rankFg: "#FFFFFF" },
+        { rank: "2", name: "Coastal Clean-Up at East Coast Park", date: "13/06/2026 · East Coast Park", count: "39", rankBg: "#C9C4B4", rankFg: "#FFFFFF" },
+        { rank: "3", name: "Food Distribution Drive", date: "09/05/2026 · Bedok CC", count: "25", rankBg: "#D9A08F", rankFg: "#FFFFFF" },
+        { rank: "4", name: "Park Clean-Up & Recycling Drive", date: "27/06/2026 · Bishan-AMK Park", count: "24", rankBg: "#F6F4EF", rankFg: "#6E7266" },
+        { rank: "5", name: "Weekend Tutoring — Primary Maths", date: "12/07/2026 · Tampines CC", count: "18", rankBg: "#F6F4EF", rankFg: "#6E7266" },
+      ],
+      topVols: [
+        { name: "Nurul Aisyah", hours: "62.5", pct: "100%" },
+        { name: "David Ong", hours: "58.0", pct: "93%" },
+        { name: "Priya Nair", hours: "51.5", pct: "82%" },
+        { name: "Muhammad Irfan", hours: "44.0", pct: "70%" },
+        { name: "Tan Wei Ling", hours: "38.5", pct: "62%" },
+      ].map((v, i) => ({ ...v, initials: ini(v.name), avBg: av[i % av.length] })),
+    };
+  }
+}
+</script>
+</body>
+</html>

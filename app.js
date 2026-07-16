@@ -1,9 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const path = require("path");
 const session = require("express-session");
+const path = require("path");
 const pool = require("./config/database");
 const publicEvents = require("./lib/publicEvents");
+const registrationRoutes = require("./routes/registrationRoutes");
+const { takeFlash } = require("./controllers/registrationController");
 
 const rolesRoutes = require("./routes/roles");
 const { isOrganiser } = require("./middleware/auth");
@@ -48,6 +50,21 @@ app.use(function (req, res, next) {
 });
 
 app.use(rolesRoutes);
+
+// Session required for future authentication (req.session.user) and flash messages.
+// Login / account registration itself is implemented by another teammate.
+app.use(session({
+  secret: process.env.SESSION_SECRET || "communityconnect-dev-session",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: "lax"
+  }
+}));
+
+app.use(registrationRoutes);
+
 
 // Temporary sample data for frontend preview only
 // Replace with MySQL results during backend implementation
@@ -823,7 +840,8 @@ app.get("/events/:id", async function (req, res) {
       activeNav: "events",
       pageTitle: event.event_name + " · CommunityConnect SG",
       event: event,
-      roles: roles
+      roles: roles,
+      messages: takeFlash(req)
     }));
   } catch (err) {
     console.error("Event details query failed:", err.message);
@@ -869,29 +887,6 @@ app.get("/member/dashboard", function (req, res) {
       hours: memberHoursSummary.totalHours,
       hoursNote: "Across " + memberHoursSummary.eventCount + " volunteer events since Jan 2026"
     }
-  }));
-});
-
-app.get("/member/registrations", function (req, res) {
-  const tab = req.query.tab || "Confirmed";
-  const tabs = ["Confirmed", "Waitlisted", "Cancelled", "Attended"];
-  const safeTab = tabs.indexOf(tab) !== -1 ? tab : "Confirmed";
-  const rows = (memberRegistrations[safeTab] || []).map(withTone);
-  res.render("member/my-registrations", appLocals("member", memberUser, "registrations", {
-    pageTitle: "My Registrations · Community member",
-    tabs: tabs,
-    activeTab: safeTab,
-    tabCounts: {
-      Confirmed: memberRegistrations.Confirmed.length,
-      Waitlisted: memberRegistrations.Waitlisted.length,
-      Cancelled: memberRegistrations.Cancelled.length,
-      Attended: memberRegistrations.Attended.length
-    },
-    rows: rows,
-    messages: [{
-      type: "success",
-      text: "Your <b>Volunteer</b> place for <b>Coastal Clean-Up at East Coast Park</b> was confirmed. A reminder will be sent one day before the event."
-    }]
   }));
 });
 

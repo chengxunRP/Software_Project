@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="My Registrations">
+  <dc-import name="Nav" role="member" active="registrations" userName="Wei Ling" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 84px;position:relative;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">My activity</div>
+      <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">My Registrations</h1>
+      <p style="margin:0;font-size:16px;color:#C6E2D0">3 upcoming · 1 on waiting list · 8 past events</p>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:22px">
+
+      <div style="display:flex;gap:10px;margin-top:-46px;position:relative">
+        <button style="padding:11px 22px;border-radius:999px;border:none;background:#FFFFFF;color:#1E4D33;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(20,38,28,0.16)">Upcoming (3)</button>
+        <button style="padding:11px 22px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.14);color:#FFFFFF;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer" style-hover="background:rgba(255,255,255,0.25)">Waiting list (1)</button>
+        <button style="padding:11px 22px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.14);color:#FFFFFF;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer" style-hover="background:rgba(255,255,255,0.25)">Past (8)</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <sc-for list="{{ regs }}" as="r" hint-placeholder-count="4">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:22px 26px;display:grid;grid-template-columns:66px 1.6fr 1fr auto;gap:22px;align-items:center;box-shadow:0 2px 8px rgba(35,39,31,0.06);transition:box-shadow 0.15s" style-hover="box-shadow:0 8px 22px rgba(35,39,31,0.11)">
+            <div style="width:66px;height:66px;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#FFFFFF;background:{{ r.panel }}">
+              <span style="font-size:11px;font-weight:800;text-transform:uppercase;opacity:0.9">{{ r.month }}</span>
+              <span style="font-size:24px;font-weight:900;line-height:1">{{ r.day }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+              <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+                <a href="Event Details.dc.html" style="font-size:16.5px;font-weight:800;color:#23271F" style-hover="color:#1E4D33">{{ r.title }}</a>
+                <span style="font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;background:{{ r.catBg }};color:{{ r.catFg }}">{{ r.category }}</span>
+              </div>
+              <span style="font-size:13.5px;color:#6E7266;font-weight:500">{{ r.when }} · {{ r.where }}</span>
+              <span style="font-size:12.5px;font-weight:700;color:{{ r.roleColor }}">{{ r.roleLabel }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <span style="align-self:flex-start;font-size:12.5px;font-weight:800;padding:6px 14px;border-radius:999px;background:{{ r.statusBg }};color:{{ r.statusFg }}">{{ r.status }}</span>
+              <span style="font-size:12.5px;color:#8B8778;font-weight:500">{{ r.note }}</span>
+            </div>
+            <div style="display:flex;gap:9px">
+              <a href="Event Details.dc.html" style="padding:10px 16px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:13px;font-weight:700;color:#23271F;background:#FDFCFA;white-space:nowrap" style-hover="border-color:#2E7D4F;color:#1E4D33;background:#EAF1E6">Details</a>
+              <a href="My Registrations.dc.html" style="padding:10px 16px;border-radius:10px;border:1.5px solid #EBD5D0;font-size:13px;font-weight:700;color:#B0433B;background:#FDF7F5;white-space:nowrap" style-hover="background:#FBEAE8;border-color:#B0433B;color:#B0433B">Cancel</a>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#E3F1EE;border:1px solid #C3E2DC;border-radius:16px;padding:18px 24px;display:flex;align-items:center;gap:14px">
+        <span style="font-size:20px">💡</span>
+        <p style="margin:0;font-size:14px;color:#155A50;line-height:1.55;font-weight:500;text-wrap:pretty">Plans changed? Cancelling early releases your space to the next person on the waiting list — they'll be notified automatically.</p>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      regs: [
+        {
+          month: "Jul", day: "25", panel: "linear-gradient(135deg,#2E7D4F,#6FBF8B)",
+          title: "Coastal Clean-Up at East Coast Park", category: "Environment", catBg: "#E7F2EA", catFg: "#1E4D33",
+          when: "Sat 25/07/2026 · 08:00–11:00", where: "East Coast Park, Area C",
+          roleLabel: "🤝 Volunteer · Beach Sweeper", roleColor: "#1F8A7A",
+          status: "✓ Confirmed", statusBg: "#E7F2EA", statusFg: "#1E4D33", note: "Registered 10/07/2026",
+        },
+        {
+          month: "Jul", day: "29", panel: "linear-gradient(135deg,#6E4F8E,#A98FC8)",
+          title: "Elderly Befriending Visits", category: "Elderly Support", catBg: "#F1EBF6", catFg: "#5F4380",
+          when: "Wed 29/07/2026 · 14:00–17:00", where: "Tampines Community Club",
+          roleLabel: "🤝 Volunteer · Befriender", roleColor: "#1F8A7A",
+          status: "✓ Confirmed", statusBg: "#E7F2EA", statusFg: "#1E4D33", note: "Registered 08/07/2026",
+        },
+        {
+          month: "Aug", day: "01", panel: "linear-gradient(135deg,#C8862B,#E9BE68)",
+          title: "Food Distribution Drive", category: "Food Support", catBg: "#FBF3DF", catFg: "#8A5E08",
+          when: "Sat 01/08/2026 · 09:00–13:00", where: "Bedok Community Centre",
+          roleLabel: "🙋 Participant", roleColor: "#8E6FA8",
+          status: "⏳ Waitlist #3", statusBg: "#FBF3DF", statusFg: "#8A5E08", note: "Joined list 12/07/2026",
+        },
+        {
+          month: "Aug", day: "15", panel: "linear-gradient(135deg,#2E7D4F,#6FBF8B)",
+          title: "Community Garden Planting Day", category: "Environment", catBg: "#E7F2EA", catFg: "#1E4D33",
+          when: "Sat 15/08/2026 · 08:00–11:00", where: "Jurong Lake Gardens",
+          roleLabel: "🙋 Participant", roleColor: "#8E6FA8",
+          status: "✓ Confirmed", statusBg: "#E7F2EA", statusFg: "#1E4D33", note: "Registered 14/07/2026",
+        },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

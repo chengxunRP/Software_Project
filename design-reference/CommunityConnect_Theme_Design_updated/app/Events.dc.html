@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Event Catalogue">
+  <dc-import name="Nav" role="public" active="events" hint-size="100%,70px"></dc-import>
+
+  <!-- Page header band -->
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="position:absolute;bottom:-120px;left:22%;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,0.04)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:48px 32px 108px;display:flex;flex-direction:column;gap:10px;position:relative">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Event catalogue</div>
+      <h1 style="margin:0;font-size:42px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">Find your next community event</h1>
+      <p style="margin:0;font-size:16.5px;color:#C6E2D0">12 upcoming events across Singapore — join as a Participant or Volunteer.</p>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 72px;display:flex;flex-direction:column;gap:26px">
+
+      <!-- Filter bar (overlapping the header band) -->
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:20px 22px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:14px;align-items:end;box-shadow:0 12px 32px rgba(20,38,28,0.14);margin-top:-64px;position:relative">
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266;text-transform:uppercase;letter-spacing:0.04em">Search</span>
+          <input type="text" placeholder="Keyword, e.g. clean-up" style="padding:11px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #DCEBD8"></input>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266;text-transform:uppercase;letter-spacing:0.04em">Category</span>
+          <select style="padding:11px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>All categories</option><option>Environment</option><option>Food Support</option><option>Elderly Support</option><option>Education</option><option>Fundraising</option><option>Health &amp; Wellness</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266;text-transform:uppercase;letter-spacing:0.04em">Date</span>
+          <select style="padding:11px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>Any date</option><option>This weekend</option><option>Next 7 days</option><option>Next 30 days</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266;text-transform:uppercase;letter-spacing:0.04em">Location</span>
+          <select style="padding:11px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>All areas</option><option>East</option><option>West</option><option>North</option><option>Central</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266;text-transform:uppercase;letter-spacing:0.04em">Availability</span>
+          <select style="padding:11px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+            <option>All events</option><option>Spaces available</option><option>Waitlist only</option>
+          </select>
+        </label>
+        <button style="padding:12px 22px;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(46,125,79,0.3)" style-hover="background:#256741">Apply</button>
+      </div>
+
+      <!-- Category quick filters -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="7">
+          <button style="padding:8px 16px;border-radius:999px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;border:1.5px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};transition:all 0.15s" style-hover="border-color:#2E7D4F">{{ c.label }}</button>
+        </sc-for>
+      </div>
+
+      <!-- Event grid -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+        <sc-for list="{{ events }}" as="ev" hint-placeholder-count="6">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(35,39,31,0.06);transition:transform 0.2s,box-shadow 0.2s" style-hover="transform:translateY(-4px);box-shadow:0 12px 28px rgba(35,39,31,0.13)">
+            <div style="height:140px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:{{ ev.panel }}">
+              <div style="position:absolute;top:-44px;right:-34px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.14)"></div>
+              <div style="position:absolute;bottom:-52px;left:-24px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+              <div style="font-size:46px;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.2))">{{ ev.glyph }}</div>
+              <span style="position:absolute;top:13px;left:13px;background:rgba(255,255,255,0.94);color:{{ ev.catFg }};font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">{{ ev.category }}</span>
+              <sc-if value="{{ ev.full }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute;top:13px;right:13px;background:#B0433B;color:#FFFFFF;font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px;letter-spacing:0.03em">FULL · WAITLIST</span>
+              </sc-if>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div style="font-size:17px;font-weight:800;color:#23271F;line-height:1.3;letter-spacing:-0.01em">{{ ev.name }}</div>
+              <div style="display:flex;flex-direction:column;gap:5px;font-size:13.5px;color:#6E7266;font-weight:500">
+                <span style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#1F8A7A;flex-shrink:0"></span>{{ ev.when }}</span>
+                <span style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#E3A93C;flex-shrink:0"></span>{{ ev.where }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto">
+                <div style="background:#F6F4EF;border-radius:11px;padding:10px 12px;display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11.5px;font-weight:700;color:#6E7266;text-transform:uppercase;letter-spacing:0.03em">Participants</span><span style="font-size:12px;font-weight:800;color:{{ ev.pColor }}">{{ ev.pNote }}</span></div>
+                  <div style="height:6px;border-radius:999px;background:#E6E2D8;overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ ev.pColor }};width:{{ ev.pPct }}"></div></div>
+                  <span style="font-size:12px;color:#6E7266;font-weight:600">{{ ev.pLabel }}</span>
+                </div>
+                <div style="background:#F6F4EF;border-radius:11px;padding:10px 12px;display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11.5px;font-weight:700;color:#6E7266;text-transform:uppercase;letter-spacing:0.03em">Volunteers</span><span style="font-size:12px;font-weight:800;color:{{ ev.vColor }}">{{ ev.vNote }}</span></div>
+                  <div style="height:6px;border-radius:999px;background:#E6E2D8;overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ ev.vColor }};width:{{ ev.vPct }}"></div></div>
+                  <span style="font-size:12px;color:#6E7266;font-weight:600">{{ ev.vLabel }}</span>
+                </div>
+              </div>
+              <a href="Event Details.dc.html" style="text-align:center;padding:11px 0;border-radius:11px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px;transition:background 0.15s" style-hover="background:#256741;color:#FFFFFF">View Details</a>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:8px;margin-top:8px">
+        <span style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px">1</span>
+        <a href="Events.dc.html" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:14px;background:#FFFFFF" style-hover="background:#EAF1E6;color:#1E4D33">2</a>
+        <a href="Events.dc.html" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid #D8D4C8;color:#3C4038;font-weight:600;font-size:14px;background:#FFFFFF" style-hover="background:#EAF1E6;color:#1E4D33">→</a>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const cats = {
+      "Environment":       { fg: "#1E4D33", bg: "#E7F2EA", border: "#C9E2D0", panel: "linear-gradient(135deg,#2E7D4F,#6FBF8B)", glyph: "🌿" },
+      "Food Support":      { fg: "#8A5E08", bg: "#FBF3DF", border: "#EFDDB8", panel: "linear-gradient(135deg,#C8862B,#E9BE68)", glyph: "🥫" },
+      "Elderly Support":   { fg: "#5F4380", bg: "#F1EBF6", border: "#DECFEB", panel: "linear-gradient(135deg,#6E4F8E,#A98FC8)", glyph: "🫶" },
+      "Education":         { fg: "#2F5E86", bg: "#E9F1F8", border: "#CBDFEF", panel: "linear-gradient(135deg,#2F5E86,#6FA8D6)", glyph: "📚" },
+      "Fundraising":       { fg: "#B3492D", bg: "#FBEAE3", border: "#F1CFC1", panel: "linear-gradient(135deg,#C25537,#EC9377)", glyph: "❤️" },
+      "Health & Wellness": { fg: "#155A50", bg: "#E3F1EE", border: "#C3E2DC", panel: "linear-gradient(135deg,#166A5E,#4FB3A4)", glyph: "🧘" },
+    };
+    const cap = (filled, total) => {
+      const pct = Math.min(100, Math.round((filled / total) * 100));
+      const left = total - filled;
+      return {
+        label: filled + " of " + total,
+        note: left <= 0 ? "Waitlist" : left + " left",
+        color: left <= 0 ? "#B0433B" : pct >= 80 ? "#C8862B" : "#2E7D4F",
+        pct: pct + "%", full: left <= 0,
+      };
+    };
+    const mk = (name, category, when, where, pF, pT, vF, vT) => {
+      const c = cats[category], p = cap(pF, pT), v = cap(vF, vT);
+      return {
+        name, category, when, where,
+        catFg: c.fg, panel: c.panel, glyph: c.glyph,
+        full: p.full && v.full,
+        pLabel: p.label, pNote: p.note, pColor: p.color, pPct: p.pct,
+        vLabel: v.label, vNote: v.note, vColor: v.color, vPct: v.pct,
+      };
+    };
+    return {
+      chips: [
+        { label: "All", fg: "#FFFFFF", bg: "#2E7D4F", border: "#2E7D4F" },
+        ...Object.entries(cats).map(([label, c]) => ({ label, fg: c.fg, bg: c.bg, border: c.border })),
+      ],
+      events: [
+        mk("Coastal Clean-Up at East Coast Park", "Environment", "Sat 25/07/2026 · 08:00–11:00", "East Coast Park, Area C", 34, 40, 8, 10),
+        mk("Food Distribution Drive", "Food Support", "Sat 01/08/2026 · 09:00–13:00", "Bedok Community Centre", 25, 25, 12, 12),
+        mk("Weekend Tutoring — Primary Maths", "Education", "Sun 26/07/2026 · 10:00–12:00", "Tampines Community Club", 9, 20, 4, 8),
+        mk("Elderly Befriending Visits", "Elderly Support", "Wed 29/07/2026 · 14:00–17:00", "Tampines Community Club", 14, 18, 9, 12),
+        mk("Morning Tai Chi for Seniors", "Health & Wellness", "Tue 28/07/2026 · 07:00–08:30", "Bishan Senior Activity Centre", 26, 35, 3, 6),
+        mk("Park Clean-Up & Recycling Drive", "Environment", "Sat 08/08/2026 · 07:30–10:30", "Bishan-Ang Mo Kio Park", 22, 50, 10, 15),
+        mk("Charity Fun Run — Route Marshals", "Fundraising", "Sun 16/08/2026 · 06:30–11:00", "Jurong Lake Gardens", 41, 45, 18, 20),
+        mk("Community Garden Planting Day", "Environment", "Sat 15/08/2026 · 08:00–11:00", "Jurong Lake Gardens", 12, 30, 5, 10),
+        mk("Grocery Delivery for Seniors", "Elderly Support", "Sat 22/08/2026 · 09:00–12:00", "Bedok Community Centre", 16, 16, 8, 8),
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

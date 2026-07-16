@@ -1,12 +1,17 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = 'Manage Events'; %>
-    <% topbarActions = '<a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>'; %>
-    <%- include('../partials/navbar') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content">
+  <%
+    pageEyebrow = 'Organiser';
+    pageHeading = 'Manage Events';
+    pageLead = 'Create, edit and manage capacity for your community events.';
+    pageActions = '<a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel">
       <div class="d-flex gap-2 align-items-center flex-wrap">
         <input type="text" class="form-control-cc" style="max-width:320px;padding:10px 14px;border-radius:10px;font-size:14px;background:#fff" placeholder="Search events…" data-preview-only>
         <select class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
@@ -61,6 +66,9 @@
       </div>
     </div>
   </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
 </div>
 
 <div class="modal-cc" id="confirmModal">

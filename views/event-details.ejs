@@ -1,9 +1,16 @@
 <%- include('partials/header') %>
-<div class="public-page">
+<div class="site-page public-page">
   <%- include('partials/navbar') %>
 
-  <main class="flex-fill">
-    <div class="section-wrap" style="padding-top:32px;max-width:1120px">
+  <%
+    pageEyebrow = 'Event details';
+    pageHeading = event.event_name;
+    pageLead = 'Organised by ' + event.organiser;
+  %>
+  <%- include('partials/page-header') %>
+
+  <main class="site-main">
+    <div class="section-wrap overlap-panel" style="max-width:1120px">
       <div class="breadcrumb-cc mb-3">
         <a href="/events">Event Catalogue</a>
         <span class="sep">/</span>
@@ -12,22 +19,16 @@
 
       <div class="details-grid">
         <div class="d-flex flex-column gap-4">
-          <div class="page-photo">
-            <span class="photo-label" style="font-family:ui-monospace,monospace;font-size:13px;color:#8B8778;background:#fff;padding:7px 12px;border-radius:8px;border:1px solid #E6E2D8"><%= event.photoLabel %></span>
-          </div>
+          <%- include('partials/event-card-panel', { category: event.category }) %>
 
-          <div>
-            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-              <span class="badge-cc badge-cc-cat" style="background:<%= event.badgeBg %>;color:<%= event.badgeFg %>"><%= event.category %></span>
-              <% if (event.participants.full || event.volunteers.full) { %>
-                <span class="badge-cc badge-cc-warning">Capacity tight</span>
-              <% } %>
-              <% if (event.full) { %>
-                <span class="badge-cc badge-cc-full">Both full</span>
-              <% } %>
-            </div>
-            <h1 class="h-page mb-2" style="font-size:34px;line-height:1.15"><%= event.event_name %></h1>
-            <div class="text-muted-cc" style="font-size:14.5px">Organised by <span style="font-weight:600;color:#3C4038"><%= event.organiser %></span></div>
+          <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+            <span class="badge-cc badge-cc-cat" style="background:<%= event.badgeBg %>;color:<%= event.badgeFg %>"><%= event.category %></span>
+            <% if (event.participants.full || event.volunteers.full) { %>
+              <span class="badge-cc badge-cc-warning">Capacity tight</span>
+            <% } %>
+            <% if (event.full) { %>
+              <span class="badge-cc badge-cc-full">Both full</span>
+            <% } %>
           </div>
 
           <div class="card-cc">
@@ -45,8 +46,8 @@
               <div class="d-flex flex-column gap-3">
                 <% roles.forEach(function (r) { %>
                   <% const roleFull = r.filled >= r.capacity; %>
-                  <% const roleNear = !roleFull && (r.filled / r.capacity) >= 0.8; %>
-                  <div class="d-flex align-items-center justify-content-between gap-3 p-3" style="border:1px solid #E6E2D8;border-radius:11px">
+                  <% const roleNear = !roleFull && r.capacity && (r.filled / r.capacity) >= 0.8; %>
+                  <div class="d-flex align-items-center justify-content-between gap-3 p-3 role-row">
                     <div>
                       <div style="font-size:15px;font-weight:700;color:#23271F"><%= r.name %></div>
                       <div style="font-size:13.5px;color:#6E7266"><%= r.description %></div>
@@ -63,7 +64,7 @@
         </div>
 
         <div class="d-flex flex-column gap-3 sticky-panel hide-mobile">
-          <div class="card-cc" style="border-radius:16px;box-shadow:0 2px 6px rgba(35,39,31,0.07)">
+          <div class="card-cc join-panel">
             <div class="card-cc-body" style="padding:24px">
               <div class="d-flex flex-column gap-3" style="font-size:14.5px">
                 <div class="d-flex justify-content-between gap-2"><span class="text-muted-cc fw-medium">Date</span><span class="fw-semibold text-ink text-end"><%= event.dateLabel %></span></div>
@@ -95,23 +96,23 @@
                 </div>
               </div>
 
-              <form data-preview-only data-participation-form class="d-flex flex-column gap-3">
-                <input type="hidden" name="event_id" value="<%= event.id %>">
+              <%- include('partials/messages') %>
 
+              <form id="registrationForm" method="POST" action="/events/<%= event.id %>/register" data-participation-form class="d-flex flex-column gap-3">
                 <div>
                   <div class="form-label-cc mb-2">How would you like to join?</div>
                   <div class="d-flex flex-column gap-2">
                     <label class="status-option">
                       <input type="radio" name="participation_type" value="Participant" checked data-participation-type>
                       <div>
-                        <div style="font-size:14px;font-weight:700;color:#23271F">Join as Participant</div>
+                        <div style="font-size:14px;font-weight:700;color:#23271F">🙋 Join as Participant</div>
                         <div style="font-size:12px;color:#8B8778"><%= event.participants.full ? 'Participant places are full — join the participant waiting list' : event.participants.left + ' participant spaces remaining' %></div>
                       </div>
                     </label>
                     <label class="status-option">
                       <input type="radio" name="participation_type" value="Volunteer" data-participation-type>
                       <div>
-                        <div style="font-size:14px;font-weight:700;color:#23271F">Volunteer for This Event</div>
+                        <div style="font-size:14px;font-weight:700;color:#23271F">🤝 Volunteer for This Event</div>
                         <div style="font-size:12px;color:#8B8778"><%= event.volunteers.full ? 'Volunteer places are full — join the volunteer waiting list' : event.volunteers.left + ' volunteer spaces remaining' %></div>
                       </div>
                     </label>
@@ -122,7 +123,7 @@
                   <label class="form-label-cc" for="volunteer_role_id">Volunteer role</label>
                   <% if (roles && roles.length) { %>
                     <select class="form-select-cc" id="volunteer_role_id" name="volunteer_role_id" disabled>
-                      <option value="">Select a role</option>
+                      <option value="">Select a role (optional)</option>
                       <% roles.forEach(function (r) { %>
                         <option value="<%= r.volunteer_role_id %>"><%= r.name %></option>
                       <% }) %>
@@ -134,12 +135,11 @@
 
                 <div>
                   <label class="form-label-cc" for="notes">Notes (optional)</label>
-                  <textarea class="form-control-cc" id="notes" name="notes" rows="2" placeholder="Anything the organiser should know"></textarea>
+                  <textarea class="form-control-cc" id="notes" name="notes" rows="2" maxlength="500" placeholder="Anything the organiser should know"></textarea>
                 </div>
 
-                <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:13px 0;border-radius:11px;font-weight:700;font-size:15.5px" data-join-cta>Join as Participant</a>
+                <button type="submit" class="btn-cc btn-cc-primary btn-cc-block btn-cc-lg" data-join-cta>Join as Participant</button>
               </form>
-              <p class="mb-0 mt-2 text-center" style="font-size:12.5px;color:#8B8778">You'll be asked to log in or create an account. Preview only — no registration is saved yet.</p>
             </div>
           </div>
         </div>
@@ -147,11 +147,12 @@
     </div>
 
     <div class="mobile-sticky-cta">
-      <a href="/login" class="btn-cc btn-cc-primary btn-cc-block" style="padding:14px 0;border-radius:12px;font-weight:700;font-size:15.5px">Join as Participant</a>
-      <a href="/login" class="btn-cc btn-cc-secondary btn-cc-block" style="padding:12px 0;border-radius:12px;font-size:14.5px">Volunteer for This Event</a>
-      <span class="text-center" style="font-size:11.5px;color:#8B8778">You'll be asked to log in or create an account.</span>
+      <a href="#registrationForm" class="btn-cc btn-cc-primary btn-cc-block">Join as Participant</a>
+      <a href="#registrationForm" class="btn-cc btn-cc-outline btn-cc-block">Volunteer for This Event</a>
     </div>
   </main>
+
+  <%- include('partials/footer') %>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>

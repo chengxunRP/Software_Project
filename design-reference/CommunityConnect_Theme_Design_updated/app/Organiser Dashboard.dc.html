@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Organiser Dashboard">
+  <dc-import name="Nav" role="organiser" active="dashboard" userName="Marcus Lim" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 96px;position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Organiser dashboard · Green Team</div>
+        <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">Welcome back, Marcus 👋</h1>
+        <p style="margin:0;font-size:16px;color:#C6E2D0">6 upcoming events · 3 items need your attention today.</p>
+      </div>
+      <a href="Event Form.dc.html" style="flex-shrink:0;padding:13px 24px;border-radius:12px;background:#FFFFFF;color:#1E4D33;font-weight:800;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,0.2)" style-hover="background:#EAF1E6;color:#1E4D33">＋ Create new event</a>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:24px">
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:-56px;position:relative">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:17px">📅</div>
+          <span style="font-size:30px;font-weight:900;color:#23271F;letter-spacing:-0.02em">24</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Total events · 18 done, 6 upcoming</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#E3F1EE;display:flex;align-items:center;justify-content:center;font-size:17px">🤝</div>
+          <span style="font-size:30px;font-weight:900;color:#2E7D4F;letter-spacing:-0.02em">138</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Confirmed volunteers, 6 events</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#FBF3DF;display:flex;align-items:center;justify-content:center;font-size:17px">⏳</div>
+          <span style="font-size:30px;font-weight:900;color:#C8862B;letter-spacing:-0.02em">14</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">On waiting lists · 2 events full</span>
+        </div>
+        <div style="background:linear-gradient(135deg,#2E7D4F,#1F8A7A);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(31,138,122,0.3)">
+          <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:17px">✓</div>
+          <span style="font-size:30px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">89%</span>
+          <span style="font-size:12.5px;font-weight:700;color:#D8EDDF">Avg. attendance, last 10 events</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:start">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <div style="padding:20px 24px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:17px;font-weight:800;color:#23271F">Upcoming events</span>
+            <a href="Manage Events.dc.html" style="font-size:13.5px;font-weight:700">Manage all →</a>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="4">
+              <div style="padding:17px 24px;display:flex;align-items:center;gap:15px;border-bottom:1px solid #F2EFE7;transition:background 0.15s" style-hover="background:#FBFAF6">
+                <div style="width:54px;height:54px;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#FFFFFF;background:{{ u.panel }}">
+                  <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;opacity:0.9">{{ u.month }}</span>
+                  <span style="font-size:20px;font-weight:900;line-height:1">{{ u.day }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0">
+                  <span style="font-size:15px;font-weight:800;color:#23271F">{{ u.name }}</span>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <div style="flex:1;max-width:190px;height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ u.pct }};height:100%;border-radius:999px;background:{{ u.color }}"></div></div>
+                    <span style="font-size:12.5px;font-weight:700;color:#6E7266">{{ u.cap }} registered</span>
+                  </div>
+                </div>
+                <a href="Manage Registrations.dc.html" style="font-size:13px;font-weight:700;flex-shrink:0;padding:9px 14px;border-radius:9px;border:1.5px solid #D8D4C8;color:#23271F;background:#FDFCFA" style-hover="border-color:#2E7D4F;color:#1E4D33;background:#EAF1E6">Registrations</a>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="padding:20px 24px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:17px;font-weight:800;color:#23271F">Needs attention</span>
+              <span style="background:#B0433B;color:#FFFFFF;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px">3</span>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <div style="padding:16px 22px;display:flex;gap:13px;border-bottom:1px solid #F2EFE7;align-items:flex-start">
+                <span style="width:30px;height:30px;border-radius:9px;background:#FBEAE8;color:#B0433B;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex-shrink:0">!</span>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <span style="font-size:14px;font-weight:700;color:#23271F;line-height:1.45">Food Distribution Drive is full with 6 on the waiting list</span>
+                  <a href="Manage Registrations.dc.html" style="font-size:13px;font-weight:700">Review waiting list →</a>
+                </div>
+              </div>
+              <div style="padding:16px 22px;display:flex;gap:13px;border-bottom:1px solid #F2EFE7;align-items:flex-start">
+                <span style="width:30px;height:30px;border-radius:9px;background:#FBF3DF;color:#8A5E08;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex-shrink:0">!</span>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <span style="font-size:14px;font-weight:700;color:#23271F;line-height:1.45">Coastal Clean-Up: 3 Team Lead roles still unassigned</span>
+                  <a href="Role Assignment.dc.html" style="font-size:13px;font-weight:700">Assign roles →</a>
+                </div>
+              </div>
+              <div style="padding:16px 22px;display:flex;gap:13px;align-items:flex-start">
+                <span style="width:30px;height:30px;border-radius:9px;background:#FBF3DF;color:#8A5E08;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex-shrink:0">!</span>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <span style="font-size:14px;font-weight:700;color:#23271F;line-height:1.45">Attendance for Weekend Tutoring (12/07) not yet finalised</span>
+                  <a href="Attendance.dc.html" style="font-size:13px;font-weight:700">Record attendance →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <span style="font-size:17px;font-weight:800;color:#23271F">Attendance — last 3 events</span>
+            <sc-for list="{{ attendance }}" as="a" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:13.5px"><span style="font-weight:700;color:#3C4038">{{ a.name }}</span><span style="font-weight:800;color:#2E7D4F">{{ a.rate }}</span></div>
+                <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ a.rate }};height:100%;border-radius:999px;background:linear-gradient(90deg,#2E7D4F,#1F8A7A)"></div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const panels = {
+      env: "linear-gradient(135deg,#2E7D4F,#6FBF8B)",
+      food: "linear-gradient(135deg,#C8862B,#E9BE68)",
+    };
+    const mk = (name, month, day, filled, total, panel) => {
+      const pct = Math.round((filled / total) * 100);
+      return {
+        name, month, day, panel,
+        pct: Math.min(100, pct) + "%",
+        cap: filled + "/" + total,
+        color: pct >= 100 ? "#B0433B" : pct >= 80 ? "#D99E2B" : "#2E7D4F",
+      };
+    };
+    return {
+      upcoming: [
+        mk("Coastal Clean-Up at East Coast Park", "Jul", "25", 34, 40, panels.env),
+        mk("Food Distribution Drive", "Aug", "01", 25, 25, panels.food),
+        mk("Park Clean-Up & Recycling Drive", "Aug", "08", 22, 50, panels.env),
+        mk("Community Garden Planting Day", "Aug", "15", 12, 30, panels.env),
+      ],
+      attendance: [
+        { name: "Weekend Tutoring (12/07)", rate: "90%" },
+        { name: "Garden Planting (04/07)", rate: "93%" },
+        { name: "Park Clean-Up (27/06)", rate: "84%" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,12 +1,17 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = 'My Registrations'; %>
-    <% topbarActions = '<a href="/events" class="btn-cc btn-cc-primary btn-cc-sm">+ Find an event</a>'; %>
-    <%- include('../partials/navbar') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content max-1000">
+  <%
+    pageEyebrow = 'Community member';
+    pageHeading = 'My Registrations';
+    pageLead = 'Track your participant and volunteer registrations, waiting-list positions and cancellations.';
+    pageActions = '<a href="/events" class="btn-cc btn-cc-primary btn-cc-sm">+ Find an event</a>';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel max-1000">
       <%- include('../partials/messages') %>
 
       <div class="tabs-cc">
@@ -40,6 +45,9 @@
               <% if (r.waiting_position) { %>
                 <div style="font-size:12.5px;color:#8A5E08;font-weight:600;margin-top:2px">Waiting-list position: #<%= r.waiting_position %></div>
               <% } %>
+              <% if (r.registered_label) { %>
+                <div style="font-size:12.5px;color:#8B8778;margin-top:2px">Registered: <%= r.registered_label %></div>
+              <% } %>
               <% if (r.note) { %>
                 <div style="font-size:12.5px;color:#8A5E08;font-weight:600"><%= r.note %></div>
               <% } %>
@@ -51,7 +59,7 @@
             <div class="d-flex gap-2">
               <a href="/events/<%= r.eventId %>" class="btn-cc btn-cc-secondary btn-cc-sm">View</a>
               <% if (r.cancellable) { %>
-                <button type="button" class="btn-cc btn-cc-danger-outline btn-cc-sm" data-open-modal data-event-name="<%= r.name %>">Cancel</button>
+                <button type="button" class="btn-cc btn-cc-danger-outline btn-cc-sm" data-open-modal data-event-name="<%= r.name %>" data-cancel-registration-id="<%= r.registration_id %>">Cancel</button>
               <% } %>
             </div>
           </div>
@@ -59,7 +67,12 @@
       </div>
     </div>
   </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
 </div>
+
+<form id="cancelRegistrationForm" method="POST" action="" style="display:none"></form>
 
 <div class="modal-cc" id="confirmModal">
   <div class="modal-cc-dialog">
@@ -70,17 +83,10 @@
     </div>
     <div class="d-flex gap-2 justify-content-end">
       <button type="button" class="btn-cc btn-cc-secondary" data-close-modal>Keep my place</button>
-      <button type="button" class="btn-cc btn-cc-danger" data-close-modal>Yes, cancel registration</button>
+      <button type="button" class="btn-cc btn-cc-danger" data-confirm-cancel>Yes, cancel registration</button>
     </div>
   </div>
 </div>
-
-<nav class="mobile-tabbar">
-  <a href="/member/dashboard"><span class="tab-icon">🏠</span>Dashboard</a>
-  <a href="/events"><span class="tab-icon">🔍</span>Events</a>
-  <a href="/member/registrations" class="active"><span class="tab-icon">🗂</span>Registrations</a>
-  <a href="/member/volunteer-hours"><span class="tab-icon">⏱</span>Hours</a>
-</nav>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>

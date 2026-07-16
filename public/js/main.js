@@ -1,50 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Public hamburger navigation
+  // Sticky top-nav hamburger sheet (public + signed-in)
   var navToggle = document.getElementById("navToggle");
   var mobileSheet = document.getElementById("publicMobileSheet");
   if (navToggle && mobileSheet) {
     navToggle.addEventListener("click", function () {
       mobileSheet.classList.toggle("open");
+      navToggle.classList.toggle("open");
     });
   }
 
-  // App sidebar open/close on mobile
-  var appShell = document.getElementById("appShell");
-  var sidebarOpenBtn = document.getElementById("sidebarOpenBtn");
-  var sidebarBackdrop = document.getElementById("sidebarBackdrop");
-  var sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
-
-  function closeSidebar() {
-    if (appShell) {
-      appShell.classList.remove("sidebar-open");
-    }
-  }
-
-  function openSidebar() {
-    if (appShell) {
-      appShell.classList.add("sidebar-open");
-    }
-  }
-
-  if (sidebarOpenBtn) {
-    sidebarOpenBtn.addEventListener("click", openSidebar);
-  }
-  if (sidebarBackdrop) {
-    sidebarBackdrop.addEventListener("click", closeSidebar);
-  }
-  if (sidebarCloseBtn) {
-    sidebarCloseBtn.addEventListener("click", closeSidebar);
-  }
-
-  // Confirmation modal (preview only — no server action)
+  // Cancellation confirmation modal — posts to /registrations/:id/cancel
   var modal = document.getElementById("confirmModal");
   var modalEventName = document.getElementById("modalEventName");
+  var cancelForm = document.getElementById("cancelRegistrationForm");
+  var pendingCancelId = null;
   var openButtons = document.querySelectorAll("[data-open-modal]");
   var closeButtons = document.querySelectorAll("[data-close-modal]");
+  var confirmCancelBtn = document.querySelector("[data-confirm-cancel]");
 
   openButtons.forEach(function (btn) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
+      pendingCancelId = btn.getAttribute("data-cancel-registration-id");
       if (modalEventName) {
         modalEventName.textContent = btn.getAttribute("data-event-name") || "this item";
       }
@@ -57,21 +34,34 @@ document.addEventListener("DOMContentLoaded", function () {
   closeButtons.forEach(function (btn) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
+      pendingCancelId = null;
       if (modal) {
         modal.classList.remove("open");
       }
     });
   });
 
+  if (confirmCancelBtn) {
+    confirmCancelBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (!cancelForm || !pendingCancelId) {
+        return;
+      }
+      cancelForm.action = "/registrations/" + encodeURIComponent(pendingCancelId) + "/cancel";
+      cancelForm.submit();
+    });
+  }
+
   if (modal) {
     modal.addEventListener("click", function (e) {
       if (e.target === modal) {
+        pendingCancelId = null;
         modal.classList.remove("open");
       }
     });
   }
 
-  // Preview-only forms: block submit so GET-only frontend stays safe
+  // Preview-only forms for teammate pages not yet wired to POST handlers
   document.querySelectorAll("form[data-preview-only]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();

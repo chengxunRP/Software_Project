@@ -1,0 +1,29 @@
+<%
+  const headerEyebrow = typeof pageEyebrow !== 'undefined' ? pageEyebrow : '';
+  const headerTitle = typeof pageHeading !== 'undefined' ? pageHeading : (typeof topbarTitle !== 'undefined' ? topbarTitle : '');
+  const headerLead = typeof pageLead !== 'undefined' ? pageLead : '';
+%>
+<section class="page-header-band">
+  <div class="page-header-inner">
+    <div class="page-header-copy">
+      <% if (headerEyebrow) { %>
+        <div class="page-eyebrow"><%= headerEyebrow %></div>
+      <% } %>
+      <% if (headerTitle) { %>
+        <h1 class="page-header-title"><%= headerTitle %></h1>
+      <% } %>
+      <% if (headerLead) { %>
+        <p class="page-header-lead"><%= headerLead %></p>
+      <% } %>
+    </div>
+    <% if (typeof pageActions !== 'undefined' && pageActions) { %>
+      <div class="page-header-actions">
+        <%- pageActions %>
+      </div>
+    <% } else if (typeof topbarActions !== 'undefined' && topbarActions) { %>
+      <div class="page-header-actions">
+        <%- topbarActions %>
+      </div>
+    <% } %>
+  </div>
+</section>
