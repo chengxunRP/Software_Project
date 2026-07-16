@@ -185,6 +185,57 @@ router.post("/organiser/events/:id/roles", isOrganiser, async function (req, res
   res.redirect("/organiser/events/" + eventId + "/roles");
 });
 
+// GET /organiser/events/:eventId/volunteers
+// User action  -> organiser clicks an event to see everyone registered as a Volunteer
+// Route        -> confirms the organiser owns the event, then loads every Volunteer
+//                 registration for it together with their assigned role (if any)
+// SQL          -> SELECT joining event_registrations, users, volunteer_assignments
+//                 and volunteer_roles, filtered to participation_type = 'Volunteer'
+// DB           -> event_registrations, users, volunteer_assignments, volunteer_roles
+// Response     -> renders the volunteer list, or an empty state if none are registered
+router.get("/organiser/events/:eventId/volunteers", isOrganiser, async function (req, res) {
+  const eventId = req.params.eventId;
+
+  const [eventRows] = await db.query(
+    "SELECT event_id, event_name, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
+
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (event.organiser_id !== req.session.user.user_id) {
+    return res.status(403).send("You do not have permission to view this event.");
+  }
+
+  const [volunteers] = await db.query(
+    `SELECT er.registration_id,
+            u.name AS volunteer_name,
+            u.email,
+            er.status AS registration_status,
+            vr.role_name AS assigned_role_name
+     FROM event_registrations er
+     JOIN users u ON u.user_id = er.user_id
+     LEFT JOIN volunteer_assignments va ON va.registration_id = er.registration_id
+     LEFT JOIN volunteer_roles vr ON vr.role_id = va.role_id
+     WHERE er.event_id = ? AND er.participation_type = 'Volunteer'
+     ORDER BY u.name ASC`,
+    [eventId]
+  );
+
+  res.render("organiser/volunteer-list", {
+    layout: "app",
+    role: "organiser",
+    activeNav: "roles",
+    pageTitle: "Event Volunteers · Organiser",
+    currentUser: req.session.user,
+    event: event,
+    volunteers: volunteers,
+    messages: [],
+  });
+});
+
 // GET /organiser/events/:eventId/roles/:roleId/assign
 // User action  -> organiser opens the "Assign volunteers" page for one role
 // Route        -> confirms ownership, then loads role + assigned + eligible lists
