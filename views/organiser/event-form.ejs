@@ -1,12 +1,17 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = formMode === 'create' ? 'Add Event' : 'Edit Event'; %>
-    <% topbarActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><a href="/organiser/events" class="btn-cc btn-cc-primary btn-cc-sm">Save event</a>'; %>
-    <%- include('../partials/navbar') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content max-1060">
+  <%
+    pageEyebrow = 'Organiser';
+    pageHeading = formMode === 'create' ? 'Add Event' : 'Edit Event';
+    pageLead = 'Set event details, schedule and separate participant and volunteer capacities.';
+    pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><a href="/organiser/events" class="btn-cc btn-cc-primary btn-cc-sm">Save event</a>';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel max-1060">
       <div class="breadcrumb-cc mb-0">
         <a href="/organiser/events" style="font-weight:600">← Manage Events</a>
         <span class="sep">/</span>
@@ -127,7 +132,11 @@
       </form>
     </div>
   </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>
 </body>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Volunteer Hours">
+  <dc-import name="Nav" role="member" active="hours" userName="Wei Ling" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 96px;position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">My contribution</div>
+        <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">My Volunteer Hours</h1>
+        <p style="margin:0;font-size:16px;color:#C6E2D0">Every hour is verified by the event organiser after attendance is marked.</p>
+      </div>
+      <button style="flex-shrink:0;padding:13px 22px;border-radius:12px;border:none;background:#FFFFFF;color:#1E4D33;font-weight:800;font-size:14.5px;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,0.2)" style-hover="background:#EAF1E6">⬇ Download record (PDF)</button>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:24px">
+
+      <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:16px;margin-top:-56px;position:relative">
+        <div style="background:linear-gradient(135deg,#14503F,#1F8A7A);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(31,138,122,0.3);position:relative;overflow:hidden">
+          <div style="position:absolute;top:-40px;right:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+          <span style="font-size:13px;font-weight:700;color:#9FE0D2;position:relative">Total verified hours</span>
+          <span style="font-size:44px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;line-height:1;position:relative">38.5</span>
+          <span style="font-size:13px;color:#CBEAE2;font-weight:500;position:relative">Across 11 attended events since January 2026</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <span style="font-size:13px;font-weight:700;color:#6E7266">This month (July)</span>
+          <span style="font-size:34px;font-weight:900;color:#2E7D4F;line-height:1">6.0</span>
+          <span style="font-size:13px;color:#8B8778;font-weight:500">2 events attended</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <span style="font-size:13px;font-weight:700;color:#6E7266">Attendance rate</span>
+          <span style="font-size:34px;font-weight:900;color:#23271F;line-height:1">92%</span>
+          <span style="font-size:13px;color:#8B8778;font-weight:500">11 attended · 1 absent</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <span style="font-size:13px;font-weight:700;color:#6E7266">Next milestone</span>
+          <span style="font-size:34px;font-weight:900;color:#C8862B;line-height:1">50 🏅</span>
+          <span style="font-size:13px;color:#8B8778;font-weight:500">11.5 hours to go</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:22px;align-items:start">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:20px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <span style="font-size:17px;font-weight:800;color:#23271F">Monthly contribution — 2026</span>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:14px;align-items:end;height:170px">
+            <sc-for list="{{ months }}" as="m" hint-placeholder-count="7">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end">
+                <span style="font-size:12.5px;font-weight:800;color:{{ m.valColor }}">{{ m.val }}</span>
+                <div style="width:100%;max-width:46px;height:{{ m.h }};border-radius:9px 9px 4px 4px;background:{{ m.color }}"></div>
+                <span style="font-size:12.5px;font-weight:700;color:#8B8778">{{ m.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div style="background:linear-gradient(135deg,#FBF3DF,#F8E8CB);border:1px solid #EFDDB8;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden">
+            <div style="position:absolute;bottom:-50px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(200,134,43,0.1)"></div>
+            <div style="display:flex;align-items:center;gap:11px;position:relative">
+              <div style="width:44px;height:44px;border-radius:13px;background:#C8862B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:20px">🏅</div>
+              <span style="font-size:18px;font-weight:800;color:#7A5312">50-Hour Community Badge</span>
+            </div>
+            <div style="height:10px;border-radius:999px;background:rgba(122,83,18,0.15);overflow:hidden;position:relative"><div style="width:77%;height:100%;border-radius:999px;background:linear-gradient(90deg,#C8862B,#E3A93C)"></div></div>
+            <span style="font-size:13.5px;color:#6B4E1B;font-weight:600;position:relative">38.5 of 50 hours — keep going, Wei Ling!</span>
+          </div>
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <span style="font-size:17px;font-weight:800;color:#23271F">Badges earned</span>
+            <div style="display:flex;gap:12px">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 10px;border-radius:14px;background:#E7F2EA;border:1px solid #C9E2D0">
+                <span style="font-size:26px">🌱</span><span style="font-size:12px;font-weight:800;color:#1E4D33;text-align:center">First Event</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 10px;border-radius:14px;background:#E3F1EE;border:1px solid #C3E2DC">
+                <span style="font-size:26px">🤝</span><span style="font-size:12px;font-weight:800;color:#155A50;text-align:center">10 Hours</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 10px;border-radius:14px;background:#FBF3DF;border:1px solid #EFDDB8">
+                <span style="font-size:26px">⭐</span><span style="font-size:12px;font-weight:800;color:#8A5E08;text-align:center">25 Hours</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 10px;border-radius:14px;background:#F6F4EF;border:1px dashed #C9C4B4;opacity:0.7">
+                <span style="font-size:26px;filter:grayscale(1)">🏅</span><span style="font-size:12px;font-weight:800;color:#8B8778;text-align:center">50 Hours</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+        <div style="padding:20px 24px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:17px;font-weight:800;color:#23271F">Event history</span>
+          <span style="font-size:13px;color:#8B8778;font-weight:600">Verified by organisers</span>
+        </div>
+        <div style="display:grid;grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr;padding:12px 24px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Event</span><span>Date</span><span>Location</span><span>Status</span><span style="text-align:right">Hours</span>
+        </div>
+        <sc-for list="{{ history }}" as="h" hint-placeholder-count="7">
+          <div style="display:grid;grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr;padding:15px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center;transition:background 0.15s" style-hover="background:#FBFAF6">
+            <span style="font-weight:700;color:#23271F">{{ h.name }}</span>
+            <span style="color:#6E7266;font-weight:500">{{ h.date }}</span>
+            <span style="color:#6E7266;font-weight:500">{{ h.loc }}</span>
+            <span><span style="background:{{ h.bBg }};color:{{ h.bFg }};font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px">{{ h.status }}</span></span>
+            <span style="text-align:right;font-weight:800;color:#23271F">{{ h.hours }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:flex-end;padding:15px 24px;font-size:14.5px;font-weight:800;color:#23271F;background:#FBFAF6">Total &nbsp;<span style="color:#2E7D4F">38.5 hours</span></div>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const vals = [4.5, 5.0, 7.5, 4.0, 6.0, 5.5, 6.0];
+    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+    const max = Math.max(...vals);
+    const months = vals.map((v, i) => ({
+      val: v.toFixed(1),
+      h: Math.round((v / max) * 118) + "px",
+      label: labels[i],
+      color: i === vals.length - 1 ? "linear-gradient(180deg,#2E7D4F,#1F8A7A)" : "#C6DCCB",
+      valColor: i === vals.length - 1 ? "#2E7D4F" : "#8B8778",
+    }));
+    const att = { bBg: "#E7F2EA", bFg: "#1E4D33" };
+    const abs = { bBg: "#FBEAE8", bFg: "#B0433B" };
+    return {
+      months,
+      history: [
+        { name: "Weekend Tutoring — Primary Maths", date: "12/07/2026", loc: "Tampines CC", status: "Attended", hours: "3.0", ...att },
+        { name: "Community Garden Planting Day", date: "04/07/2026", loc: "Jurong Lake Gardens", status: "Attended", hours: "3.0", ...att },
+        { name: "Park Clean-Up & Recycling Drive", date: "27/06/2026", loc: "Bishan-AMK Park", status: "Attended", hours: "3.0", ...att },
+        { name: "Grocery Delivery for Seniors", date: "13/06/2026", loc: "Bedok CC", status: "Attended", hours: "3.5", ...att },
+        { name: "Charity Fun Run — Route Marshals", date: "24/05/2026", loc: "Jurong Lake Gardens", status: "Absent", hours: "0.0", ...abs },
+        { name: "Food Distribution Drive", date: "09/05/2026", loc: "Bedok CC", status: "Attended", hours: "4.0", ...att },
+        { name: "Elderly Befriending Visits", date: "22/04/2026", loc: "Tampines CC", status: "Attended", hours: "3.0", ...att },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

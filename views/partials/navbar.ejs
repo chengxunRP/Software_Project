@@ -1,57 +1,102 @@
-<% const isPublic = typeof layout === 'undefined' || layout === 'public'; %>
-<% if (isPublic) { %>
-<header class="public-header <%= typeof activeNav !== 'undefined' && activeNav === 'events' ? 'wide' : '' %>">
-  <div class="public-header-inner">
-    <a href="/" class="d-flex align-items-center gap-2 text-decoration-none">
+<%
+  const isPublic = typeof layout === 'undefined' || layout === 'public';
+  const navRole = typeof role !== 'undefined' ? role : null;
+  const hideAuthLinks = typeof activeNav !== 'undefined' && (activeNav === 'login' || activeNav === 'register');
+%>
+<header class="cc-nav">
+  <div class="cc-nav-inner">
+    <a href="/" class="cc-brand">
       <span class="brand-mark">C</span>
       <span class="brand-name">CommunityConnect <span class="sg">SG</span></span>
+      <% if (navRole === 'organiser') { %>
+        <span class="role-badge-nav">Organiser</span>
+      <% } else if (navRole === 'admin') { %>
+        <span class="role-badge-nav">Admin</span>
+      <% } %>
     </a>
 
-    <% if (typeof activeNav !== 'undefined' && (activeNav === 'login' || activeNav === 'register')) { %>
-      <div class="hide-mobile" style="font-size:14px;color:#6E7266">
-        <% if (activeNav === 'login') { %>
-          New here? <a href="/register" style="font-weight:600">Create an account</a>
-        <% } else { %>
-          Already have an account? <a href="/login" style="font-weight:600">Log in</a>
+    <% if (!hideAuthLinks) { %>
+      <nav class="pill-nav" aria-label="Primary">
+        <% if (isPublic) { %>
+          <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Browse Events</a>
+          <a href="/#impact">Our Impact</a>
+        <% } else if (navRole === 'member') { %>
+          <a href="/member/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+          <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Browse Events</a>
+          <a href="/member/registrations" class="<%= activeNav === 'registrations' ? 'active' : '' %>">My Registrations</a>
+          <a href="/member/volunteer-hours" class="<%= activeNav === 'hours' ? 'active' : '' %>">Volunteer Hours</a>
+        <% } else if (navRole === 'organiser') { %>
+          <a href="/organiser/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+          <a href="/organiser/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Manage Events</a>
+          <a href="/organiser/events/2/registrations" class="<%= activeNav === 'registrations' ? 'active' : '' %>">Registrations</a>
+          <a href="/organiser/events/1/roles" class="<%= activeNav === 'roles' ? 'active' : '' %>">Volunteer Roles</a>
+          <a href="/organiser/events/11/attendance" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
+        <% } else if (navRole === 'admin') { %>
+          <a href="/admin/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+          <a href="/admin/users" class="<%= activeNav === 'users' ? 'active' : '' %>">Users</a>
+          <a href="/admin/categories" class="<%= activeNav === 'categories' ? 'active' : '' %>">Categories</a>
+          <a href="/admin/reports" class="<%= activeNav === 'reports' ? 'active' : '' %>">Reports</a>
         <% } %>
-      </div>
-    <% } else { %>
-      <nav class="public-nav">
-        <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Browse Events</a>
-        <a href="/#impact">Our Impact</a>
       </nav>
-      <div class="public-actions">
-        <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
-        <a href="/register" class="btn-cc btn-cc-primary btn-cc-sm">Register</a>
-      </div>
     <% } %>
 
-    <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-  <div class="public-mobile-sheet" id="publicMobileSheet">
-    <a href="/events">Browse Events</a>
-    <a href="/#impact">Our Impact</a>
-    <a href="/login">Log in</a>
-    <a href="/register">Register</a>
-    <div class="sheet-actions">
-      <a href="/member/dashboard" class="btn-cc btn-cc-secondary btn-cc-block">Preview as Member</a>
-      <a href="/organiser/dashboard" class="btn-cc btn-cc-secondary btn-cc-block">Preview as Organiser</a>
-      <a href="/admin/dashboard" class="btn-cc btn-cc-secondary btn-cc-block">Preview as Admin</a>
+    <div class="nav-actions">
+      <% if (hideAuthLinks) { %>
+        <div class="nav-auth-hint hide-mobile">
+          <% if (activeNav === 'login') { %>
+            New here? <a href="/register">Create an account</a>
+          <% } else { %>
+            Already have an account? <a href="/login">Log in</a>
+          <% } %>
+        </div>
+      <% } else if (isPublic) { %>
+        <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
+        <a href="/register" class="btn-cc btn-cc-primary btn-cc-sm">Register</a>
+      <% } else if (typeof currentUser !== 'undefined' && currentUser) { %>
+        <a href="<%= navRole === 'member' ? '/member/dashboard' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (navRole === 'member') { %><span class="count">3</span><% } %></a>
+        <a href="<%= navRole === 'member' ? '/member/profile' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="nav-avatar">
+          <span class="avatar-cc"><%= currentUser.initials || 'CC' %></span>
+          <span class="nav-avatar-name"><%= currentUser.firstName || currentUser.name || 'Account' %></span>
+        </a>
+        <a href="/" class="nav-logout">Log out</a>
+      <% } %>
+
+      <% if (!hideAuthLinks) { %>
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      <% } %>
     </div>
   </div>
+
+  <% if (!hideAuthLinks) { %>
+    <div class="cc-mobile-sheet" id="publicMobileSheet">
+      <% if (isPublic) { %>
+        <a href="/events">Browse Events</a>
+        <a href="/#impact">Our Impact</a>
+        <a href="/login">Log in</a>
+        <a href="/register">Register</a>
+      <% } else if (navRole === 'member') { %>
+        <a href="/member/dashboard">Dashboard</a>
+        <a href="/events">Browse Events</a>
+        <a href="/member/registrations">My Registrations</a>
+        <a href="/member/volunteer-hours">Volunteer Hours</a>
+        <a href="/member/profile">My Profile</a>
+        <a href="/">Log out</a>
+      <% } else if (navRole === 'organiser') { %>
+        <a href="/organiser/dashboard">Dashboard</a>
+        <a href="/organiser/events">Manage Events</a>
+        <a href="/organiser/events/2/registrations">Registrations</a>
+        <a href="/organiser/events/1/roles">Volunteer Roles</a>
+        <a href="/organiser/events/11/attendance">Attendance</a>
+        <a href="/">Log out</a>
+      <% } else if (navRole === 'admin') { %>
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/categories">Categories</a>
+        <a href="/admin/reports">Reports</a>
+        <a href="/">Log out</a>
+      <% } %>
+    </div>
+  <% } %>
 </header>
-<% } else { %>
-<div class="app-topbar">
-  <div class="d-flex align-items-center gap-2">
-    <button type="button" class="sidebar-open-btn" id="sidebarOpenBtn" aria-label="Open menu">☰</button>
-    <h1><%= typeof topbarTitle !== 'undefined' ? topbarTitle : (typeof pageTitle !== 'undefined' ? pageTitle.split(' · ')[0] : 'Dashboard') %></h1>
-  </div>
-  <div class="d-flex align-items-center gap-2">
-    <% if (typeof topbarActions !== 'undefined') { %>
-      <%- topbarActions %>
-    <% } %>
-  </div>
-</div>
-<% } %>

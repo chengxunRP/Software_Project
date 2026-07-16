@@ -1,0 +1,14 @@
+<%
+  const catName = typeof category !== 'undefined' ? String(category) : '';
+  let panelEmoji = '🌿';
+  let panelClass = 'panel-environment';
+  if (/food/i.test(catName)) { panelEmoji = '🍲'; panelClass = 'panel-food'; }
+  else if (/elder/i.test(catName)) { panelEmoji = '🤝'; panelClass = 'panel-elderly'; }
+  else if (/educat|tutor|youth/i.test(catName)) { panelEmoji = '📚'; panelClass = 'panel-education'; }
+  else if (/fund|rais/i.test(catName)) { panelEmoji = '💛'; panelClass = 'panel-fundraising'; }
+  else if (/health|blood|well/i.test(catName)) { panelEmoji = '💚'; panelClass = 'panel-health'; }
+  else if (/environ|clean|green|garden/i.test(catName)) { panelEmoji = '🌿'; panelClass = 'panel-environment'; }
+%>
+<div class="event-card-panel <%= panelClass %>" aria-hidden="true">
+  <span class="event-card-emoji"><%= panelEmoji %></span>
+</div>

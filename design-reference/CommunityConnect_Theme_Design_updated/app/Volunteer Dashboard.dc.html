@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Community Member Dashboard">
+  <dc-import name="Nav" role="member" active="dashboard" userName="Wei Ling" hint-size="100%,70px"></dc-import>
+
+  <!-- Welcome header -->
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 50%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-110px;right:-70px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="position:absolute;bottom:-140px;left:30%;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.05)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 96px;position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Community Member dashboard</div>
+        <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">Good afternoon, Wei Ling 👋</h1>
+        <p style="margin:0;font-size:16px;color:#C6E2D0">You have 2 upcoming events this month and 38.5 verified volunteer hours. Thank you for serving your community!</p>
+      </div>
+      <a href="Events.dc.html" style="flex-shrink:0;padding:13px 24px;border-radius:12px;background:#FFFFFF;color:#1E4D33;font-weight:800;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,0.2)" style-hover="background:#EAF1E6;color:#1E4D33">＋ Find a new event</a>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:26px">
+
+      <!-- Stat cards overlapping header -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:-56px;position:relative">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:17px">🙋</div>
+          <span style="font-size:28px;font-weight:900;color:#23271F;letter-spacing:-0.02em">4</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Participant registrations</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#E3F1EE;display:flex;align-items:center;justify-content:center;font-size:17px">🤝</div>
+          <span style="font-size:28px;font-weight:900;color:#23271F;letter-spacing:-0.02em">7</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Volunteer registrations</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#FBF3DF;display:flex;align-items:center;justify-content:center;font-size:17px">⏳</div>
+          <span style="font-size:28px;font-weight:900;color:#C8862B;letter-spacing:-0.02em">1</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Waiting list · position #3</span>
+        </div>
+        <div style="background:linear-gradient(135deg,#2E7D4F,#1F8A7A);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(31,138,122,0.3)">
+          <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:17px">🌱</div>
+          <span style="font-size:28px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">38.5</span>
+          <span style="font-size:12.5px;font-weight:700;color:#D8EDDF">Verified volunteer hours</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#E9F1F8;display:flex;align-items:center;justify-content:center;font-size:17px">📅</div>
+          <span style="font-size:28px;font-weight:900;color:#23271F;letter-spacing:-0.02em">2</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Upcoming · next Sat 25/07</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:22px;align-items:start">
+        <!-- Left column -->
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="padding:20px 24px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:17px;font-weight:800;color:#23271F">Upcoming activities</span>
+              <a href="My Registrations.dc.html" style="font-size:13.5px;font-weight:700">View all →</a>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <div style="padding:17px 24px;display:flex;align-items:center;gap:15px;border-bottom:1px solid #F2EFE7;transition:background 0.15s" style-hover="background:#FBFAF6">
+                <div style="width:54px;height:54px;border-radius:13px;background:linear-gradient(135deg,#2E7D4F,#6FBF8B);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#FFFFFF">
+                  <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;opacity:0.9">Jul</span>
+                  <span style="font-size:20px;font-weight:900;line-height:1">25</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1">
+                  <span style="font-size:15px;font-weight:800;color:#23271F">Coastal Clean-Up at East Coast Park</span>
+                  <span style="font-size:13px;color:#6E7266;font-weight:500">08:00–11:00 · East Coast Park, Area C</span>
+                  <span style="font-size:12px;font-weight:700;color:#1F8A7A">🤝 Volunteer · Beach Sweeper</span>
+                </div>
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;flex-shrink:0">✓ Confirmed</span>
+              </div>
+              <div style="padding:17px 24px;display:flex;align-items:center;gap:15px;border-bottom:1px solid #F2EFE7;transition:background 0.15s" style-hover="background:#FBFAF6">
+                <div style="width:54px;height:54px;border-radius:13px;background:linear-gradient(135deg,#6E4F8E,#A98FC8);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#FFFFFF">
+                  <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;opacity:0.9">Jul</span>
+                  <span style="font-size:20px;font-weight:900;line-height:1">29</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1">
+                  <span style="font-size:15px;font-weight:800;color:#23271F">Elderly Befriending Visits</span>
+                  <span style="font-size:13px;color:#6E7266;font-weight:500">14:00–17:00 · Tampines Community Club</span>
+                  <span style="font-size:12px;font-weight:700;color:#1F8A7A">🤝 Volunteer · Befriender</span>
+                </div>
+                <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;flex-shrink:0">✓ Confirmed</span>
+              </div>
+              <div style="padding:17px 24px;display:flex;align-items:center;gap:15px;transition:background 0.15s" style-hover="background:#FBFAF6">
+                <div style="width:54px;height:54px;border-radius:13px;background:linear-gradient(135deg,#C8862B,#E9BE68);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#FFFFFF">
+                  <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;opacity:0.9">Aug</span>
+                  <span style="font-size:20px;font-weight:900;line-height:1">01</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1">
+                  <span style="font-size:15px;font-weight:800;color:#23271F">Food Distribution Drive</span>
+                  <span style="font-size:13px;color:#6E7266;font-weight:500">09:00–13:00 · Bedok Community Centre</span>
+                  <span style="font-size:12px;font-weight:700;color:#8E6FA8">🙋 Participant</span>
+                </div>
+                <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;flex-shrink:0">⏳ Waitlist #3</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="padding:20px 24px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:17px;font-weight:800;color:#23271F">Recommended for you</span>
+              <a href="Events.dc.html" style="font-size:13.5px;font-weight:700">Browse all →</a>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr">
+              <div style="padding:18px 22px;display:flex;flex-direction:column;gap:8px;border-right:1px solid #F2EFE7">
+                <span style="align-self:flex-start;background:#E7F2EA;color:#1E4D33;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px">🌿 Environment</span>
+                <span style="font-size:14.5px;font-weight:800;color:#23271F;line-height:1.35">Park Clean-Up &amp; Recycling Drive</span>
+                <span style="font-size:12.5px;color:#6E7266;font-weight:500">Sat 08/08/2026 · Bishan-Ang Mo Kio Park<br>28 participant spaces left</span>
+                <a href="Event Details.dc.html" style="font-size:13px;font-weight:700;margin-top:auto">View details →</a>
+              </div>
+              <div style="padding:18px 22px;display:flex;flex-direction:column;gap:8px">
+                <span style="align-self:flex-start;background:#E7F2EA;color:#1E4D33;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px">🌿 Environment</span>
+                <span style="font-size:14.5px;font-weight:800;color:#23271F;line-height:1.35">Community Garden Planting Day</span>
+                <span style="font-size:12.5px;color:#6E7266;font-weight:500">Sat 15/08/2026 · Jurong Lake Gardens<br>18 participant spaces left</span>
+                <a href="Event Details.dc.html" style="font-size:13px;font-weight:700;margin-top:auto">View details →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="padding:20px 24px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:17px;font-weight:800;color:#23271F">Notifications</span>
+              <span style="background:#B0433B;color:#FFFFFF;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px">3 new</span>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <div style="padding:15px 22px;display:flex;gap:12px;border-bottom:1px solid #F2EFE7">
+                <span style="width:9px;height:9px;border-radius:50%;background:#2E7D4F;margin-top:6px;flex-shrink:0"></span>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:500">Your volunteer registration for <b>Coastal Clean-Up</b> is confirmed.</span>
+                  <span style="font-size:12px;color:#8B8778">Today, 09:14</span>
+                </div>
+              </div>
+              <div style="padding:15px 22px;display:flex;gap:12px;border-bottom:1px solid #F2EFE7">
+                <span style="width:9px;height:9px;border-radius:50%;background:#E3A93C;margin-top:6px;flex-shrink:0"></span>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:500">You moved up to <b>position #3</b> on the Food Distribution Drive waiting list.</span>
+                  <span style="font-size:12px;color:#8B8778">Yesterday, 16:40</span>
+                </div>
+              </div>
+              <div style="padding:15px 22px;display:flex;gap:12px;border-bottom:1px solid #F2EFE7">
+                <span style="width:9px;height:9px;border-radius:50%;background:#2E7D4F;margin-top:6px;flex-shrink:0"></span>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:500"><b>3.0 hours</b> recorded for Weekend Tutoring on 12/07/2026.</span>
+                  <span style="font-size:12px;color:#8B8778">12/07/2026, 13:05</span>
+                </div>
+              </div>
+              <div style="padding:15px 22px;display:flex;gap:12px">
+                <span style="width:9px;height:9px;border-radius:50%;background:#B9B5A8;margin-top:6px;flex-shrink:0"></span>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:500">Reminder: Elderly Befriending Visits starts in 3 days.</span>
+                  <span style="font-size:12px;color:#8B8778">11/07/2026, 08:00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hours progress -->
+          <div style="background:linear-gradient(135deg,#14503F,#1F8A7A);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(31,138,122,0.25)">
+            <div style="position:absolute;top:-50px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+            <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9FE0D2;position:relative">Next milestone</div>
+            <div style="font-size:22px;font-weight:900;color:#FFFFFF;position:relative;letter-spacing:-0.01em">11.5 hours to your 50-hour badge 🏅</div>
+            <div style="height:10px;border-radius:999px;background:rgba(255,255,255,0.2);overflow:hidden;position:relative"><div style="width:77%;height:100%;border-radius:999px;background:linear-gradient(90deg,#E3A93C,#F2C96B)"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:#CBEAE2;position:relative"><span>38.5 verified hours</span><span>Goal: 50</span></div>
+            <a href="My Hours.dc.html" style="align-self:flex-start;position:relative;padding:10px 18px;border-radius:10px;background:rgba(255,255,255,0.95);color:#14503F;font-weight:800;font-size:13.5px" style-hover="background:#FFFFFF;color:#14503F">View my hours →</a>
+          </div>
+
+          <!-- Quick actions -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <a href="Events.dc.html" style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;color:#23271F;transition:all 0.15s" style-hover="border-color:#2E7D4F;box-shadow:0 6px 16px rgba(35,39,31,0.08);color:#23271F">
+              <span style="font-size:19px">🔍</span><span style="font-size:13.5px;font-weight:800">Browse events</span>
+            </a>
+            <a href="My Registrations.dc.html" style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;color:#23271F;transition:all 0.15s" style-hover="border-color:#2E7D4F;box-shadow:0 6px 16px rgba(35,39,31,0.08);color:#23271F">
+              <span style="font-size:19px">🗓</span><span style="font-size:13.5px;font-weight:800">My registrations</span>
+            </a>
+            <a href="My Hours.dc.html" style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;color:#23271F;transition:all 0.15s" style-hover="border-color:#2E7D4F;box-shadow:0 6px 16px rgba(35,39,31,0.08);color:#23271F">
+              <span style="font-size:19px">🌱</span><span style="font-size:13.5px;font-weight:800">Volunteer hours</span>
+            </a>
+            <a href="Volunteer Dashboard.dc.html" style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;color:#23271F;transition:all 0.15s" style-hover="border-color:#2E7D4F;box-shadow:0 6px 16px rgba(35,39,31,0.08);color:#23271F">
+              <span style="font-size:19px">👤</span><span style="font-size:13.5px;font-weight:800">My profile</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+</body>
+</html>
