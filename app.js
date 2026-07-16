@@ -777,13 +777,15 @@ app.get("/events", async function (req, res) {
     const date = (req.query.date || "").trim();
     const location = (req.query.location || "").trim();
     const availability = (req.query.availability || "").trim();
+    const sort = (req.query.sort || "date").trim().toLowerCase();
 
     const filters = {
       search: search,
       category: category,
       date: date,
       location: location,
-      availability: availability
+      availability: availability,
+      sort: sort === "popularity" ? "popularity" : "date"
     };
 
     const hasFilters = Boolean(
