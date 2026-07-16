@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Event Details">
+  <dc-import name="Nav" role="public" active="events" hint-size="100%,70px"></dc-import>
+
+  <!-- Visual event header -->
+  <section style="background:linear-gradient(135deg,#1E4D33,#2E7D4F 55%,#6FBF8B);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-90px;right:-70px;width:340px;height:340px;border-radius:50%;background:rgba(255,255,255,0.08)"></div>
+    <div style="position:absolute;bottom:-130px;left:18%;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:36px 32px 84px;position:relative;display:grid;grid-template-columns:1fr 400px;gap:48px;align-items:center">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="font-size:13.5px;color:#C6E2D0"><a href="Events.dc.html" style="color:#C6E2D0;font-weight:600" style-hover="color:#FFFFFF">Event Catalogue</a> <span style="margin:0 6px;opacity:0.6">/</span> Coastal Clean-Up</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="background:rgba(255,255,255,0.94);color:#1E4D33;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px">🌿 Environment</span>
+          <span style="background:#E3A93C;color:#3D2A05;font-size:12.5px;font-weight:800;padding:6px 13px;border-radius:999px">Filling fast — 6 participant spaces left</span>
+        </div>
+        <h1 style="margin:0;font-size:44px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;line-height:1.08;text-wrap:balance">Coastal Clean-Up at East Coast Park</h1>
+        <div style="display:flex;flex-wrap:wrap;gap:22px;font-size:14.5px;color:#E8F3EB;font-weight:600">
+          <span style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">📅</span> Sat 25/07/2026 · 08:00–11:00</span>
+          <span style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">📍</span> East Coast Park, Area C</span>
+          <span style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">👥</span> Green Team, CommunityConnect SG</span>
+        </div>
+      </div>
+      <div style="height:250px;border-radius:20px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.3);position:relative">
+        <image-slot id="event-hero" shape="rect" placeholder="Event photo — shoreline clean-up at East Coast Park"></image-slot>
+      </div>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 72px;display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start;margin-top:-40px;position:relative">
+
+      <!-- Left: event content -->
+      <div style="display:flex;flex-direction:column;gap:22px">
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <h2 style="margin:0;font-size:20px;font-weight:800;color:#23271F">About this event</h2>
+          <p style="margin:0;font-size:15.5px;line-height:1.7;color:#3C4038;text-wrap:pretty">Join us for a Saturday morning shoreline clean-up along East Coast Park, Area C. Participants and volunteers work in small teams to collect and sort litter, record data for our marine waste audit, and help keep one of Singapore's favourite parks clean. Gloves, tongs and trash bags are provided — just bring a water bottle, sun protection and covered shoes. Suitable for ages 13 and up; anyone under 16 must be accompanied by an adult.</p>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <h2 style="margin:0;font-size:20px;font-weight:800;color:#23271F">Schedule</h2>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:grid;grid-template-columns:86px 16px 1fr;gap:14px;align-items:start;padding:10px 0">
+              <span style="font-size:14px;font-weight:800;color:#1F8A7A">08:00</span>
+              <div style="display:flex;flex-direction:column;align-items:center;height:100%"><span style="width:10px;height:10px;border-radius:50%;background:#1F8A7A;margin-top:4px"></span><span style="flex:1;width:2px;background:#DCEBD8"></span></div>
+              <div><div style="font-size:15px;font-weight:700;color:#23271F">Check-in &amp; team briefing</div><div style="font-size:13.5px;color:#6E7266">Meet at Area C carpark C2 pavilion</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:86px 16px 1fr;gap:14px;align-items:start;padding:10px 0">
+              <span style="font-size:14px;font-weight:800;color:#1F8A7A">08:30</span>
+              <div style="display:flex;flex-direction:column;align-items:center;height:100%"><span style="width:10px;height:10px;border-radius:50%;background:#1F8A7A;margin-top:4px"></span><span style="flex:1;width:2px;background:#DCEBD8"></span></div>
+              <div><div style="font-size:15px;font-weight:700;color:#23271F">Shoreline clean-up in teams</div><div style="font-size:13.5px;color:#6E7266">Zones assigned by team leads; water points along route</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:86px 16px 1fr;gap:14px;align-items:start;padding:10px 0">
+              <span style="font-size:14px;font-weight:800;color:#1F8A7A">10:30</span>
+              <div style="display:flex;flex-direction:column;align-items:center;height:100%"><span style="width:10px;height:10px;border-radius:50%;background:#1F8A7A;margin-top:4px"></span><span style="flex:1;width:2px;background:#DCEBD8"></span></div>
+              <div><div style="font-size:15px;font-weight:700;color:#23271F">Waste audit &amp; sorting</div><div style="font-size:13.5px;color:#6E7266">Data recorders log litter categories for the marine audit</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:86px 16px 1fr;gap:14px;align-items:start;padding:10px 0">
+              <span style="font-size:14px;font-weight:800;color:#1F8A7A">11:00</span>
+              <div style="display:flex;flex-direction:column;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#E3A93C;margin-top:4px"></span></div>
+              <div><div style="font-size:15px;font-weight:700;color:#23271F">Wrap-up &amp; refreshments</div><div style="font-size:13.5px;color:#6E7266">Group photo and light snacks at the pavilion</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <h2 style="margin:0;font-size:18px;font-weight:800;color:#23271F">What to expect</h2>
+            <div style="display:flex;flex-direction:column;gap:9px;font-size:14px;color:#3C4038;line-height:1.5">
+              <span style="display:flex;gap:9px"><span style="color:#2E7D4F;font-weight:800">✓</span>Outdoor activity, about 3 hours</span>
+              <span style="display:flex;gap:9px"><span style="color:#2E7D4F;font-weight:800">✓</span>All equipment provided</span>
+              <span style="display:flex;gap:9px"><span style="color:#2E7D4F;font-weight:800">✓</span>Teams of 8–10, all ages welcome</span>
+              <span style="display:flex;gap:9px"><span style="color:#2E7D4F;font-weight:800">✓</span>Refreshments after the event</span>
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#E3F1EE,#DCEBD8);border:1px solid #C3E2DC;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:12px">
+            <h2 style="margin:0;font-size:18px;font-weight:800;color:#155A50">Community impact</h2>
+            <p style="margin:0;font-size:14px;line-height:1.6;color:#2A4A42;text-wrap:pretty">Last season's clean-ups removed <strong>1.8 tonnes</strong> of litter from East Coast Park and contributed audit data to national coastal-waste research.</p>
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <h2 style="margin:0;font-size:20px;font-weight:800;color:#23271F">Volunteer roles</h2>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border:1px solid #E6E2D8;border-radius:13px;background:#FDFCFA">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="width:42px;height:42px;border-radius:12px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">🧹</div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:15px;font-weight:800;color:#23271F">Beach Sweeper</span>
+                  <span style="font-size:13.5px;color:#6E7266">Collect litter along the assigned zone</span>
+                </div>
+              </div>
+              <span style="font-size:13px;font-weight:700;color:#2E7D4F;background:#E7F2EA;padding:6px 12px;border-radius:999px;white-space:nowrap">24 of 28 filled</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border:1px solid #E6E2D8;border-radius:13px;background:#FDFCFA">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="width:42px;height:42px;border-radius:12px;background:#FBF3DF;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">📋</div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:15px;font-weight:800;color:#23271F">Data Recorder</span>
+                  <span style="font-size:13.5px;color:#6E7266">Log litter types for the waste audit</span>
+                </div>
+              </div>
+              <span style="font-size:13px;font-weight:700;color:#8A5E08;background:#FBF3DF;padding:6px 12px;border-radius:999px;white-space:nowrap">7 of 8 filled</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border:1px solid #E6E2D8;border-radius:13px;background:#FDFCFA">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="width:42px;height:42px;border-radius:12px;background:#FBEAE3;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">🧭</div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:15px;font-weight:800;color:#23271F">Team Lead</span>
+                  <span style="font-size:13.5px;color:#6E7266">Guide a team of 8–10 (experience required)</span>
+                </div>
+              </div>
+              <span style="font-size:13px;font-weight:700;color:#B0433B;background:#FBEAE8;padding:6px 12px;border-radius:999px;white-space:nowrap">4 of 4 filled</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <h2 style="margin:0;font-size:20px;font-weight:800;color:#23271F">Accessibility</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <span style="display:flex;align-items:center;gap:8px;background:#F6F4EF;border:1px solid #E6E2D8;border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:600;color:#3C4038">♿ Wheelchair-accessible pavilion</span>
+            <span style="display:flex;align-items:center;gap:8px;background:#F6F4EF;border:1px solid #E6E2D8;border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:600;color:#3C4038">🚻 Restrooms nearby</span>
+            <span style="display:flex;align-items:center;gap:8px;background:#F6F4EF;border:1px solid #E6E2D8;border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:600;color:#3C4038">🚌 5 min from Bus 401 stop</span>
+            <span style="display:flex;align-items:center;gap:8px;background:#F6F4EF;border:1px solid #E6E2D8;border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:600;color:#3C4038">🪑 Seated tasks available</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: sticky action panel -->
+      <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:90px">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 6px 24px rgba(35,39,31,0.1)">
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:14.5px">
+            <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Date</span><span style="font-weight:700;color:#23271F;text-align:right">Sat 25/07/2026</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Time</span><span style="font-weight:700;color:#23271F;text-align:right">08:00–11:00</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Location</span><span style="font-weight:700;color:#23271F;text-align:right">East Coast Park, Area C</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#6E7266;font-weight:500">Registration closes</span><span style="font-weight:700;color:#23271F;text-align:right">23/07/2026, 23:59</span></div>
+          </div>
+          <div style="height:1px;background:#EDEAE0"></div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12.5px;font-weight:800;color:#6E7266;text-transform:uppercase;letter-spacing:0.05em">Participants</span><span style="font-size:13px;font-weight:800;color:#C8862B">6 left</span></div>
+            <div style="height:8px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:linear-gradient(90deg,#E3A93C,#C8862B)"></div></div>
+            <span style="font-size:12.5px;color:#6E7266;font-weight:600">34 of 40 spaces filled</span>
+          </div>
+          <a href="Login.dc.html" style="text-align:center;padding:14px 0;border-radius:12px;background:#2E7D4F;color:#FFFFFF;font-weight:800;font-size:15.5px;box-shadow:0 3px 12px rgba(46,125,79,0.3)" style-hover="background:#256741;color:#FFFFFF">🙋 Join as Participant</a>
+
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12.5px;font-weight:800;color:#6E7266;text-transform:uppercase;letter-spacing:0.05em">Volunteers</span><span style="font-size:13px;font-weight:800;color:#2E7D4F">2 left</span></div>
+            <div style="height:8px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:80%;height:100%;border-radius:999px;background:linear-gradient(90deg,#2E7D4F,#1F8A7A)"></div></div>
+            <span style="font-size:12.5px;color:#6E7266;font-weight:600">8 of 10 spaces filled</span>
+          </div>
+          <a href="Login.dc.html" style="text-align:center;padding:14px 0;border-radius:12px;border:2px solid #2E7D4F;color:#1E4D33;font-weight:800;font-size:15.5px;background:#E7F2EA" style-hover="background:#DCEBD8;color:#1E4D33">🤝 Volunteer for This Event</a>
+
+          <p style="margin:0;font-size:12.5px;color:#8B8778;text-align:center;line-height:1.5">You'll be asked to log in or create a free Community Member account.</p>
+        </div>
+
+        <div style="background:#FBF3DF;border:1px solid #EFDDB8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:9px"><span style="font-size:17px">⏳</span><span style="font-size:14px;font-weight:800;color:#7A5312">Waiting list</span></div>
+          <p style="margin:0;font-size:13px;color:#6B4E1B;line-height:1.55;text-wrap:pretty">If a role fills up, join the waiting list — 6 people are currently waiting, and you'll be notified automatically if a space opens.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+  <div style="width:0;height:0;overflow:hidden;position:absolute"><x-import component-from-global-scope="image-slot" from="./image-slot.js" hint-size="0,0"></x-import></div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Landing Page">
+
+  <dc-import name="Nav" role="public" active="" hint-size="100%,70px"></dc-import>
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(135deg,#16382A 0%,#1E4D33 45%,#1F8A7A 100%);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-120px;right:-80px;width:420px;height:420px;border-radius:50%;background:rgba(255,255,255,0.05)"></div>
+    <div style="position:absolute;bottom:-160px;left:-60px;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,0.04)"></div>
+    <div style="position:absolute;top:80px;right:34%;width:14px;height:14px;border-radius:50%;background:#E3A93C;opacity:0.85"></div>
+    <div style="position:absolute;bottom:110px;left:44%;width:10px;height:10px;border-radius:50%;background:#E0704F;opacity:0.8"></div>
+
+    <div style="max-width:1240px;margin:0 auto;padding:76px 32px 84px;display:grid;grid-template-columns:1.05fr 0.95fr;gap:64px;align-items:center;position:relative">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div style="display:inline-flex;align-self:flex-start;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);color:#D8EDDF;font-size:13.5px;font-weight:600;padding:7px 14px;border-radius:999px">
+          <span style="width:7px;height:7px;border-radius:50%;background:#7FC99E"></span>
+          {{ heroBadge }}
+        </div>
+        <h1 style="margin:0;font-size:56px;line-height:1.06;letter-spacing:-0.025em;color:#FFFFFF;font-weight:900;text-wrap:balance">Connect with your community. Make a difference together.</h1>
+        <p style="margin:0;font-size:18.5px;line-height:1.6;color:#C6E2D0;max-width:50ch;text-wrap:pretty">Discover meaningful events across Singapore, participate in local activities and volunteer to support the people around you.</p>
+        <div style="display:flex;gap:14px;margin-top:8px">
+          <a href="Events.dc.html" style="padding:15px 28px;border-radius:13px;background:#FFFFFF;color:#1E4D33;font-weight:700;font-size:16px;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:transform 0.15s" style-hover="background:#EAF1E6;color:#1E4D33;transform:translateY(-2px)">Browse Events</a>
+          <a href="Register.dc.html" style="padding:15px 28px;border-radius:13px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.4);color:#FFFFFF;font-weight:700;font-size:16px;transition:all 0.15s" style-hover="background:rgba(255,255,255,0.22);color:#FFFFFF">Join CommunityConnect</a>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:10px">
+          <div style="display:flex">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#E3A93C,#E0704F);border:2.5px solid #1E4D33;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:12px;font-weight:700">AH</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4A8FC2,#1F8A7A);border:2.5px solid #1E4D33;margin-left:-10px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:12px;font-weight:700">WL</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8E6FA8,#4A8FC2);border:2.5px solid #1E4D33;margin-left:-10px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:12px;font-weight:700">RK</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.18);border:2.5px solid #1E4D33;margin-left:-10px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:11px;font-weight:700">+</div>
+          </div>
+          <span style="font-size:14px;color:#C6E2D0;font-weight:500">Residents, volunteers and organisers across Singapore</span>
+        </div>
+      </div>
+
+      <!-- Illustrated visual panel -->
+      <div style="position:relative;min-height:440px">
+        <div style="position:absolute;inset:0;border-radius:24px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.3)">
+          <image-slot id="hero-community" shape="rect" placeholder="Community photo — volunteers and residents together"></image-slot>
+        </div>
+        <div style="position:absolute;top:24px;left:-26px;background:#FFFFFF;border-radius:14px;padding:13px 17px;display:flex;align-items:center;gap:11px;box-shadow:0 10px 30px rgba(20,38,28,0.25);pointer-events:none">
+          <div style="width:36px;height:36px;border-radius:10px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:17px">🤝</div>
+          <div style="display:flex;flex-direction:column">
+            <span style="font-size:13.5px;font-weight:700;color:#23271F">Volunteer confirmed</span>
+            <span style="font-size:12px;color:#6E7266">Coastal Clean-Up · East Coast Park</span>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:30px;right:-22px;background:#FFFFFF;border-radius:14px;padding:13px 17px;display:flex;align-items:center;gap:11px;box-shadow:0 10px 30px rgba(20,38,28,0.25);pointer-events:none">
+          <div style="width:36px;height:36px;border-radius:10px;background:#FBF3DF;display:flex;align-items:center;justify-content:center;font-size:17px">🌱</div>
+          <div style="display:flex;flex-direction:column">
+            <span style="font-size:13.5px;font-weight:700;color:#23271F">12,450 hours contributed</span>
+            <span style="font-size:12px;color:#6E7266">by our community, and counting</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact stats -->
+  <section id="impact" style="background:#14261C;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-90px;left:52%;width:280px;height:280px;border-radius:50%;background:rgba(127,201,158,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:52px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px;position:relative">
+      <div style="display:flex;flex-direction:column;gap:6px;padding:22px 26px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09)">
+        <div style="font-size:42px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">1,240</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:600">Active community members</div>
+        <div style="height:4px;width:44px;border-radius:999px;background:#7FC99E;margin-top:6px"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:22px 26px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09)">
+        <div style="font-size:42px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">386</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:600">Events hosted</div>
+        <div style="height:4px;width:44px;border-radius:999px;background:#E3A93C;margin-top:6px"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:22px 26px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09)">
+        <div style="font-size:42px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">12,450</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:600">Volunteer hours recorded</div>
+        <div style="height:4px;width:44px;border-radius:999px;background:#E0704F;margin-top:6px"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:22px 26px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09)">
+        <div style="font-size:42px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">28</div>
+        <div style="font-size:14px;color:#A9BCA9;font-weight:600">Partner organisations</div>
+        <div style="height:4px;width:44px;border-radius:999px;background:#4A8FC2;margin-top:6px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured events -->
+  <section style="background:#F6F4EF">
+    <div style="max-width:1240px;margin:0 auto;padding:72px 32px;display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1F8A7A">This week in your community</div>
+          <h2 style="margin:0;font-size:36px;font-weight:800;color:#23271F;letter-spacing:-0.02em">Featured upcoming events</h2>
+        </div>
+        <a href="Events.dc.html" style="font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px">View all events <span style="font-size:17px">→</span></a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+        <sc-for list="{{ featured }}" as="ev" hint-placeholder-count="3">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(35,39,31,0.06);transition:transform 0.2s,box-shadow 0.2s" style-hover="transform:translateY(-4px);box-shadow:0 12px 28px rgba(35,39,31,0.13)">
+            <div style="height:158px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:{{ ev.panel }}">
+              <div style="position:absolute;top:-40px;right:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.14)"></div>
+              <div style="position:absolute;bottom:-50px;left:-20px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+              <div style="font-size:52px;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.2))">{{ ev.glyph }}</div>
+              <span style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.94);color:{{ ev.badgeColor }};font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">{{ ev.category }}</span>
+            </div>
+            <div style="padding:22px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div style="font-size:18px;font-weight:800;color:#23271F;line-height:1.3;letter-spacing:-0.01em">{{ ev.title }}</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:#6E7266;font-weight:500">
+                <span style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#1F8A7A;flex-shrink:0"></span>{{ ev.when }}</span>
+                <span style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#E3A93C;flex-shrink:0"></span>{{ ev.where }}</span>
+              </div>
+              <div style="margin-top:auto;display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700"><span style="color:#6E7266">{{ ev.capacity }}</span><span style="color:{{ ev.remainColor }}">{{ ev.remain }}</span></div>
+                <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ ev.barColor }};width:{{ ev.pct }}"></div></div>
+                <a href="Event Details.dc.html" style="margin-top:10px;text-align:center;padding:11px 0;border-radius:11px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px;transition:background 0.15s" style-hover="background:#256741;color:#FFFFFF">View Details</a>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how" style="background:#FFFFFF">
+    <div style="max-width:1240px;margin:0 auto;padding:72px 32px;display:flex;flex-direction:column;gap:36px">
+      <div style="display:flex;flex-direction:column;gap:8px;text-align:center;align-items:center">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1F8A7A">Simple by design</div>
+        <h2 style="margin:0;font-size:36px;font-weight:800;color:#23271F;letter-spacing:-0.02em">How CommunityConnect works</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+        <div style="background:#F6F4EF;border-radius:18px;padding:30px;display:flex;flex-direction:column;gap:14px;border:1px solid #EDEAE0">
+          <div style="width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,#2E7D4F,#1F8A7A);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900">1</div>
+          <div style="font-size:19px;font-weight:800;color:#23271F">Create one account</div>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:#6E7266;text-wrap:pretty">Register once as a Community Member — no separate volunteer or participant accounts needed.</p>
+        </div>
+        <div style="background:#F6F4EF;border-radius:18px;padding:30px;display:flex;flex-direction:column;gap:14px;border:1px solid #EDEAE0">
+          <div style="width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,#E3A93C,#E0704F);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900">2</div>
+          <div style="font-size:19px;font-weight:800;color:#23271F">Choose how you join</div>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:#6E7266;text-wrap:pretty">For every event, join as a Participant to take part — or as a Volunteer to help others enjoy it.</p>
+        </div>
+        <div style="background:#F6F4EF;border-radius:18px;padding:30px;display:flex;flex-direction:column;gap:14px;border:1px solid #EDEAE0">
+          <div style="width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,#4A8FC2,#1F8A7A);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900">3</div>
+          <div style="font-size:19px;font-weight:800;color:#23271F">Track your impact</div>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:#6E7266;text-wrap:pretty">Manage registrations and waiting lists, and watch your verified volunteer hours grow.</p>
+        </div>
+      </div>
+
+      <!-- Participant vs Volunteer -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:12px">
+        <div style="border-radius:20px;padding:34px;background:linear-gradient(135deg,#EAF1E6,#DCEBD8);border:1px solid #D9E2D3;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:-60px;right:-40px;width:190px;height:190px;border-radius:50%;background:rgba(46,125,79,0.08)"></div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:46px;height:46px;border-radius:13px;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:21px">🙋</div>
+            <div style="font-size:22px;font-weight:800;color:#1E4D33">Join as a Participant</div>
+          </div>
+          <p style="margin:0;font-size:15.5px;line-height:1.65;color:#3C4038;text-wrap:pretty">Attend wellness mornings, community garden days, learning workshops and neighbourhood activities. Every resident is welcome — from students to seniors.</p>
+          <a href="Events.dc.html" style="align-self:flex-start;font-weight:700;font-size:14.5px;color:#1E4D33">Find an activity →</a>
+        </div>
+        <div style="border-radius:20px;padding:34px;background:linear-gradient(135deg,#FBF3DF,#F8E8CB);border:1px solid #EFDDB8;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:-60px;right:-40px;width:190px;height:190px;border-radius:50%;background:rgba(200,134,43,0.1)"></div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:46px;height:46px;border-radius:13px;background:#C8862B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:21px">🤝</div>
+            <div style="font-size:22px;font-weight:800;color:#7A5312">Help as a Volunteer</div>
+          </div>
+          <p style="margin:0;font-size:15.5px;line-height:1.65;color:#3C4038;text-wrap:pretty">Assist elderly residents, pack food parcels, tutor children or guide a park clean-up. Your hours are recorded and verified after each event.</p>
+          <a href="Events.dc.html" style="align-self:flex-start;font-weight:700;font-size:14.5px;color:#7A5312" style-hover="color:#5C3D0B">Find a volunteer role →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section id="categories" style="background:#F6F4EF">
+    <div style="max-width:1240px;margin:0 auto;padding:72px 32px;display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1F8A7A">Something for everyone</div>
+        <h2 style="margin:0;font-size:36px;font-weight:800;color:#23271F;letter-spacing:-0.02em">Explore by category</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px">
+        <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="6">
+          <a href="Events.dc.html" style="border-radius:16px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;border:1px solid #E6E2D8;background:#FFFFFF;transition:transform 0.18s,box-shadow 0.18s;color:#23271F" style-hover="transform:translateY(-3px);box-shadow:0 10px 22px rgba(35,39,31,0.1);color:#23271F">
+            <div style="width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:23px;background:{{ cat.bg }}">{{ cat.icon }}</div>
+            <div style="font-size:14.5px;font-weight:700;color:#23271F">{{ cat.name }}</div>
+            <div style="font-size:12.5px;font-weight:600;color:{{ cat.color }}">{{ cat.count }} events</div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact story -->
+  <section style="background:#FFFFFF">
+    <div style="max-width:1240px;margin:0 auto;padding:72px 32px;display:grid;grid-template-columns:0.95fr 1.05fr;gap:56px;align-items:center">
+      <div style="position:relative;min-height:340px">
+        <div style="position:absolute;inset:0;border-radius:22px;overflow:hidden;box-shadow:0 16px 40px rgba(35,39,31,0.14)">
+          <image-slot id="story-photo" shape="rect" placeholder="Photo — seniors and volunteers at Bishan community garden"></image-slot>
+        </div>
+        <div style="position:absolute;bottom:-18px;left:-18px;background:linear-gradient(135deg,#1F8A7A,#4A8FC2);color:#FFFFFF;border-radius:16px;padding:16px 22px;box-shadow:0 12px 30px rgba(31,138,122,0.35);pointer-events:none">
+          <div style="font-size:26px;font-weight:900;letter-spacing:-0.02em">140+</div>
+          <div style="font-size:12.5px;font-weight:600;opacity:0.9">residents joined this season</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#E0704F">Community story</div>
+        <h2 style="margin:0;font-size:34px;font-weight:800;color:#23271F;letter-spacing:-0.02em;line-height:1.15;text-wrap:balance">"The garden gave my mother a reason to go downstairs every morning."</h2>
+        <p style="margin:0;font-size:16.5px;line-height:1.65;color:#6E7266;text-wrap:pretty">When Bishan's community garden programme needed helpers, student volunteers stepped in to work alongside senior residents — planting, harvesting and sharing stories. What began as a six-week activity is now a weekly neighbourhood fixture.</p>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#8E6FA8,#E0704F);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">DL</div>
+          <div style="display:flex;flex-direction:column">
+            <span style="font-size:14.5px;font-weight:700;color:#23271F">Daniel Lim</span>
+            <span style="font-size:13px;color:#6E7266">Resident volunteer, Bishan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section style="background:#F6F4EF;padding:0 32px 80px">
+    <div style="max-width:1240px;margin:0 auto;border-radius:26px;background:linear-gradient(120deg,#C25537,#E0704F 55%,#E3A93C);position:relative;overflow:hidden;padding:64px 56px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+      <div style="position:absolute;top:-70px;left:-40px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,0.12)"></div>
+      <div style="position:absolute;bottom:-90px;right:-50px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+      <h2 style="margin:0;font-size:40px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;max-width:22ch;position:relative;text-wrap:balance">Your neighbourhood needs you. Start this weekend.</h2>
+      <p style="margin:0;font-size:17px;color:rgba(255,255,255,0.92);max-width:52ch;position:relative;line-height:1.6;text-wrap:pretty">Join as a Participant, lend a hand as a Volunteer — one account opens every door in your community.</p>
+      <div style="display:flex;gap:14px;position:relative;margin-top:6px">
+        <a href="Register.dc.html" style="padding:15px 30px;border-radius:13px;background:#FFFFFF;color:#B3492D;font-weight:800;font-size:16px;box-shadow:0 6px 18px rgba(0,0,0,0.18)" style-hover="background:#FBF3DF;color:#B3492D">Join CommunityConnect</a>
+        <a href="Events.dc.html" style="padding:15px 30px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.55);color:#FFFFFF;font-weight:700;font-size:16px" style-hover="background:rgba(255,255,255,0.14);color:#FFFFFF">Browse Events</a>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+
+  <div style="width:0;height:0;overflow:hidden;position:absolute"><x-import component-from-global-scope="image-slot" from="./image-slot.js" hint-size="0,0"></x-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroBadge&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Serving neighbourhoods across Singapore&quot;, &quot;tsType&quot;: &quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      heroBadge: this.props.heroBadge ?? "Serving neighbourhoods across Singapore",
+      featured: [
+        {
+          category: "Environment", badgeColor: "#1E4D33", glyph: "🌊",
+          panel: "linear-gradient(135deg,#2E7D4F,#6FBF8B)",
+          title: "Coastal Clean-Up at East Coast Park",
+          when: "Sat 25/07/2026 · 08:00–11:00", where: "East Coast Park, Area C",
+          capacity: "34 of 40 spaces filled", remain: "6 left", remainColor: "#8A5E08",
+          barColor: "#D99E2B", pct: "85%",
+        },
+        {
+          category: "Food Support", badgeColor: "#8A5E08", glyph: "🥫",
+          panel: "linear-gradient(135deg,#C8862B,#E9BE68)",
+          title: "Food Distribution Drive",
+          when: "Sat 01/08/2026 · 09:00–13:00", where: "Bedok Community Centre",
+          capacity: "25 of 25 spaces filled", remain: "Full · waitlist open", remainColor: "#B0433B",
+          barColor: "#B0433B", pct: "100%",
+        },
+        {
+          category: "Education", badgeColor: "#2F5E86", glyph: "📚",
+          panel: "linear-gradient(135deg,#2F5E86,#6FA8D6)",
+          title: "Weekend Tutoring — Primary Maths",
+          when: "Sun 26/07/2026 · 10:00–12:00", where: "Tampines Community Club",
+          capacity: "9 of 20 spaces filled", remain: "11 left", remainColor: "#2E7D4F",
+          barColor: "#2E7D4F", pct: "45%",
+        },
+      ],
+      categories: [
+        { name: "Environment", icon: "🌿", count: 42, bg: "#E7F2EA", color: "#2E7D4F" },
+        { name: "Elderly Support", icon: "🫶", count: 58, bg: "#F1EBF6", color: "#8E6FA8" },
+        { name: "Food Support", icon: "🍚", count: 36, bg: "#FBF3DF", color: "#C8862B" },
+        { name: "Education", icon: "📖", count: 44, bg: "#E9F1F8", color: "#4A8FC2" },
+        { name: "Fundraising", icon: "❤️", count: 21, bg: "#FBEAE3", color: "#E0704F" },
+        { name: "Health & Wellness", icon: "🧘", count: 39, bg: "#E3F1EE", color: "#1F8A7A" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

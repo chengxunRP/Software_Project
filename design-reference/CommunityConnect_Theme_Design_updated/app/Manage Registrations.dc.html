@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Manage Registrations">
+  <dc-import name="Nav" role="organiser" active="registrations" userName="Marcus Lim" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 84px;position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Organiser · Green Team</div>
+        <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">Manage Registrations</h1>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+        <span style="font-size:12px;font-weight:700;color:#9FD9B4;text-transform:uppercase;letter-spacing:0.05em">Event</span>
+        <select style="padding:12px 16px;border-radius:11px;border:none;font-size:14px;font-family:inherit;background:#FFFFFF;color:#23271F;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,0.2)">
+          <option>Food Distribution Drive — 01/08/2026</option>
+          <option>Coastal Clean-Up at East Coast Park — 25/07/2026</option>
+          <option>Park Clean-Up &amp; Recycling Drive — 08/08/2026</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:20px">
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:-46px;position:relative">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#E9F1F8;display:flex;align-items:center;justify-content:center;font-size:18px">👥</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#23271F;line-height:1.1">25</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Capacity</span></div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:18px">✓</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#2E7D4F;line-height:1.1">25</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Confirmed</span></div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#FBF3DF;display:flex;align-items:center;justify-content:center;font-size:18px">⏳</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#C8862B;line-height:1.1">6</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Waiting list</span></div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:42px;height:42px;border-radius:12px;background:#EDEAE0;display:flex;align-items:center;justify-content:center;font-size:18px">✕</div>
+          <div style="display:flex;flex-direction:column"><span style="font-size:26px;font-weight:900;color:#6E7266;line-height:1.1">3</span><span style="font-size:12.5px;font-weight:700;color:#6E7266">Cancellations</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;background:#FBF3DF;border:1px solid #EAD9AC;border-radius:14px;padding:14px 18px">
+        <span style="width:24px;height:24px;border-radius:50%;background:#D99E2B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">!</span>
+        <span style="font-size:14px;color:#6B4E0A;font-weight:600">This event is at full capacity. If a confirmed member cancels, the first person on the waiting list is offered the space automatically.</span>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+        <div style="padding:18px 24px;border-bottom:1px solid #EDEAE0;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:17px;font-weight:800;color:#23271F">Confirmed volunteers <span style="color:#8B8778;font-weight:600;font-size:14px">(showing 5 of 25)</span></span>
+          <button style="padding:9px 15px;border-radius:9px;border:1.5px solid #D8D4C8;background:#FDFCFA;color:#23271F;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit" style-hover="background:#EAF1E6;border-color:#2E7D4F">⬇ Export CSV</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr;padding:12px 24px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Volunteer</span><span>Contact</span><span>Registered on</span><span>Status</span><span style="text-align:right">Action</span>
+        </div>
+        <sc-for list="{{ confirmed }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr;padding:14px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center;transition:background 0.15s" style-hover="background:#FBFAF6">
+            <div style="display:flex;align-items:center;gap:11px">
+              <div style="width:34px;height:34px;border-radius:50%;background:{{ c.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">{{ c.initials }}</div>
+              <span style="font-weight:700;color:#23271F">{{ c.name }}</span>
+            </div>
+            <span style="color:#6E7266;font-size:13px;font-weight:500">{{ c.contact }}</span>
+            <span style="color:#6E7266;font-size:13.5px;font-weight:500">{{ c.date }}</span>
+            <span><span style="background:#E7F2EA;color:#1E4D33;font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px">✓ Confirmed</span></span>
+            <div style="display:flex;justify-content:flex-end">
+              <button onClick="{{ c.askRemove }}" style="padding:8px 13px;border-radius:9px;border:1.5px solid #EBD5D0;color:#B0433B;font-weight:700;font-size:12.5px;background:#FFFFFF;cursor:pointer;font-family:inherit" style-hover="background:#FBEAE8;border-color:#B0433B">Remove</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+        <div style="padding:18px 24px;border-bottom:1px solid #EDEAE0;background:linear-gradient(90deg,#FBF3DF,#FFFFFF)">
+          <span style="font-size:17px;font-weight:800;color:#23271F">⏳ Waiting list <span style="color:#8B8778;font-weight:600;font-size:14px">(in order of registration)</span></span>
+        </div>
+        <sc-for list="{{ waitlist }}" as="w" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:15px;padding:14px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;transition:background 0.15s" style-hover="background:#FBFAF6">
+            <span style="width:32px;height:32px;border-radius:10px;background:#FBF3DF;color:#8A5E08;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13.5px;flex-shrink:0">{{ w.pos }}</span>
+            <div style="display:flex;align-items:center;gap:11px;flex:1;min-width:0">
+              <div style="width:34px;height:34px;border-radius:50%;background:{{ w.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">{{ w.initials }}</div>
+              <div style="display:flex;flex-direction:column">
+                <span style="font-weight:700;color:#23271F">{{ w.name }}</span>
+                <span style="font-size:12.5px;color:#8B8778;font-weight:500">Joined waitlist {{ w.date }}</span>
+              </div>
+            </div>
+            <span style="background:#FBF3DF;color:#8A5E08;font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px">Waitlisted</span>
+            <button style="padding:8px 15px;border-radius:9px;border:1.5px solid #BFDCC9;color:#1E4D33;font-weight:700;font-size:12.5px;background:#E7F2EA;cursor:pointer;font-family:inherit" style-hover="background:#D5E8DC">↑ Promote</button>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+        <div style="padding:18px 24px;border-bottom:1px solid #EDEAE0">
+          <span style="font-size:17px;font-weight:800;color:#23271F">Cancellation records</span>
+        </div>
+        <sc-for list="{{ cancelled }}" as="x" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:15px;padding:14px 24px;border-bottom:1px solid #F2EFE7;font-size:14px">
+            <div style="display:flex;flex-direction:column;flex:1">
+              <span style="font-weight:700;color:#23271F">{{ x.name }}</span>
+              <span style="font-size:12.5px;color:#8B8778;font-weight:500">{{ x.detail }}</span>
+            </div>
+            <span style="background:#EDEAE0;color:#6E7266;font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px">Cancelled</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(20,38,28,0.6);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px;backdrop-filter:blur(3px)">
+      <div style="background:#FFFFFF;border-radius:20px;width:470px;max-width:100%;padding:30px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 60px rgba(20,38,28,0.35)">
+        <div style="width:48px;height:48px;border-radius:50%;background:#FBEAE8;color:#B0433B;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900">!</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:20px;font-weight:900;color:#23271F">Remove this volunteer?</div>
+          <div style="font-size:14.5px;color:#6E7266;line-height:1.55"><b style="color:#3C4038">{{ modalName }}</b> will be removed from the confirmed list and notified by email. The first person on the waiting list will be offered the space.</div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+          <button onClick="{{ closeModal }}" style="padding:11px 19px;border-radius:11px;border:1.5px solid #D8D4C8;background:#FFFFFF;color:#23271F;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">Keep volunteer</button>
+          <button onClick="{{ closeModal }}" style="padding:11px 19px;border-radius:11px;border:none;background:#B0433B;color:#FFFFFF;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 3px 10px rgba(176,67,59,0.3)" style-hover="background:#96362F">Yes, remove</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { modalOpen: false, modalName: "" };
+  renderVals() {
+    const av = ["#C8862B", "#4A8FC2", "#8E6FA8", "#2E7D4F", "#E0704F"];
+    const ini = (n) => n.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+    const person = (name, i) => ({ name, initials: ini(name), avBg: av[i % av.length] });
+    return {
+      confirmed: [
+        { ...person("Nurul Aisyah", 0), contact: "nurul.a@example.sg · 9123 0001", date: "02/07/2026" },
+        { ...person("David Ong", 1), contact: "david.ong@example.sg · 9123 0002", date: "02/07/2026" },
+        { ...person("Priya Nair", 2), contact: "priya.n@example.sg · 9123 0003", date: "03/07/2026" },
+        { ...person("Muhammad Irfan", 3), contact: "m.irfan@example.sg · 9123 0004", date: "03/07/2026" },
+        { ...person("Chloe Goh", 4), contact: "chloe.goh@example.sg · 9123 0005", date: "04/07/2026" },
+      ].map((c) => ({ ...c, askRemove: () => this.setState({ modalOpen: true, modalName: c.name }) })),
+      waitlist: [
+        { ...person("Rajesh Kumar", 1), pos: "1", date: "05/07/2026" },
+        { ...person("Sarah Chen", 2), pos: "2", date: "06/07/2026" },
+        { ...person("Tan Wei Ling", 0), pos: "3", date: "07/07/2026" },
+        { ...person("Farah Binte Rahman", 3), pos: "4", date: "09/07/2026" },
+      ],
+      cancelled: [
+        { name: "Jason Teo", detail: "Cancelled 08/07/2026 · Reason: schedule clash · Space reallocated to waitlist #1" },
+        { name: "Amanda Lee", detail: "Cancelled 06/07/2026 · Reason: not stated" },
+        { name: "Kumar Selvam", detail: "Removed by organiser 04/07/2026 · Duplicate registration" },
+      ],
+      modalOpen: this.state.modalOpen,
+      modalName: this.state.modalName,
+      closeModal: () => this.setState({ modalOpen: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

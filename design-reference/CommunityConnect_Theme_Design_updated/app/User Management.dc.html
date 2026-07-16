@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="User Management">
+  <dc-import name="Nav" role="admin" active="users" userName="Siti Rahman" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 84px;position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Platform administration</div>
+        <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">User Management</h1>
+        <p style="margin:0;font-size:16px;color:#C6E2D0">1,318 users · 1 organiser application pending approval.</p>
+      </div>
+      <button style="flex-shrink:0;padding:13px 24px;border-radius:12px;background:#FFFFFF;color:#1E4D33;font-weight:800;font-size:15px;border:none;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,0.2)" style-hover="background:#EAF1E6">＋ Add user</button>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:18px">
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:16px 20px;display:flex;gap:12px;align-items:center;margin-top:-46px;position:relative;box-shadow:0 10px 28px rgba(20,38,28,0.13)">
+        <input type="text" placeholder="🔍 Search by name or email…" style="flex:1;max-width:340px;padding:11px 14px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #DCEBD8"></input>
+        <select style="padding:11px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+          <option>All roles</option><option>Community Member</option><option>Organiser</option><option>Admin</option>
+        </select>
+        <select style="padding:11px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14px;font-family:inherit;background:#FDFCFA;color:#23271F">
+          <option>All statuses</option><option>Active</option><option>Pending approval</option><option>Suspended</option>
+        </select>
+        <span style="margin-left:auto;font-size:13.5px;color:#8B8778;font-weight:600">1,318 users · showing 7</span>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+        <div style="display:grid;grid-template-columns:2fr 1.8fr 1.2fr 1fr 1fr 1.2fr;padding:13px 24px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>User</span><span>Email</span><span>Role</span><span>Joined</span><span>Status</span><span style="text-align:right">Actions</span>
+        </div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="7">
+          <div style="display:grid;grid-template-columns:2fr 1.8fr 1.2fr 1fr 1fr 1.2fr;padding:14px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center;transition:background 0.15s" style-hover="background:#FBFAF6">
+            <div style="display:flex;align-items:center;gap:11px">
+              <div style="width:34px;height:34px;border-radius:50%;background:{{ r.avBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">{{ r.initials }}</div>
+              <span style="font-weight:700;color:#23271F">{{ r.name }}</span>
+            </div>
+            <span style="color:#6E7266;font-size:13px;font-weight:500">{{ r.email }}</span>
+            <span><span style="background:{{ r.roleBg }};color:{{ r.roleFg }};font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px">{{ r.role }}</span></span>
+            <span style="color:#6E7266;font-size:13.5px;font-weight:500">{{ r.joined }}</span>
+            <span><span style="background:{{ r.stBg }};color:{{ r.stFg }};font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px">{{ r.status }}</span></span>
+            <div style="display:flex;gap:7px;justify-content:flex-end">
+              <button style="padding:8px 13px;border-radius:9px;border:1.5px solid #D8D4C8;color:#23271F;font-weight:700;font-size:12.5px;background:#FDFCFA;cursor:pointer;font-family:inherit" style-hover="background:#EAF1E6;border-color:#2E7D4F">Edit</button>
+              <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ false }}">
+                <button style="padding:8px 13px;border-radius:9px;border:1.5px solid #BFDCC9;color:#1E4D33;font-weight:700;font-size:12.5px;background:#E7F2EA;cursor:pointer;font-family:inherit" style-hover="background:#D5E8DC">Approve</button>
+              </sc-if>
+              <sc-if value="{{ r.suspendable }}" hint-placeholder-val="{{ false }}">
+                <button style="padding:8px 13px;border-radius:9px;border:1.5px solid #EBD5D0;color:#B0433B;font-weight:700;font-size:12.5px;background:#FFFFFF;cursor:pointer;font-family:inherit" style-hover="background:#FBEAE8;border-color:#B0433B">Suspend</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#E3F1EE;border:1px solid #C3E2DC;border-radius:16px;padding:16px 22px;display:flex;align-items:center;gap:13px">
+        <span style="font-size:19px">🛡</span>
+        <p style="margin:0;font-size:14px;color:#155A50;line-height:1.55;font-weight:500;text-wrap:pretty">Public sign-ups always join as <b>Community Members</b>. Organiser and Admin roles are granted here by an administrator after review.</p>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const av = ["#C8862B", "#4A8FC2", "#8E6FA8", "#2E7D4F", "#E0704F", "#1F8A7A"];
+    const ini = (n) => n.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+    const roleTone = { "Community Member": ["#E7F2EA", "#1E4D33"], Organiser: ["#E9F1F8", "#2F5E86"], Admin: ["#F1EBF6", "#5F4380"] };
+    const stTone = { Active: ["#E7F2EA", "#1E4D33"], Pending: ["#FBF3DF", "#8A5E08"], Suspended: ["#FBEAE8", "#B0433B"] };
+    const mk = (name, email, role, joined, status, i) => ({
+      name, email, role, joined, status,
+      initials: ini(name), avBg: av[i % av.length],
+      roleBg: roleTone[role][0], roleFg: roleTone[role][1],
+      stBg: stTone[status][0], stFg: stTone[status][1],
+      pending: status === "Pending",
+      suspendable: status === "Active",
+    });
+    return {
+      rows: [
+        mk("Tan Wei Ling", "weiling.tan@example.sg", "Community Member", "14/01/2026", "Active", 0),
+        mk("Marcus Lim", "marcus.lim@example.sg", "Organiser", "03/11/2025", "Active", 1),
+        mk("Nurul Aisyah", "nurul.a@example.sg", "Community Member", "22/02/2026", "Active", 2),
+        mk("Grace Chua", "grace.chua@example.sg", "Organiser", "12/07/2026", "Pending", 3),
+        mk("Rajesh Kumar", "rajesh.k@example.sg", "Community Member", "08/03/2026", "Active", 4),
+        mk("Jason Teo", "jason.teo@example.sg", "Community Member", "19/05/2026", "Suspended", 5),
+        mk("Siti Rahman", "siti.r@communityconnect.sg", "Admin", "01/09/2025", "Active", 2),
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
