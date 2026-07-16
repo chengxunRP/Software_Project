@@ -1,0 +1,114 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Attendance Reports'; %>
+    <% topbarActions = '<a href="/organiser/dashboard" class="btn-cc btn-cc-secondary btn-cc-sm">Back to dashboard</a>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1200">
+      <form method="get" action="/organiser/reports/attendance" class="card-cc" style="padding:18px 20px;margin-bottom:16px">
+        <div class="d-flex flex-wrap gap-3 align-items-end">
+          <div>
+            <label class="form-label-cc" for="search">Search event</label>
+            <input id="search" name="search" class="form-control-cc" value="<%= filters.search %>" placeholder="Event name" />
+          </div>
+          <div>
+            <label class="form-label-cc" for="event_id">Event</label>
+            <select id="event_id" name="event_id" class="form-select-cc">
+              <option value="">All events</option>
+              <% eventOptions.forEach(function (option) { %>
+                <option value="<%= option.event_id %>" <%= String(filters.event_id) === String(option.event_id) ? 'selected' : '' %>><%= option.event_name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div>
+            <label class="form-label-cc" for="status">Status</label>
+            <select id="status" name="status" class="form-select-cc">
+              <option value="">All statuses</option>
+              <option value="Open" <%= filters.status === 'Open' ? 'selected' : '' %>>Open</option>
+              <option value="Full" <%= filters.status === 'Full' ? 'selected' : '' %>>Full</option>
+              <option value="Completed" <%= filters.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+              <option value="Cancelled" <%= filters.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label-cc" for="sortBy">Sort by</label>
+            <select id="sortBy" name="sortBy" class="form-select-cc">
+              <option value="event_date" <%= filters.sortBy === 'event_date' ? 'selected' : '' %>>Event date</option>
+              <option value="event_name" <%= filters.sortBy === 'event_name' ? 'selected' : '' %>>Event name</option>
+              <option value="total_registered_volunteers" <%= filters.sortBy === 'total_registered_volunteers' ? 'selected' : '' %>>Registered volunteers</option>
+              <option value="present" <%= filters.sortBy === 'present' ? 'selected' : '' %>>Present</option>
+              <option value="absent" <%= filters.sortBy === 'absent' ? 'selected' : '' %>>Absent</option>
+              <option value="attendance_percentage" <%= filters.sortBy === 'attendance_percentage' ? 'selected' : '' %>>Attendance %</option>
+              <option value="volunteer_hours_earned" <%= filters.sortBy === 'volunteer_hours_earned' ? 'selected' : '' %>>Volunteer hours</option>
+              <option value="waitlisted_volunteers" <%= filters.sortBy === 'waitlisted_volunteers' ? 'selected' : '' %>>Waitlisted</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label-cc" for="sortOrder">Order</label>
+            <select id="sortOrder" name="sortOrder" class="form-select-cc">
+              <option value="desc" <%= filters.sortOrder === 'desc' ? 'selected' : '' %>>Descending</option>
+              <option value="asc" <%= filters.sortOrder === 'asc' ? 'selected' : '' %>>Ascending</option>
+            </select>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-cc btn-cc-primary btn-cc-sm">Apply</button>
+            <a href="/organiser/reports/attendance" class="btn-cc btn-cc-secondary btn-cc-sm">Reset</a>
+            <a href="<%= exportUrl %>" class="btn-cc btn-cc-secondary btn-cc-sm">Export CSV</a>
+          </div>
+        </div>
+      </form>
+
+      <div class="stat-row-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">
+        <div class="stat-card" style="padding:18px 20px">
+          <span class="stat-label" style="font-size:12.5px">Events</span>
+          <span class="stat-value" style="font-size:26px"><%= summary.totalEvents %></span>
+        </div>
+        <div class="stat-card" style="padding:18px 20px">
+          <span class="stat-label" style="font-size:12.5px">Volunteer registrations</span>
+          <span class="stat-value green" style="font-size:26px"><%= summary.totalRegisteredVolunteers %></span>
+        </div>
+        <div class="stat-card" style="padding:18px 20px">
+          <span class="stat-label" style="font-size:12.5px">Present</span>
+          <span class="stat-value" style="font-size:26px"><%= summary.present %></span>
+        </div>
+        <div class="stat-card" style="padding:18px 20px">
+          <span class="stat-label" style="font-size:12.5px">Attendance %</span>
+          <span class="stat-value amber" style="font-size:26px"><%= overallAttendanceRate %>%</span>
+        </div>
+      </div>
+
+      <div class="card-cc overflow-hidden">
+        <div class="panel-header">
+          <span class="h-card">Volunteer attendance report</span>
+          <span style="font-size:13px;color:#8B8778">Hours: <%= summary.volunteerHours.toFixed(1) %> · Waitlisted: <%= summary.waitlisted %></span>
+        </div>
+        <div class="table-scroll">
+          <div class="table-cc-head" style="grid-template-columns:1.5fr 0.8fr 0.8fr 0.6fr 0.6fr 0.8fr 0.8fr 0.8fr">
+            <span>Event</span><span>Date</span><span>Registered</span><span>Present</span><span>Absent</span><span>Attendance</span><span>Hours</span><span>Waitlisted</span>
+          </div>
+          <% rows.forEach(function (row) { %>
+            <div class="table-cc-row" style="grid-template-columns:1.5fr 0.8fr 0.8fr 0.6fr 0.6fr 0.8fr 0.8fr 0.8fr">
+              <div>
+                <div style="font-weight:700;color:#23271F"><%= row.event_name %></div>
+                <div style="font-size:12.5px;color:#8B8778"><%= row.event_status %></div>
+              </div>
+              <span style="font-weight:600;color:#3C4038"><%= row.formatted_event_date %></span>
+              <span style="font-weight:600;color:#3C4038"><%= row.total_registered_volunteers %></span>
+              <span style="font-weight:600;color:#3C4038"><%= row.present %></span>
+              <span style="font-weight:600;color:#3C4038"><%= row.absent %></span>
+              <span style="font-weight:600;color:#3C4038"><%= row.attendance_percentage %>%</span>
+              <span style="font-weight:600;color:#3C4038"><%= row.volunteer_hours_earned.toFixed(1) %></span>
+              <span style="font-weight:600;color:#3C4038"><%= row.waitlisted_volunteers %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,5 +1,9 @@
 const pool = require("../config/database");
 
+function isActiveAllowedRole(role) {
+  return role === "community_member" || role === "organiser" || role === "admin";
+}
+
 /**
  * Temporary development authentication fallback.
  *
@@ -50,7 +54,7 @@ async function attachCurrentUser(req, res, next) {
       }
 
       const user = rows[0];
-      if (user.role !== "community_member" || user.account_status !== "Active") {
+      if (!isActiveAllowedRole(user.role) || user.account_status !== "Active") {
         return res.status(403).render("error", {
           layout: "public",
           activeNav: "",
@@ -59,7 +63,7 @@ async function attachCurrentUser(req, res, next) {
           messages: [],
           statusCode: 403,
           errorTitle: "Not allowed",
-          errorMessage: "Only active community members can manage event registrations."
+          errorMessage: "Only active users can access this area."
         });
       }
 
@@ -125,7 +129,7 @@ async function attachCurrentUser(req, res, next) {
     }
 
     const devUser = devRows[0];
-    if (devUser.role !== "community_member" || devUser.account_status !== "Active") {
+    if (!isActiveAllowedRole(devUser.role) || devUser.account_status !== "Active") {
       return res.status(500).render("error", {
         layout: "public",
         activeNav: "",
@@ -133,10 +137,19 @@ async function attachCurrentUser(req, res, next) {
         currentUser: null,
         messages: [],
         statusCode: 500,
-        errorTitle: "DEV_USER_ID is not an active community member",
-        errorMessage: "DEV_USER_ID must point to a user with role = community_member and account_status = Active."
+        errorTitle: "DEV_USER_ID is not an active user",
+        errorMessage: "DEV_USER_ID must point to an Active community_member, organiser, or admin account."
       });
     }
+
+    req.session.user = {
+      user_id: devUser.user_id,
+      name: devUser.name,
+      email: devUser.email,
+      role: devUser.role,
+      account_status: devUser.account_status,
+      source: "dev_user"
+    };
 
     req.currentUser = {
       user_id: devUser.user_id,
@@ -162,6 +175,11 @@ async function attachCurrentUser(req, res, next) {
   }
 }
 
+async function attachAnyCurrentUser(req, res, next) {
+  return attachCurrentUser(req, res, next);
+}
+
 module.exports = {
-  attachCurrentUser: attachCurrentUser
+  attachCurrentUser: attachCurrentUser,
+  attachAnyCurrentUser: attachAnyCurrentUser
 };

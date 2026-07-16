@@ -97,7 +97,8 @@
 
               <%- include('partials/messages') %>
 
-              <form id="registrationForm" method="POST" action="/events/<%= event.id %>/register" data-participation-form class="d-flex flex-column gap-3">
+              <form id="registrationForm" method="POST" action="/registrations" data-participation-form class="d-flex flex-column gap-3">
+                <input type="hidden" name="event_id" value="<%= event.event_id %>">
                 <div>
                   <div class="form-label-cc mb-2">How would you like to join?</div>
                   <div class="d-flex flex-column gap-2">

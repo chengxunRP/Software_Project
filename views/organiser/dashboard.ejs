@@ -9,24 +9,47 @@
     <div class="app-content max-1080">
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
         <div class="stat-card">
-          <span class="stat-label">Total events</span>
+          <span class="stat-label">Total events created</span>
           <span class="stat-value"><%= stats.totalEvents %></span>
-          <span class="stat-note"><%= stats.completed %> completed · <%= stats.upcoming %> upcoming</span>
+          <span class="stat-note">All events under your organisation</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Confirmed participants</span>
-          <span class="stat-value green"><%= stats.confirmedParticipants %></span>
-          <span class="stat-note">Across upcoming events</span>
+          <span class="stat-label">Active events</span>
+          <span class="stat-value green"><%= stats.activeEvents %></span>
+          <span class="stat-note">Currently open or full</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Confirmed volunteers</span>
-          <span class="stat-value green"><%= stats.confirmedVolunteers %></span>
-          <span class="stat-note">Across upcoming events</span>
+          <span class="stat-label">Completed events</span>
+          <span class="stat-value"><%= stats.completedEvents %></span>
+          <span class="stat-note">Closed after delivery</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Waiting lists</span>
-          <span class="stat-value amber"><%= stats.participantWaitlist + stats.volunteerWaitlist %></span>
-          <span class="stat-note">P <%= stats.participantWaitlist %> · V <%= stats.volunteerWaitlist %> · avg attendance <%= stats.avgAttendance %></span>
+          <span class="stat-label">Cancelled events</span>
+          <span class="stat-value amber"><%= stats.cancelledEvents %></span>
+          <span class="stat-note">Events withdrawn</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px">
+        <div class="stat-card">
+          <span class="stat-label">Registered volunteers</span>
+          <span class="stat-value green"><%= stats.totalRegisteredVolunteers %></span>
+          <span class="stat-note">Confirmed volunteer registrations</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Attendance rate</span>
+          <span class="stat-value"><%= stats.attendanceRate %></span>
+          <span class="stat-note">Recorded attendance outcomes</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Avg. volunteers/event</span>
+          <span class="stat-value amber"><%= stats.averageVolunteersPerEvent %></span>
+          <span class="stat-note">Across all created events</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Volunteer hours</span>
+          <span class="stat-value"><%= stats.totalVolunteerHours %></span>
+          <span class="stat-note">Hours contributed by volunteers</span>
         </div>
       </div>
 

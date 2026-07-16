@@ -3,7 +3,8 @@
   <%- include('../partials/sidebar') %>
   <main class="app-main">
     <% topbarTitle = 'Dashboard'; %>
-    <% topbarActions = '<div class="bell-btn" title="Notifications">🔔<span class="count">3</span></div>'; %>
+    <% const notificationCount = typeof unreadCount !== 'undefined' ? unreadCount : (notifications ? notifications.length : 0); %>
+    <% topbarActions = '<div class="bell-btn" title="Notifications">🔔<span class="count">' + notificationCount + '</span></div>'; %>
     <%- include('../partials/navbar') %>
 
     <div class="app-content max-1080">

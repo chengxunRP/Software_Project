@@ -8,7 +8,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  authPlugins: ["caching_sha2_password", "mysql_native_password"]
 });
 
 module.exports = pool;

@@ -2,11 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
-const session = require("express-session");
 const pool = require("./config/database");
 const publicEvents = require("./lib/publicEvents");
 const registrationRoutes = require("./routes/registrationRoutes");
 const { takeFlash } = require("./controllers/registrationController");
+const notificationController = require("./controllers/notificationController");
+const organiserStatsController = require("./controllers/organiserStatsController");
+const organiserAttendanceReportController = require("./controllers/organiserAttendanceReportController");
+const { attachCurrentUser } = require("./middleware/devUser");
 
 const rolesRoutes = require("./routes/roles");
 
@@ -18,18 +21,17 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 
-if (!process.env.SESSION_SECRET) {
-  throw new Error(
-    "SESSION_SECRET is not set. Add it to your .env file, then restart the server " +
-    "(dotenv only reads .env once, at startup — editing it while the server is still running has no effect)."
-  );
-}
+const sessionSecret = process.env.SESSION_SECRET || "communityconnect-dev-session";
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax"
+    }
   })
 );
 
@@ -38,30 +40,21 @@ app.use(
 // and before any protected routes below.
 app.use(function (req, res, next) {
   if (!req.session.user) {
+    const devUserId = Number(process.env.DEV_USER_ID || 3);
+    const devUserRole = String(process.env.DEV_USER_ROLE || "community_member").toLowerCase();
+
     req.session.user = {
-      user_id: 2, // Assume an Organiser exists with ID 1
-      name: "Marcus Lim",
-      initials: "ML",
-      avatarBg: "#7FA8D9",
-      role: "organiser", // must be lowercase — matches the users.role ENUM and isOrganiser's check
+      user_id: Number.isInteger(devUserId) && devUserId > 0 ? devUserId : 3,
+      name: "Tan Wei Ling",
+      initials: "WL",
+      avatarBg: "#D99E2B",
+      role: devUserRole,
     };
   }
   next();
 });
 
 app.use(rolesRoutes);
-
-// Session required for future authentication (req.session.user) and flash messages.
-// Login / account registration itself is implemented by another teammate.
-app.use(session({
-  secret: process.env.SESSION_SECRET || "communityconnect-dev-session",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    sameSite: "lax"
-  }
-}));
 
 app.use(registrationRoutes);
 
@@ -857,37 +850,69 @@ app.get("/events/:id", async function (req, res) {
 
 // ---------- Community member GET preview routes ----------
 
-app.get("/member/dashboard", function (req, res) {
-  const asParticipant = memberRegistrations.Confirmed
-    .filter(function (r) { return r.participation_type === "Participant"; })
-    .map(withTone);
-  const asVolunteer = memberRegistrations.Confirmed
-    .filter(function (r) { return r.participation_type === "Volunteer"; })
-    .map(withTone);
-  const participantWaitlist = memberRegistrations.Waitlisted
-    .filter(function (r) { return r.participation_type === "Participant"; })
-    .map(withTone);
-  const volunteerWaitlistRows = memberRegistrations.Waitlisted
-    .filter(function (r) { return r.participation_type === "Volunteer"; })
-    .map(withTone);
-  const recommended = [events[4], events[6]];
-  res.render("member/dashboard", appLocals("member", memberUser, "dashboard", {
-    pageTitle: "Dashboard · Community member",
-    asParticipant: asParticipant,
-    asVolunteer: asVolunteer,
-    participantWaitlist: participantWaitlist,
-    volunteerWaitlist: volunteerWaitlistRows,
-    recommended: recommended,
-    notifications: memberNotifications,
-    stats: {
-      participantUpcoming: asParticipant.length,
-      volunteerUpcoming: asVolunteer.length,
-      participantWaitlist: participantWaitlist.length,
-      volunteerWaitlist: volunteerWaitlistRows.length,
-      hours: memberHoursSummary.totalHours,
-      hoursNote: "Across " + memberHoursSummary.eventCount + " volunteer events since Jan 2026"
-    }
-  }));
+app.get("/member/dashboard", attachCurrentUser, async function (req, res) {
+  try {
+    const asParticipant = memberRegistrations.Confirmed
+      .filter(function (r) { return r.participation_type === "Participant"; })
+      .map(withTone);
+    const asVolunteer = memberRegistrations.Confirmed
+      .filter(function (r) { return r.participation_type === "Volunteer"; })
+      .map(withTone);
+    const participantWaitlist = memberRegistrations.Waitlisted
+      .filter(function (r) { return r.participation_type === "Participant"; })
+      .map(withTone);
+    const volunteerWaitlistRows = memberRegistrations.Waitlisted
+      .filter(function (r) { return r.participation_type === "Volunteer"; })
+      .map(withTone);
+    const recommended = [events[4], events[6]];
+
+    const userId = req.currentUser && req.currentUser.user_id ? req.currentUser.user_id : (req.session.user && req.session.user.user_id ? req.session.user.user_id : 3);
+    const notifications = await notificationController.listNotifications(pool, userId, {
+      limit: 8,
+      offset: 0,
+      includeRead: true
+    });
+
+    const normalizedNotifications = notifications.map(function (notification) {
+      return {
+        id: notification.notification_id,
+        type: notification.notification_type.toLowerCase(),
+        text: notification.message,
+        time: new Date(notification.created_at).toLocaleString("en-SG", {
+          dateStyle: "medium",
+          timeStyle: "short"
+        })
+      };
+    });
+
+    res.render("member/dashboard", appLocals("member", memberUser, "dashboard", {
+      pageTitle: "Dashboard · Community member",
+      asParticipant: asParticipant,
+      asVolunteer: asVolunteer,
+      participantWaitlist: participantWaitlist,
+      volunteerWaitlist: volunteerWaitlistRows,
+      recommended: recommended,
+      notifications: normalizedNotifications,
+      unreadCount: normalizedNotifications.length,
+      stats: {
+        participantUpcoming: asParticipant.length,
+        volunteerUpcoming: asVolunteer.length,
+        participantWaitlist: participantWaitlist.length,
+        volunteerWaitlist: volunteerWaitlistRows.length,
+        hours: memberHoursSummary.totalHours,
+        hoursNote: "Across " + memberHoursSummary.eventCount + " volunteer events since Jan 2026"
+      }
+    }));
+  } catch (err) {
+    console.error("member dashboard notification load failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "dashboard",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load your dashboard notifications. Please try again shortly."
+    }));
+  }
 });
 
 app.get("/member/volunteer-hours", function (req, res) {
@@ -916,15 +941,33 @@ app.get("/volunteer/profile", function (req, res) { res.redirect("/member/profil
 
 // ---------- Organiser GET preview routes ----------
 
-app.get("/organiser/dashboard", function (req, res) {
-  const upcoming = [events[0], events[1], events[4], events[6]];
-  res.render("organiser/dashboard", appLocals("organiser", organiserUser, "dashboard", {
-    pageTitle: "Dashboard · Organiser",
-    stats: organiserStats,
-    upcoming: upcoming,
-    alerts: organiserAlerts,
-    attendance: organiserAttendanceSummary
-  }));
+app.get("/organiser/dashboard", async function (req, res) {
+  try {
+    await organiserStatsController.renderOrganiserDashboard(req, res);
+  } catch (error) {
+    console.error("organiser dashboard route failed:", error.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "dashboard",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load your organiser dashboard. Please try again shortly."
+    }));
+  }
+});
+
+app.get("/api/organiser/dashboard-stats", attachCurrentUser, async function (req, res) {
+  try {
+    if (req.currentUser && req.currentUser.role !== "organiser") {
+      return res.status(403).json({ error: "Only organisers can view this dashboard statistics API." });
+    }
+
+    const statsData = await organiserStatsController.getOrganiserDashboardData(req.currentUser.user_id);
+    return res.json(statsData.stats);
+  } catch (error) {
+    console.error("organiser dashboard API failed:", error.message);
+    return res.status(500).json({ error: "Unable to load organiser statistics." });
+  }
 });
 
 app.get("/organiser/events", function (req, res) {
@@ -1033,6 +1076,30 @@ app.get("/organiser/events/:id/attendance", function (req, res) {
       text: "Marking a volunteer as <b>Attended</b> records 2.0 hours (event duration) to their volunteer record automatically."
     }]
   }));
+});
+
+app.get("/organiser/reports/attendance", attachCurrentUser, async function (req, res) {
+  try {
+    await organiserAttendanceReportController.renderAttendanceReportPage(req, res);
+  } catch (error) {
+    console.error("attendance report route failed:", error.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "attendance-reports",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load the attendance report. Please try again shortly."
+    }));
+  }
+});
+
+app.get("/organiser/reports/export", attachCurrentUser, async function (req, res) {
+  try {
+    await organiserAttendanceReportController.exportAttendanceReportCsv(req, res);
+  } catch (error) {
+    console.error("attendance report export route failed:", error.message);
+    res.status(500).send("Unable to export attendance report.");
+  }
 });
 
 // ---------- Admin GET preview routes ----------

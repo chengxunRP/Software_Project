@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const notificationController = require("./notificationController");
 
 const ALLOWED_PARTICIPATION_TYPES = ["Participant", "Volunteer"];
 const NOTES_MAX_LENGTH = 500;
@@ -117,6 +118,87 @@ async function nextWaitingPosition(connection, eventId, participationType) {
   return Number(rows[0].next_position) || 1;
 }
 
+function pickNextWaitlistedRegistration(rows) {
+  if (!rows || !rows.length) {
+    return null;
+  }
+
+  return rows.slice().sort(function (left, right) {
+    if (Number(left.waiting_position) !== Number(right.waiting_position)) {
+      return Number(left.waiting_position) - Number(right.waiting_position);
+    }
+    const leftTime = left.registered_at ? new Date(left.registered_at).getTime() : 0;
+    const rightTime = right.registered_at ? new Date(right.registered_at).getTime() : 0;
+    if (leftTime !== rightTime) {
+      return leftTime - rightTime;
+    }
+    return Number(left.registration_id) - Number(right.registration_id);
+  })[0];
+}
+
+async function insertPromotionNotification(connection, userId, eventId, eventName) {
+  const title = "You have a confirmed place";
+  const message = 'You have been promoted from the volunteer waitlist for "' + eventName + '" and now have a confirmed place.';
+
+  const [existingRows] = await connection.query(
+    `SELECT notification_id
+     FROM notifications
+     WHERE user_id = ?
+       AND event_id = ?
+       AND title = ?
+       AND message = ?
+       AND notification_type = 'Promotion'
+     LIMIT 1`,
+    [userId, eventId, title, message]
+  );
+
+  if (existingRows.length) {
+    return false;
+  }
+
+  await connection.query(
+    `INSERT INTO notifications (user_id, event_id, title, message, notification_type)
+     VALUES (?, ?, ?, ?, 'Promotion')`,
+    [userId, eventId, title, message]
+  );
+
+  return true;
+}
+
+async function promoteNextVolunteerWaitlist(connection, eventId, eventName) {
+  const [rows] = await connection.query(
+    `SELECT registration_id, user_id, waiting_position, registered_at
+     FROM event_registrations
+     WHERE event_id = ?
+       AND participation_type = 'Volunteer'
+       AND status = 'Waitlisted'
+     ORDER BY
+       waiting_position ASC,
+       registered_at ASC,
+       registration_id ASC
+     LIMIT 1
+     FOR UPDATE`,
+    [eventId]
+  );
+
+  const nextRegistration = pickNextWaitlistedRegistration(rows);
+  if (!nextRegistration) {
+    return null;
+  }
+
+  await connection.query(
+    `UPDATE event_registrations
+     SET status = 'Confirmed',
+         waiting_position = NULL,
+         updated_at = CURRENT_TIMESTAMP
+     WHERE registration_id = ?`,
+    [nextRegistration.registration_id]
+  );
+
+  await insertPromotionNotification(connection, nextRegistration.user_id, eventId, eventName);
+  return nextRegistration;
+}
+
 /**
  * Recalculate waiting positions for one event + participation type.
  * Must run inside an open transaction on the provided connection.
@@ -195,7 +277,11 @@ function registrationResultMessage(participationType, status, waitingPosition, r
 
 async function registerForEvent(req, res) {
   const user = req.currentUser;
-  const eventId = Number(req.params.id);
+  const eventIdFromParam = Number(req.params.id);
+  const eventIdFromBody = Number(req.body.event_id || req.body.eventId);
+  const eventId = Number.isInteger(eventIdFromParam) && eventIdFromParam > 0
+    ? eventIdFromParam
+    : eventIdFromBody;
   let participationType = String(req.body.participation_type || "").trim();
   let notes = String(req.body.notes || "").trim();
   const volunteerRoleIdRaw = req.body.volunteer_role_id;
@@ -351,6 +437,15 @@ async function registerForEvent(req, res) {
           newStatus,
           waitingPosition
         ]
+      );
+    }
+
+    if (participationType === "Volunteer") {
+      await notificationController.createVolunteerRegistrationNotification(
+        connection,
+        user.user_id,
+        eventId,
+        eventRow.event_name
       );
     }
 
@@ -532,6 +627,7 @@ async function cancelRegistration(req, res) {
          r.user_id,
          r.participation_type,
          r.status,
+         e.event_name,
          e.start_datetime
        FROM event_registrations r
        INNER JOIN events e ON e.event_id = r.event_id
@@ -576,6 +672,7 @@ async function cancelRegistration(req, res) {
     const wasConfirmed = registration.status === "Confirmed";
     const participationType = registration.participation_type;
     const eventId = registration.event_id;
+    const eventName = registration.event_name;
 
     await connection.query(
       `UPDATE event_registrations
@@ -587,32 +684,8 @@ async function cancelRegistration(req, res) {
       [registrationId]
     );
 
-    if (wasConfirmed) {
-      const [waitlisted] = await connection.query(
-        `SELECT registration_id
-         FROM event_registrations
-         WHERE event_id = ?
-           AND participation_type = ?
-           AND status = 'Waitlisted'
-         ORDER BY
-           waiting_position ASC,
-           registered_at ASC,
-           registration_id ASC
-         LIMIT 1
-         FOR UPDATE`,
-        [eventId, participationType]
-      );
-
-      if (waitlisted.length) {
-        await connection.query(
-          `UPDATE event_registrations
-           SET status = 'Confirmed',
-               waiting_position = NULL,
-               updated_at = CURRENT_TIMESTAMP
-           WHERE registration_id = ?`,
-          [waitlisted[0].registration_id]
-        );
-      }
+    if (wasConfirmed && participationType === "Volunteer") {
+      await promoteNextVolunteerWaitlist(connection, eventId, eventName);
     }
 
     await recalculateWaitingPositions(connection, eventId, participationType);
@@ -643,5 +716,6 @@ module.exports = {
   listMyRegistrations: listMyRegistrations,
   cancelRegistration: cancelRegistration,
   recalculateWaitingPositions: recalculateWaitingPositions,
+  pickNextWaitlistedRegistration: pickNextWaitlistedRegistration,
   takeFlash: takeFlash
 };

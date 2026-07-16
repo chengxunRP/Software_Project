@@ -1,0 +1,123 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Volunteer Contribution History'; %>
+    <% topbarActions = '<a href="/member/volunteer-hours" class="btn-cc btn-cc-secondary btn-cc-sm">Back to hours</a>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1200">
+      <div class="card-cc" style="padding:24px;display:grid;gap:18px">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+          <div>
+            <div class="h-card mb-2">Volunteer contribution history</div>
+            <div class="text-muted-cc">Track completed events, attendance outcomes, and hours earned.</div>
+          </div>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="/member/volunteer-hours" class="btn-cc btn-cc-secondary btn-cc-sm">Overview</a>
+          </div>
+        </div>
+
+        <div class="dashboard-split" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+          <div class="stat-card" style="padding:20px">
+            <span class="stat-label">Completed events</span>
+            <span class="stat-value green" style="font-size:30px"><%= summary.completedEvents %></span>
+          </div>
+          <div class="stat-card" style="padding:20px">
+            <span class="stat-label">Volunteer hours</span>
+            <span class="stat-value" style="font-size:30px"><%= summary.totalHours %></span>
+          </div>
+          <div class="stat-card" style="padding:20px">
+            <span class="stat-label">Avg. hours/event</span>
+            <span class="stat-value amber" style="font-size:30px"><%= summary.averageHours %></span>
+          </div>
+        </div>
+
+        <form method="get" action="/member/volunteer-history" class="d-flex flex-wrap gap-2 align-items-end">
+          <div class="flex-fill" style="min-width:220px">
+            <label class="form-label-cc" for="search">Search by event title</label>
+            <input id="search" name="search" class="form-control-cc" value="<%= filters.search %>" placeholder="Search event" />
+          </div>
+          <div style="min-width:180px">
+            <label class="form-label-cc" for="category">Category</label>
+            <select id="category" name="category" class="form-select-cc">
+              <option value="">All categories</option>
+              <% categories.forEach(function (categoryName) { %>
+                <option value="<%= categoryName %>" <%= filters.category === categoryName ? 'selected' : '' %>><%= categoryName %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div style="min-width:140px">
+            <label class="form-label-cc" for="year">Year</label>
+            <select id="year" name="year" class="form-select-cc">
+              <option value="">All years</option>
+              <% years.forEach(function (yearValue) { %>
+                <option value="<%= yearValue %>" <%= filters.year === yearValue ? 'selected' : '' %>><%= yearValue %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div style="min-width:120px">
+            <label class="form-label-cc" for="limit">Per page</label>
+            <select id="limit" name="limit" class="form-select-cc">
+              <option value="10" <%= Number(filters.limit) === 10 ? 'selected' : '' %>>10</option>
+              <option value="20" <%= Number(filters.limit) === 20 ? 'selected' : '' %>>20</option>
+              <option value="50" <%= Number(filters.limit) === 50 ? 'selected' : '' %>>50</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-cc btn-cc-primary btn-cc-sm">Apply</button>
+          <a href="/member/volunteer-history" class="btn-cc btn-cc-secondary btn-cc-sm">Reset</a>
+        </form>
+      </div>
+
+      <div class="table-cc mt-3">
+        <div class="panel-header">
+          <span class="h-card">History entries</span>
+          <span class="text-muted-cc">Newest first</span>
+        </div>
+        <div class="table-scroll">
+          <div class="table-cc-head" style="grid-template-columns:1.8fr 1.1fr 1.1fr 0.9fr 0.8fr 0.8fr">
+            <span>Event title</span><span>Organiser</span><span>Category</span><span>Status</span><span>Hours</span><span>Completed</span>
+          </div>
+          <% rows.forEach(function (row) { %>
+            <div class="table-cc-row" style="grid-template-columns:1.8fr 1.1fr 1.1fr 0.9fr 0.8fr 0.8fr">
+              <span style="font-weight:600;color:#23271F"><%= row.event_name %></span>
+              <span class="text-muted-cc"><%= row.organiser_name %></span>
+              <span class="text-muted-cc"><%= row.category_name %></span>
+              <span>
+                <span class="badge-cc <%= row.attendance_status === 'Attended' ? 'badge-cc-attended' : (row.attendance_status === 'Absent' ? 'badge-cc-absent' : 'badge-cc-pending') %>" style="font-size:11.5px;padding:4px 10px"><%= row.attendance_status %></span>
+              </span>
+              <span style="font-weight:700;color:#23271F"><%= row.volunteer_hours_display %></span>
+              <span class="text-muted-cc"><%= row.completion_date %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <% if (pagination.totalPages > 1) { %>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="text-muted-cc">Page <%= pagination.currentPage %> of <%= pagination.totalPages %></div>
+          <div class="d-flex gap-2">
+            <% if (pagination.hasPreviousPage) { %>
+              <a class="btn-cc btn-cc-secondary btn-cc-sm" href="/member/volunteer-history?page=<%= pagination.currentPage - 1 %>&search=<%= encodeURIComponent(filters.search) %>&category=<%= encodeURIComponent(filters.category) %>&year=<%= encodeURIComponent(filters.year) %>&limit=<%= filters.limit %>">Previous</a>
+            <% } %>
+            <% if (pagination.hasNextPage) { %>
+              <a class="btn-cc btn-cc-primary btn-cc-sm" href="/member/volunteer-history?page=<%= pagination.currentPage + 1 %>&search=<%= encodeURIComponent(filters.search) %>&category=<%= encodeURIComponent(filters.category) %>&year=<%= encodeURIComponent(filters.year) %>&limit=<%= filters.limit %>">Next</a>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<nav class="mobile-tabbar">
+  <a href="/member/dashboard"><span class="tab-icon">🏠</span>Dashboard</a>
+  <a href="/events"><span class="tab-icon">🔍</span>Events</a>
+  <a href="/member/registrations"><span class="tab-icon">🗂</span>Registrations</a>
+  <a href="/member/volunteer-hours" class="active"><span class="tab-icon">⏱</span>Hours</a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
