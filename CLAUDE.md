@@ -5,6 +5,8 @@ Read this file **before** implementing, changing or generating any code.
 
 Before changing code, also inspect **Sources of Truth** (later in this file), especially `design-reference/` for visuals and `database/community_event_manager.sql` for schema. **Report conflicts before changing files.**
 
+**Strict rule:** No AI tool or teammate may redesign, restyle, or visually change any existing CommunityConnect page unless the team explicitly approves a design change. See **Strict Frontend Design Preservation Rules** and **Rules for AI Coding Assistants** below.
+
 ---
 
 ## 1. Project Overview
@@ -316,7 +318,7 @@ Dashboard shows upcoming Participant and Volunteer places, both waiting lists, c
 
 ## 11. UI Design Requirements
 
-The exported Claude Design prototype in `design-reference/` is the **visual source of truth**. Do not invent a new look. Implementation must follow the sections below: **Approved Claude Design Reference**, **Participant and Volunteer Design Requirements**, and **Frontend Preservation Rules**.
+The exported Claude Design prototype in `design-reference/` is the **visual source of truth**. Do not invent a new look. Implementation must follow the sections below: **Approved Claude Design Reference**, **Participant and Volunteer Design Requirements**, **Frontend Preservation Rules**, **Strict Frontend Design Preservation Rules**, and **Rules for AI Coding Assistants**.
 
 High-level requirements remain:
 
@@ -428,6 +430,125 @@ Example copy pattern for capacities:
 - Preserve existing empty states, alerts, cards, tables and responsive behaviour.
 
 Temporary sample data in `app.js` is for frontend preview only and must be phased out as routes gain real queries.
+
+---
+
+# Strict Frontend Design Preservation Rules
+
+No AI tool or teammate may redesign, restyle, or visually change any existing CommunityConnect page unless the team **explicitly approves** a design change.
+
+1. The current CommunityConnect website design is approved and must be preserved.
+
+2. When implementing backend features, database queries, routes, controllers, authentication, validation or business logic, do not redesign any page.
+
+3. Do not change:
+   - Page layout
+   - Colours
+   - Fonts
+   - Spacing
+   - Card styles
+   - Button styles
+   - Navigation appearance
+   - Sidebar appearance
+   - Tables
+   - Forms
+   - Status badges
+   - Images
+   - Responsive layouts
+   - Dashboard arrangement
+
+4. Do not replace an existing page with a newly generated design.
+
+5. Do not create an alternative visual theme.
+
+6. Do not modify `public/css/style.css` for feature implementation unless a small CSS change is strictly necessary for displaying new functional data.
+
+7. Any necessary CSS change must:
+   - Match the existing design system
+   - Be limited to the assigned feature
+   - Not affect unrelated pages
+   - Not change the overall visual theme
+
+8. Do not change shared visual partials unless the assigned feature requires functional content to be displayed.
+
+   Shared visual partials include:
+   - Navbar
+   - Header
+   - Sidebar
+   - Footer
+   - Message components
+
+9. Do not remove or rename existing CSS classes without checking where they are used.
+
+10. Do not add inline styling that overrides the approved design.
+
+11. Do not modify files inside `design-reference/`.
+
+12. `design-reference/` remains the visual source of truth.
+
+13. Feature work should connect existing EJS pages to routes and MySQL data instead of recreating the pages.
+
+14. Preserve:
+   - Existing EJS structure
+   - Existing form actions
+   - Existing form input names
+   - Existing route paths
+   - Existing EJS variables
+   - Existing database-driven content
+
+15. Do not replace real MySQL data with sample or hardcoded data when changing frontend files.
+
+16. When an assigned feature requires a new element, such as a button, form field, table column, badge or message:
+   - Add only the required element
+   - Follow the existing visual style
+   - Do not redesign the rest of the page
+
+17. A developer must obtain team approval before making any major visual change.
+
+18. Examples of major visual changes that require approval:
+   - Changing the colour palette
+   - Moving major page sections
+   - Replacing the navigation
+   - Rebuilding dashboards
+   - Changing card layouts
+   - Changing typography
+   - Replacing images
+   - Changing desktop or mobile layouts
+   - Applying a new theme
+
+19. If an AI tool believes a design change is necessary, it must report the suggestion first and wait for approval before editing.
+
+20. When the user asks for backend or feature implementation, assume:
+   - Existing design must remain unchanged
+   - Only functional code should be added
+   - Unrelated frontend files must not be edited
+
+---
+
+# Rules for AI Coding Assistants
+
+Before editing files, the AI assistant must:
+
+1. Read `CLAUDE.md` completely.
+2. Identify the assigned feature.
+3. Identify the minimum files required.
+4. Avoid modifying unrelated files.
+5. Preserve the existing website design.
+6. Report any proposed design change before applying it.
+
+The AI assistant must **not** make visual improvements automatically.
+
+Phrases such as:
+
+- “Improve the page”
+- “Make it more modern”
+- “Clean up the UI”
+- “Enhance the layout”
+- “Make the design consistent”
+
+must **not** be interpreted as permission to redesign the application unless the user explicitly requests a design change.
+
+**Final rule:** When there is a conflict between feature functionality and frontend design, preserve the existing design and report the conflict before changing the page structure.
 
 ---
 
@@ -583,6 +704,7 @@ Feature branches:
 - Do not ask AI to redesign the website or replace `public/css/style.css` — preserve the approved Claude Design
 - Backend work must wire existing EJS pages to MySQL rather than rebuilding pages from scratch
 - Report conflicts between Sources of Truth before changing files
+- Follow **Strict Frontend Design Preservation Rules** and **Rules for AI Coding Assistants** — no redesign, restyle, or visual change without explicit team approval
 
 ---
 
