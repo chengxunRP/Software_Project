@@ -8,6 +8,7 @@ const registrationRoutes = require("./routes/registrationRoutes");
 const { takeFlash } = require("./controllers/registrationController");
 
 const rolesRoutes = require("./routes/roles");
+const { isOrganiser } = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,19 +50,6 @@ app.use(function (req, res, next) {
 });
 
 app.use(rolesRoutes);
-
-// Session required for future authentication (req.session.user) and flash messages.
-// Login / account registration itself is implemented by another teammate.
-app.use(session({
-  secret: process.env.SESSION_SECRET || "communityconnect-dev-session",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    sameSite: "lax"
-  }
-}));
-
 app.use(registrationRoutes);
 
 
@@ -777,13 +765,15 @@ app.get("/events", async function (req, res) {
     const date = (req.query.date || "").trim();
     const location = (req.query.location || "").trim();
     const availability = (req.query.availability || "").trim();
+    const sort = (req.query.sort || "date").trim().toLowerCase();
 
     const filters = {
       search: search,
       category: category,
       date: date,
       location: location,
-      availability: availability
+      availability: availability,
+      sort: sort === "popularity" ? "popularity" : "date"
     };
 
     const hasFilters = Boolean(
@@ -1011,27 +1001,131 @@ app.get("/organiser/events/:id/roles", function (req, res) {
   }));
 });
 
-app.get("/organiser/events/:id/attendance", function (req, res) {
-  const event = findEvent(req.params.id) || events[10];
-  const attendedCount = attendanceRows.filter(function (r) { return r.status === "Attended"; }).length;
-  const absentCount = attendanceRows.filter(function (r) { return r.status === "Absent"; }).length;
-  const pendingCount = attendanceRows.filter(function (r) { return r.status === "Pending"; }).length;
-  res.render("organiser/attendance", appLocals("organiser", organiserUser, "attendance", {
+// GET /organiser/events/:id/attendance
+// User action  -> organiser opens the Attendance page for one event
+// Route        -> confirms ownership, then loads every eligible registration
+// SQL          -> event_registrations LEFT JOIN volunteer_assignments/volunteer_roles
+//                 (to show which role a Volunteer holds) LEFT JOIN attendance
+//                 (registration_id) so a registration with no attendance row yet
+//                 shows as "Pending" instead of being excluded
+// DB           -> events, event_registrations, users, volunteer_assignments,
+//                 volunteer_roles, attendance
+// Response     -> renders the attendance page with real data (no attendance
+//                 marking yet — POST /organiser/events/:id/attendance is next step)
+const AVATAR_COLORS = ["#7FA8D9", "#D99E2B", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
+
+app.get("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
+  const eventId = req.params.id;
+
+  const [eventRows] = await pool.query(
+    "SELECT event_id, event_name, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
+
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (event.organiser_id !== req.session.user.user_id) {
+    return res.status(403).send("You do not have permission to manage this event.");
+  }
+
+  // Only registrations that actually held (or hold) a place are attendance-eligible.
+  // Waitlisted/Cancelled registrations never had a place to check in for.
+  const [regRows] = await pool.query(
+    `SELECT er.registration_id, u.name, er.participation_type,
+            vr.role_name, a.attendance_status
+     FROM event_registrations er
+     JOIN users u ON u.user_id = er.user_id
+     LEFT JOIN volunteer_assignments va ON va.registration_id = er.registration_id
+     LEFT JOIN volunteer_roles vr ON vr.role_id = va.role_id
+     LEFT JOIN attendance a ON a.registration_id = er.registration_id
+     WHERE er.event_id = ? AND er.status IN ('Confirmed', 'Attended', 'Absent')
+     ORDER BY u.name ASC`,
+    [eventId]
+  );
+
+  const rows = regRows.map(function (r, i) {
+    const initials = r.name.split(" ").map(function (part) { return part[0]; }).join("").slice(0, 2).toUpperCase();
+    return {
+      registration_id: r.registration_id,
+      name: r.name,
+      initials: initials,
+      avBg: AVATAR_COLORS[i % AVATAR_COLORS.length],
+      participation_type: r.participation_type,
+      role: r.role_name || "—",
+      status: r.attendance_status || "Pending",
+    };
+  });
+
+  const attendedCount = rows.filter(function (r) { return r.status === "Attended"; }).length;
+  const absentCount = rows.filter(function (r) { return r.status === "Absent"; }).length;
+  const pendingCount = rows.filter(function (r) { return r.status === "Pending"; }).length;
+
+  res.render("organiser/attendance", {
+    layout: "app",
+    role: "organiser",
+    activeNav: "attendance",
     pageTitle: "Attendance · Organiser",
+    currentUser: req.session.user,
     event: event,
-    eventOptions: [events[10], events[6]],
-    rows: attendanceRows,
+    eventOptions: [event],
+    rows: rows,
     summary: {
-      registered: 20,
+      registered: rows.length,
       attended: attendedCount,
       absent: absentCount,
       pending: pendingCount
     },
-    messages: [{
-      type: "success",
-      text: "Marking a volunteer as <b>Attended</b> records 2.0 hours (event duration) to their volunteer record automatically."
-    }]
-  }));
+    messages: takeFlash(req)
+  });
+});
+
+// POST /organiser/events/:id/attendance
+// User action  -> organiser clicks "Mark Attended" / "Mark Absent" on a row
+// Route        -> confirms ownership, checks for an existing attendance record,
+//                 then records the attendance decision
+// SQL          -> SELECT to check for a duplicate, then INSERT into attendance
+// DB           -> attendance
+// Response     -> redirect back to the same attendance page (with a flash
+//                 message if the record already existed)
+app.post("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
+  const eventId = req.params.id;
+
+  const [eventRows] = await pool.query(
+    "SELECT event_id, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
+
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (event.organiser_id !== req.session.user.user_id) {
+    return res.status(403).send("You do not have permission to manage this event.");
+  }
+
+  const { registration_id, attendance_status } = req.body;
+
+  const [existingRows] = await pool.query(
+    "SELECT attendance_id FROM attendance WHERE registration_id = ?",
+    [registration_id]
+  );
+
+  if (existingRows.length > 0) {
+    // Reuses the same req.session.flash shape that controllers/registrationController.js's
+    // takeFlash() reads — matches this route's GET handler, which now passes takeFlash(req).
+    req.session.flash = { type: "error", text: "Attendance has already been recorded for this volunteer." };
+    return res.redirect("/organiser/events/" + eventId + "/attendance");
+  }
+
+  await pool.query(
+    `INSERT INTO attendance (registration_id, attendance_status, check_in_time, recorded_by, recorded_at)
+     VALUES (?, ?, NOW(), ?, NOW())`,
+    [registration_id, attendance_status, req.session.user.user_id]
+  );
+
+  res.redirect("/organiser/events/" + eventId + "/attendance");
 });
 
 // ---------- Admin GET preview routes ----------
