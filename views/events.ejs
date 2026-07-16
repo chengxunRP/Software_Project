@@ -68,6 +68,15 @@
             <% }) %>
           </select>
         </div>
+        <div>
+          <label class="form-label-cc" for="sort">Sort by</label>
+          <select class="form-select-cc" id="sort" name="sort">
+            <% const sortOptions = [{ value: 'date', label: 'Date (soonest)' }, { value: 'popularity', label: 'Popularity' }]; %>
+            <% sortOptions.forEach(function (opt) { %>
+              <option value="<%= opt.value %>" <%= (activeFilters.sort || 'date') === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+            <% }) %>
+          </select>
+        </div>
         <button type="submit" class="btn-cc btn-cc-primary">Apply</button>
       </form>
 
