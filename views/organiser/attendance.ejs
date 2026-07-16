@@ -50,8 +50,16 @@
             </div>
             <span class="badge-cc <%= r.status === 'Attended' ? 'badge-cc-attended' : (r.status === 'Absent' ? 'badge-cc-absent' : 'badge-cc-pending') %>" data-attendance-badge style="font-size:11.5px;padding:4px 11px"><%= r.status %></span>
             <div class="d-flex gap-2">
-              <button type="button" class="btn-cc btn-cc-xs <%= r.status === 'Attended' ? 'btn-cc-primary' : 'btn-cc-secondary' %>" data-attendance-toggle="attended">Attended</button>
-              <button type="button" class="btn-cc btn-cc-xs <%= r.status === 'Absent' ? 'btn-cc-danger' : 'btn-cc-secondary' %>" data-attendance-toggle="absent">Absent</button>
+              <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance">
+                <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
+                <input type="hidden" name="attendance_status" value="Attended">
+                <button type="submit" class="btn-cc btn-cc-xs <%= r.status === 'Attended' ? 'btn-cc-primary' : 'btn-cc-secondary' %>">Mark Attended</button>
+              </form>
+              <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance">
+                <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
+                <input type="hidden" name="attendance_status" value="Absent">
+                <button type="submit" class="btn-cc btn-cc-xs <%= r.status === 'Absent' ? 'btn-cc-danger' : 'btn-cc-secondary' %>">Mark Absent</button>
+              </form>
             </div>
           </div>
         <% }) %>
