@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
-const session = require("express-session");
 const pool = require("./config/database");
 const publicEvents = require("./lib/publicEvents");
 const registrationRoutes = require("./routes/registrationRoutes");
