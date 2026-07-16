@@ -50,19 +50,6 @@ app.use(function (req, res, next) {
 });
 
 app.use(rolesRoutes);
-
-// Session required for future authentication (req.session.user) and flash messages.
-// Login / account registration itself is implemented by another teammate.
-app.use(session({
-  secret: process.env.SESSION_SECRET || "communityconnect-dev-session",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    sameSite: "lax"
-  }
-}));
-
 app.use(registrationRoutes);
 
 
@@ -1090,6 +1077,39 @@ app.get("/organiser/events/:id/attendance", isOrganiser, async function (req, re
     },
     messages: []
   });
+});
+
+// POST /organiser/events/:id/attendance
+// User action  -> organiser clicks "Mark Attended" / "Mark Absent" on a row
+// Route        -> confirms ownership, then records the attendance decision
+// SQL          -> INSERT into attendance (raw insert only — duplicate handling is a later stage)
+// DB           -> attendance
+// Response     -> redirect back to the same attendance page
+app.post("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
+  const eventId = req.params.id;
+
+  const [eventRows] = await pool.query(
+    "SELECT event_id, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
+
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (event.organiser_id !== req.session.user.user_id) {
+    return res.status(403).send("You do not have permission to manage this event.");
+  }
+
+  const { registration_id, attendance_status } = req.body;
+
+  await pool.query(
+    `INSERT INTO attendance (registration_id, attendance_status, check_in_time, recorded_by, recorded_at)
+     VALUES (?, ?, NOW(), ?, NOW())`,
+    [registration_id, attendance_status, req.session.user.user_id]
+  );
+
+  res.redirect("/organiser/events/" + eventId + "/attendance");
 });
 
 // ---------- Admin GET preview routes ----------
