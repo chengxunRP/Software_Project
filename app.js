@@ -1075,16 +1075,18 @@ app.get("/organiser/events/:id/attendance", isOrganiser, async function (req, re
       absent: absentCount,
       pending: pendingCount
     },
-    messages: []
+    messages: takeFlash(req)
   });
 });
 
 // POST /organiser/events/:id/attendance
 // User action  -> organiser clicks "Mark Attended" / "Mark Absent" on a row
-// Route        -> confirms ownership, then records the attendance decision
-// SQL          -> INSERT into attendance (raw insert only — duplicate handling is a later stage)
+// Route        -> confirms ownership, checks for an existing attendance record,
+//                 then records the attendance decision
+// SQL          -> SELECT to check for a duplicate, then INSERT into attendance
 // DB           -> attendance
-// Response     -> redirect back to the same attendance page
+// Response     -> redirect back to the same attendance page (with a flash
+//                 message if the record already existed)
 app.post("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
   const eventId = req.params.id;
 
@@ -1102,6 +1104,18 @@ app.post("/organiser/events/:id/attendance", isOrganiser, async function (req, r
   }
 
   const { registration_id, attendance_status } = req.body;
+
+  const [existingRows] = await pool.query(
+    "SELECT attendance_id FROM attendance WHERE registration_id = ?",
+    [registration_id]
+  );
+
+  if (existingRows.length > 0) {
+    // Reuses the same req.session.flash shape that controllers/registrationController.js's
+    // takeFlash() reads — matches this route's GET handler, which now passes takeFlash(req).
+    req.session.flash = { type: "error", text: "Attendance has already been recorded for this volunteer." };
+    return res.redirect("/organiser/events/" + eventId + "/attendance");
+  }
 
   await pool.query(
     `INSERT INTO attendance (registration_id, attendance_status, check_in_time, recorded_by, recorded_at)
