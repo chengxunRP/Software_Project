@@ -103,8 +103,10 @@
                     <span class="badge-cc badge-cc-cat" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>
                     <% if (ev.full) { %>
                       <span class="badge-cc badge-cc-full">FULL · WAITLIST</span>
-                    <% } else if (ev.status === 'Draft') { %>
-                      <span class="badge-cc badge-cc-draft">Draft</span>
+                    <% } else if (ev.status === 'Closed') { %>
+                      <span class="badge-cc badge-cc-muted">Registration closed</span>
+                    <% } else if (ev.status === 'Full') { %>
+                      <span class="badge-cc badge-cc-warning">Full — waiting list</span>
                     <% } %>
                   </div>
                   <div class="event-card-title"><%= ev.event_name %></div>

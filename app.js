@@ -183,6 +183,59 @@ app.get("/events", async function (req, res) {
   }
 });
 
+/**
+ * Decide whether the join form may show. Uses raw MySQL datetimes + status ENUM.
+ * Full still allows waiting-list registration.
+ */
+function registrationPanelState(event, currentRegistration) {
+  const now = new Date();
+  const status = event.status;
+  const deadline = event.registration_deadline
+    ? new Date(event.registration_deadline)
+    : null;
+  const start = event.start_datetime ? new Date(event.start_datetime) : null;
+  const eventStarted = !!(start && start.getTime() <= now.getTime());
+
+  const activeStatuses = { Confirmed: true, Waitlisted: true, Attended: true, Absent: true };
+  const hasBlockingRegistration = !!(
+    currentRegistration && activeStatuses[currentRegistration.status]
+  );
+
+  let canRegister = false;
+  let registrationUnavailableReason = null;
+
+  if (hasBlockingRegistration) {
+    registrationUnavailableReason = null;
+  } else if (status === "Cancelled") {
+    registrationUnavailableReason = "Event cancelled";
+  } else if (status === "Completed") {
+    registrationUnavailableReason = "Event completed";
+  } else if (status === "Closed") {
+    registrationUnavailableReason = "Registration closed";
+  } else if (status !== "Open" && status !== "Full") {
+    registrationUnavailableReason = "Registration closed";
+  } else if (deadline && deadline.getTime() < now.getTime()) {
+    registrationUnavailableReason = "Registration deadline has passed";
+  } else if (eventStarted) {
+    registrationUnavailableReason = "Event has started";
+  } else {
+    canRegister = true;
+  }
+
+  const canCancelRegistration = !!(
+    currentRegistration
+    && (currentRegistration.status === "Confirmed" || currentRegistration.status === "Waitlisted")
+    && !eventStarted
+  );
+
+  return {
+    canRegister: canRegister,
+    registrationUnavailableReason: registrationUnavailableReason,
+    canCancelRegistration: canCancelRegistration,
+    eventStarted: eventStarted
+  };
+}
+
 app.get("/events/:id", async function (req, res) {
   try {
     const event = await publicEvents.getEventById(req.params.id);
@@ -197,11 +250,51 @@ app.get("/events/:id", async function (req, res) {
     }
 
     const roles = await publicEvents.getVolunteerRolesForEvent(event.event_id);
+
+    // Only community_member session identity — never URL/query/form user_id.
+    let currentRegistration = null;
+    const sessionUser = req.session && req.session.user;
+    if (
+      sessionUser
+      && sessionUser.role === "community_member"
+      && sessionUser.user_id
+    ) {
+      const memberId = Number(sessionUser.user_id);
+      if (Number.isInteger(memberId) && memberId > 0) {
+        const [regRows] = await pool.query(
+          `SELECT
+             r.registration_id,
+             r.participation_type,
+             r.status,
+             r.waiting_position,
+             r.preferred_role_id,
+             vr.role_name AS volunteer_role_name
+           FROM event_registrations r
+           LEFT JOIN volunteer_roles vr ON vr.role_id = r.preferred_role_id
+           WHERE r.event_id = ?
+             AND r.user_id = ?
+           LIMIT 1`,
+          [event.event_id, memberId]
+        );
+        if (regRows.length) {
+          currentRegistration = regRows[0];
+        }
+      }
+    }
+
+    const panel = registrationPanelState(event, currentRegistration);
+    const viewUser = sessionUser ? toViewUser(sessionUser) : null;
+
     res.render("event-details", publicLocals({
       activeNav: "events",
       pageTitle: event.event_name + " · CommunityConnect SG",
+      currentUser: viewUser,
       event: event,
       roles: roles,
+      currentRegistration: currentRegistration,
+      canRegister: panel.canRegister,
+      registrationUnavailableReason: panel.registrationUnavailableReason,
+      canCancelRegistration: panel.canCancelRegistration,
       messages: takeFlash(req)
     }));
   } catch (err) {

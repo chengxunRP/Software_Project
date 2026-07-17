@@ -1,15 +1,15 @@
 const pool = require("../config/database");
+const { flash } = require("../lib/flash");
 
 /**
- * Temporary development authentication fallback.
+ * Attach the logged-in community member for registration routes.
  *
- * Prefer the real session user once Feature 1 (authentication) is merged:
- *   req.session.user = { user_id, name, email, role }
+ * Prefer the real session user (Feature 1 authentication).
+ * Never accept user_id from the URL, query string or form.
  *
- * Until then, in non-production only, load an Active community_member from
- * process.env.DEV_USER_ID. Never accept user_id from the browser.
- *
- * Disable / remove this middleware fallback after authentication is live.
+ * The former DEV_USER_ID anonymous fallback is disabled for normal routes so
+ * a visitor cannot register as another database user. Automated tests must
+ * log in via /login and send the session cookie.
  */
 async function attachCurrentUser(req, res, next) {
   try {
@@ -74,79 +74,9 @@ async function attachCurrentUser(req, res, next) {
       return next();
     }
 
-    // Temporary development-only fallback — never enabled in production.
-    if (process.env.NODE_ENV === "production") {
-      return res.status(401).render("error", {
-        layout: "public",
-        activeNav: "",
-        pageTitle: "Sign in required · CommunityConnect SG",
-        currentUser: null,
-        messages: [],
-        statusCode: 401,
-        errorTitle: "Sign in required",
-        errorMessage: "Please log in as a community member to continue."
-      });
-    }
-
-    const rawDevId = process.env.DEV_USER_ID;
-    const devUserId = Number(rawDevId);
-    if (!rawDevId || !Number.isInteger(devUserId) || devUserId <= 0) {
-      return res.status(500).render("error", {
-        layout: "public",
-        activeNav: "",
-        pageTitle: "Development setup · CommunityConnect SG",
-        currentUser: null,
-        messages: [],
-        statusCode: 500,
-        errorTitle: "DEV_USER_ID is missing or invalid",
-        errorMessage: "Set DEV_USER_ID in .env to an Active community_member user_id for local registration testing. This fallback is temporary and never runs in production."
-      });
-    }
-
-    const [devRows] = await pool.query(
-      `SELECT user_id, name, email, role, account_status
-       FROM users
-       WHERE user_id = ?
-       LIMIT 1`,
-      [devUserId]
-    );
-
-    if (!devRows.length) {
-      return res.status(500).render("error", {
-        layout: "public",
-        activeNav: "",
-        pageTitle: "Development setup · CommunityConnect SG",
-        currentUser: null,
-        messages: [],
-        statusCode: 500,
-        errorTitle: "DEV_USER_ID not found",
-        errorMessage: "No user exists for DEV_USER_ID. Choose an Active community_member from the users table."
-      });
-    }
-
-    const devUser = devRows[0];
-    if (devUser.role !== "community_member" || devUser.account_status !== "Active") {
-      return res.status(500).render("error", {
-        layout: "public",
-        activeNav: "",
-        pageTitle: "Development setup · CommunityConnect SG",
-        currentUser: null,
-        messages: [],
-        statusCode: 500,
-        errorTitle: "DEV_USER_ID is not an active community member",
-        errorMessage: "DEV_USER_ID must point to a user with role = community_member and account_status = Active."
-      });
-    }
-
-    req.currentUser = {
-      user_id: devUser.user_id,
-      name: devUser.name,
-      email: devUser.email,
-      role: devUser.role,
-      account_status: devUser.account_status,
-      source: "dev_user"
-    };
-    return next();
+    // No session — require login. Do not fall back to DEV_USER_ID.
+    flash(req, "error", "Please log in as a community member to continue.");
+    return res.redirect("/login");
   } catch (err) {
     console.error("attachCurrentUser failed:", err.message);
     return res.status(500).render("error", {

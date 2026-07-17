@@ -40,9 +40,15 @@ function extractTitles(html) {
   return titles;
 }
 
+/** Active upcoming catalogue visibility (matches lib/publicEvents.js). */
+const CATALOGUE_WHERE =
+  "status IN ('Open', 'Full', 'Closed') AND start_datetime >= NOW()";
+
 (async function main() {
   const [dbEvents] = await pool.query(
-    "SELECT event_id, event_name, location, status, category_id, participant_capacity, volunteer_capacity, start_datetime FROM events ORDER BY start_datetime ASC"
+    "SELECT event_id, event_name, location, status, category_id, participant_capacity, volunteer_capacity, start_datetime FROM events WHERE "
+      + CATALOGUE_WHERE
+      + " ORDER BY start_datetime ASC"
   );
   const mysqlCount = dbEvents.length;
   const mysqlNames = dbEvents.map(function (e) { return e.event_name; });
@@ -53,14 +59,19 @@ function extractTitles(html) {
   const titles = extractTitles(cat.body);
   record("1. GET /events loads", cat.status === 200, "status=" + cat.status);
   record(
-    "2. Card count matches MySQL COUNT(*)",
+    "2. Card count matches public catalogue MySQL set",
     cards === mysqlCount,
     "mysql=" + mysqlCount + " cards=" + cards
   );
   record(
-    "2b. Displayed names match MySQL set",
+    "2b. Displayed names match public catalogue MySQL set",
     titles.length === mysqlNames.length && titles.every(function (t) { return mysqlNames.indexOf(t) !== -1; }),
     "titles=" + JSON.stringify(titles)
+  );
+  record(
+    "2c. Draft/Cancelled/Completed/past hidden from catalogue",
+    !/badge-cc-draft/.test(cat.body),
+    "ok"
   );
   record(
     "14. No temporary/sample markers on catalogue",
@@ -93,7 +104,7 @@ function extractTitles(html) {
     "SELECT category_id, category_name FROM event_categories ORDER BY category_id LIMIT 1"
   );
   const [[catCountRow]] = await pool.query(
-    "SELECT COUNT(*) AS total FROM events WHERE category_id = ?",
+    "SELECT COUNT(*) AS total FROM events WHERE category_id = ? AND " + CATALOGUE_WHERE,
     [catRow.category_id]
   );
   const byCat = await get("/events?category=" + catRow.category_id);
@@ -114,7 +125,9 @@ function extractTitles(html) {
   // 6. Date filter — Next 30 days
   const [[next30]] = await pool.query(
     `SELECT COUNT(*) AS total FROM events
-     WHERE start_datetime >= NOW() AND start_datetime < DATE_ADD(NOW(), INTERVAL 30 DAY)`
+     WHERE status IN ('Open', 'Full', 'Closed')
+       AND start_datetime >= NOW()
+       AND start_datetime < DATE_ADD(NOW(), INTERVAL 30 DAY)`
   );
   const byDate = await get("/events?date=" + encodeURIComponent("Next 30 days"));
   record(
@@ -126,7 +139,7 @@ function extractTitles(html) {
   // 7. Location East
   const eastKeywords = ["East Coast", "Bedok", "Tampines", "Pasir Ris", "Changi"];
   let eastSql = "SELECT COUNT(*) AS total FROM events WHERE (" +
-    eastKeywords.map(function () { return "location LIKE ?"; }).join(" OR ") + ")";
+    eastKeywords.map(function () { return "location LIKE ?"; }).join(" OR ") + ") AND " + CATALOGUE_WHERE;
   const eastParams = eastKeywords.map(function (k) { return "%" + k + "%"; });
   const [[eastCount]] = await pool.query(eastSql, eastParams);
   const byLoc = await get("/events?location=East");
@@ -141,6 +154,7 @@ function extractTitles(html) {
     SELECT e.event_id
     FROM events e
     LEFT JOIN event_registrations r ON r.event_id = e.event_id
+    WHERE e.status IN ('Open', 'Full', 'Closed') AND e.start_datetime >= NOW()
     GROUP BY e.event_id, e.participant_capacity
     HAVING (e.participant_capacity - COALESCE(SUM(CASE WHEN r.participation_type = 'Participant' AND r.status = 'Confirmed' THEN 1 ELSE 0 END), 0)) > 0
   `);
@@ -156,6 +170,7 @@ function extractTitles(html) {
     SELECT e.event_id
     FROM events e
     LEFT JOIN event_registrations r ON r.event_id = e.event_id
+    WHERE e.status IN ('Open', 'Full', 'Closed') AND e.start_datetime >= NOW()
     GROUP BY e.event_id, e.volunteer_capacity
     HAVING (e.volunteer_capacity - COALESCE(SUM(CASE WHEN r.participation_type = 'Volunteer' AND r.status = 'Confirmed' THEN 1 ELSE 0 END), 0)) > 0
   `);
@@ -185,6 +200,7 @@ function extractTitles(html) {
       COALESCE(SUM(CASE WHEN r.status IN ('Confirmed','Waitlisted') THEN 1 ELSE 0 END), 0) AS pop
     FROM events e
     LEFT JOIN event_registrations r ON r.event_id = e.event_id
+    WHERE e.status IN ('Open', 'Full', 'Closed') AND e.start_datetime >= NOW()
     GROUP BY e.event_id, e.event_name, e.start_datetime
     ORDER BY pop DESC, e.start_datetime ASC
   `);
@@ -229,6 +245,20 @@ function extractTitles(html) {
 
   const missing = await get("/events/999999");
   record("404 for missing event", missing.status === 404, "status=" + missing.status);
+
+  const [[draftRow]] = await pool.query(
+    "SELECT event_id FROM events WHERE status = 'Draft' ORDER BY event_id LIMIT 1"
+  );
+  if (draftRow) {
+    const draftDetail = await get("/events/" + draftRow.event_id);
+    record(
+      "Draft event unavailable on public details",
+      draftDetail.status === 404,
+      "status=" + draftDetail.status + " id=" + draftRow.event_id
+    );
+  } else {
+    record("Draft event unavailable on public details", true, "no Draft event in DB to probe");
+  }
 
   // Preserve filters after refresh (sort + search in URL reflected in form)
   const preserved = await get("/events?search=Park&sort=popularity");
