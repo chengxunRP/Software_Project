@@ -58,7 +58,7 @@
           <span class="avatar-cc"><%= currentUser.initials || 'CC' %></span>
           <span class="nav-avatar-name"><%= currentUser.firstName || currentUser.name || 'Account' %></span>
         </a>
-        <a href="/" class="nav-logout">Log out</a>
+        <a href="/logout" class="nav-logout">Log out</a>
       <% } %>
 
       <% if (!hideAuthLinks) { %>
@@ -82,20 +82,20 @@
         <a href="/member/registrations">My Registrations</a>
         <a href="/member/volunteer-hours">Volunteer Hours</a>
         <a href="/member/profile">My Profile</a>
-        <a href="/">Log out</a>
+        <a href="/logout">Log out</a>
       <% } else if (navRole === 'organiser') { %>
         <a href="/organiser/dashboard">Dashboard</a>
         <a href="/organiser/events">Manage Events</a>
         <a href="/organiser/events/2/registrations">Registrations</a>
         <a href="/organiser/events/1/roles">Volunteer Roles</a>
         <a href="/organiser/events/11/attendance">Attendance</a>
-        <a href="/">Log out</a>
+        <a href="/logout">Log out</a>
       <% } else if (navRole === 'admin') { %>
         <a href="/admin/dashboard">Dashboard</a>
         <a href="/admin/users">Users</a>
         <a href="/admin/categories">Categories</a>
         <a href="/admin/reports">Reports</a>
-        <a href="/">Log out</a>
+        <a href="/logout">Log out</a>
       <% } %>
     </div>
   <% } %>

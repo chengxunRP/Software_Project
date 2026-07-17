@@ -35,6 +35,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS attendance;
 DROP TABLE IF EXISTS volunteer_assignments;
+DROP TABLE IF EXISTS password_reset_tokens;
 DROP TABLE IF EXISTS event_registrations;
 DROP TABLE IF EXISTS volunteer_roles;
 DROP TABLE IF EXISTS events;
@@ -64,6 +65,25 @@ CREATE TABLE users (
   account_status ENUM('Active', 'Suspended') NOT NULL DEFAULT 'Active',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------------------------------------
+-- Table: password_reset_tokens (Feature 1 — authentication)
+-- One-time, time-limited password reset tokens.
+-- Stores SHA-256 hashes of raw tokens only — never the raw token itself.
+-- -----------------------------------------------------------------------------
+CREATE TABLE password_reset_tokens (
+  token_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  token_hash CHAR(64) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  used_at DATETIME NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_password_reset_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  INDEX idx_password_reset_user_id (user_id),
+  INDEX idx_password_reset_token_hash (token_hash),
+  INDEX idx_password_reset_expires_at (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
