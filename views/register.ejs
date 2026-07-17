@@ -37,27 +37,29 @@
           <span class="msg-text">Public sign-ups create a Community Member account. Organiser and Admin roles are assigned separately.</span>
         </div>
 
-        <form class="auth-card flat" data-preview-only>
+        <%- include('partials/messages') %>
+
+        <form class="auth-card flat" method="POST" action="/register">
           <div>
             <label class="form-label-cc" for="full_name">Full name</label>
-            <input class="form-control-cc" type="text" id="full_name" name="full_name" placeholder="Tan Wei Ling">
+            <input class="form-control-cc" type="text" id="full_name" name="full_name" autocomplete="name" required value="<%= typeof form !== 'undefined' && form.full_name ? form.full_name : '' %>" placeholder="Tan Wei Ling">
           </div>
           <div>
             <label class="form-label-cc" for="email">Email address</label>
-            <input class="form-control-cc" type="email" id="email" name="email" placeholder="you@example.sg">
+            <input class="form-control-cc" type="email" id="email" name="email" autocomplete="email" required value="<%= typeof form !== 'undefined' && form.email ? form.email : '' %>" placeholder="you@example.sg">
           </div>
           <div class="form-grid-2">
             <div>
               <label class="form-label-cc" for="password">Password</label>
-              <input class="form-control-cc" type="password" id="password" name="password" placeholder="Min. 8 characters">
+              <input class="form-control-cc" type="password" id="password" name="password" autocomplete="new-password" required minlength="8" placeholder="Min. 8 characters">
             </div>
             <div>
               <label class="form-label-cc" for="confirm_password">Confirm password</label>
-              <input class="form-control-cc" type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password">
+              <input class="form-control-cc" type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required minlength="8" placeholder="Re-enter password">
             </div>
           </div>
           <label class="form-check-cc" style="font-size:13.5px;line-height:1.5">
-            <input type="checkbox" name="terms">
+            <input type="checkbox" name="terms" required>
             <span>I agree to the <a href="/register" style="font-weight:600">Terms of Use</a> and consent to being contacted about events I register for.</span>
           </label>
           <button type="submit" class="btn-cc btn-cc-primary btn-cc-block btn-cc-lg">Create account</button>

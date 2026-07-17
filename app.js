@@ -8,7 +8,15 @@ const registrationRoutes = require("./routes/registrationRoutes");
 const { takeFlash } = require("./controllers/registrationController");
 
 const rolesRoutes = require("./routes/roles");
-const { isOrganiser } = require("./middleware/auth");
+const authRoutes = require("./routes/authRoutes");
+const adminUserRoutes = require("./routes/adminUserRoutes");
+const {
+  isOrganiser,
+  requireCommunityMember,
+  requireOrganiser,
+  requireAdmin
+} = require("./middleware/auth");
+const { toViewUser } = require("./lib/userDisplay");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,24 +38,18 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production"
+    }
   })
 );
 
-// TODO: Remove this before final CA2 submission! (Temporary Auth Mock)
-// Must run after the session middleware above (needs req.session to exist)
-// and before any protected routes below.
-app.use(function (req, res, next) {
-  if (!req.session.user) {
-    req.session.user = {
-      user_id: 2, // Assume an Organiser exists with ID 1
-      name: "Marcus Lim",
-      initials: "ML",
-      avatarBg: "#7FA8D9",
-      role: "organiser", // must be lowercase — matches the users.role ENUM and isOrganiser's check
-    };
-  }
-  next();
-});
+// Feature 1 — authentication (register / login / logout / password reset)
+app.use(authRoutes);
+// Feature 1 — admin user account management (all routes require admin role)
+app.use(adminUserRoutes);
 
 app.use(rolesRoutes);
 app.use(registrationRoutes);
@@ -744,19 +746,7 @@ app.get("/", async function (req, res) {
   }
 });
 
-app.get("/login", function (req, res) {
-  res.render("login", publicLocals({
-    activeNav: "login",
-    pageTitle: "Log in · CommunityConnect SG"
-  }));
-});
-
-app.get("/register", function (req, res) {
-  res.render("register", publicLocals({
-    activeNav: "register",
-    pageTitle: "Register · CommunityConnect SG"
-  }));
-});
+// GET /login and GET /register are served by routes/authRoutes.js (Feature 1).
 
 app.get("/events", async function (req, res) {
   try {
@@ -845,8 +835,11 @@ app.get("/events/:id", async function (req, res) {
 });
 
 // ---------- Community member GET preview routes ----------
+// Protected by requireCommunityMember; currentUser comes from the login session.
+// Dashboard/hours/profile data below is still preview sample data — replacing
+// it with MySQL queries belongs to Features 4 and 6.
 
-app.get("/member/dashboard", function (req, res) {
+app.get("/member/dashboard", requireCommunityMember, function (req, res) {
   const asParticipant = memberRegistrations.Confirmed
     .filter(function (r) { return r.participation_type === "Participant"; })
     .map(withTone);
@@ -860,8 +853,9 @@ app.get("/member/dashboard", function (req, res) {
     .filter(function (r) { return r.participation_type === "Volunteer"; })
     .map(withTone);
   const recommended = [events[4], events[6]];
-  res.render("member/dashboard", appLocals("member", memberUser, "dashboard", {
+  res.render("member/dashboard", appLocals("member", toViewUser(req.session.user), "dashboard", {
     pageTitle: "Dashboard · Community member",
+    messages: takeFlash(req),
     asParticipant: asParticipant,
     asVolunteer: asVolunteer,
     participantWaitlist: participantWaitlist,
@@ -879,8 +873,8 @@ app.get("/member/dashboard", function (req, res) {
   }));
 });
 
-app.get("/member/volunteer-hours", function (req, res) {
-  res.render("member/volunteer-hours", appLocals("member", memberUser, "hours", {
+app.get("/member/volunteer-hours", requireCommunityMember, function (req, res) {
+  res.render("member/volunteer-hours", appLocals("member", toViewUser(req.session.user), "hours", {
     pageTitle: "Volunteer Hours · Community member",
     summary: memberHoursSummary,
     months: memberMonthlyHours,
@@ -888,10 +882,11 @@ app.get("/member/volunteer-hours", function (req, res) {
   }));
 });
 
-app.get("/member/profile", function (req, res) {
-  res.render("member/profile", appLocals("member", memberUser, "profile", {
+app.get("/member/profile", requireCommunityMember, function (req, res) {
+  const viewUser = toViewUser(req.session.user);
+  res.render("member/profile", appLocals("member", viewUser, "profile", {
     pageTitle: "My Profile · Community member",
-    profile: memberUser,
+    profile: viewUser,
     hours: memberHoursSummary.totalHours,
     attendedEvents: memberHoursSummary.eventCount
   }));
@@ -904,11 +899,13 @@ app.get("/volunteer/hours", function (req, res) { res.redirect("/member/voluntee
 app.get("/volunteer/profile", function (req, res) { res.redirect("/member/profile"); });
 
 // ---------- Organiser GET preview routes ----------
+// Protected by requireOrganiser; currentUser comes from the login session.
 
-app.get("/organiser/dashboard", function (req, res) {
+app.get("/organiser/dashboard", requireOrganiser, function (req, res) {
   const upcoming = [events[0], events[1], events[4], events[6]];
-  res.render("organiser/dashboard", appLocals("organiser", organiserUser, "dashboard", {
+  res.render("organiser/dashboard", appLocals("organiser", toViewUser(req.session.user), "dashboard", {
     pageTitle: "Dashboard · Organiser",
+    messages: takeFlash(req),
     stats: organiserStats,
     upcoming: upcoming,
     alerts: organiserAlerts,
@@ -916,16 +913,16 @@ app.get("/organiser/dashboard", function (req, res) {
   }));
 });
 
-app.get("/organiser/events", function (req, res) {
-  res.render("organiser/manage-events", appLocals("organiser", organiserUser, "events", {
+app.get("/organiser/events", requireOrganiser, function (req, res) {
+  res.render("organiser/manage-events", appLocals("organiser", toViewUser(req.session.user), "events", {
     pageTitle: "Manage Events · Organiser",
     rows: manageEventRows,
     categories: categories.filter(function (c) { return c.status === "Active"; })
   }));
 });
 
-app.get("/organiser/events/new", function (req, res) {
-  res.render("organiser/event-form", appLocals("organiser", organiserUser, "events", {
+app.get("/organiser/events/new", requireOrganiser, function (req, res) {
+  res.render("organiser/event-form", appLocals("organiser", toViewUser(req.session.user), "events", {
     pageTitle: "Add Event · Organiser",
     formMode: "create",
     event: {
@@ -945,9 +942,9 @@ app.get("/organiser/events/new", function (req, res) {
   }));
 });
 
-app.get("/organiser/events/:id/edit", function (req, res) {
+app.get("/organiser/events/:id/edit", requireOrganiser, function (req, res) {
   const event = findEvent(req.params.id) || events[0];
-  res.render("organiser/event-form", appLocals("organiser", organiserUser, "events", {
+  res.render("organiser/event-form", appLocals("organiser", toViewUser(req.session.user), "events", {
     pageTitle: "Edit Event · Organiser",
     formMode: "edit",
     event: event,
@@ -959,9 +956,9 @@ app.get("/organiser/events/:id/edit", function (req, res) {
   }));
 });
 
-app.get("/organiser/events/:id/registrations", function (req, res) {
+app.get("/organiser/events/:id/registrations", requireOrganiser, function (req, res) {
   const event = findEvent(req.params.id) || events[1];
-  res.render("organiser/manage-registrations", appLocals("organiser", organiserUser, "registrations", {
+  res.render("organiser/manage-registrations", appLocals("organiser", toViewUser(req.session.user), "registrations", {
     pageTitle: "Manage Registrations · Organiser",
     event: event,
     eventOptions: manageEventRows.filter(function (r) { return r.status !== "Draft"; }),
@@ -985,9 +982,9 @@ app.get("/organiser/events/:id/registrations", function (req, res) {
   }));
 });
 
-app.get("/organiser/events/:id/roles", function (req, res) {
+app.get("/organiser/events/:id/roles", requireOrganiser, function (req, res) {
   const event = findEvent(req.params.id) || events[0];
-  res.render("organiser/role-assignment", appLocals("organiser", organiserUser, "roles", {
+  res.render("organiser/role-assignment", appLocals("organiser", toViewUser(req.session.user), "roles", {
     pageTitle: "Role Assignment · Organiser",
     event: event,
     eventOptions: [events[0], events[1]],
@@ -1129,10 +1126,13 @@ app.post("/organiser/events/:id/attendance", isOrganiser, async function (req, r
 });
 
 // ---------- Admin GET preview routes ----------
+// Protected by requireAdmin. GET /admin/users now lives in
+// routes/adminUserRoutes.js and is backed by MySQL (Feature 1).
 
-app.get("/admin/dashboard", function (req, res) {
-  res.render("admin/dashboard", appLocals("admin", adminUser, "dashboard", {
+app.get("/admin/dashboard", requireAdmin, function (req, res) {
+  res.render("admin/dashboard", appLocals("admin", toViewUser(req.session.user), "dashboard", {
     pageTitle: "Admin Dashboard",
+    messages: takeFlash(req),
     stats: adminStats,
     months: adminMonthlyRegs,
     userRoles: adminUserRoles,
@@ -1141,22 +1141,15 @@ app.get("/admin/dashboard", function (req, res) {
   }));
 });
 
-app.get("/admin/users", function (req, res) {
-  res.render("admin/users", appLocals("admin", adminUser, "users", {
-    pageTitle: "User Management · Admin",
-    users: adminUsers
-  }));
-});
-
-app.get("/admin/categories", function (req, res) {
-  res.render("admin/categories", appLocals("admin", adminUser, "categories", {
+app.get("/admin/categories", requireAdmin, function (req, res) {
+  res.render("admin/categories", appLocals("admin", toViewUser(req.session.user), "categories", {
     pageTitle: "Event Categories · Admin",
     categories: categories
   }));
 });
 
-app.get("/admin/reports", function (req, res) {
-  res.render("admin/reports", appLocals("admin", adminUser, "reports", {
+app.get("/admin/reports", requireAdmin, function (req, res) {
+  res.render("admin/reports", appLocals("admin", toViewUser(req.session.user), "reports", {
     pageTitle: "System Reports · Admin",
     kpis: reportKpis,
     byCategory: reportByCategory,
