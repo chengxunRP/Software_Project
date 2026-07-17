@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const notifications = require("../lib/notifications");
 
 const ALLOWED_PARTICIPATION_TYPES = ["Participant", "Volunteer"];
 const NOTES_MAX_LENGTH = 500;
@@ -356,6 +357,31 @@ async function registerForEvent(req, res) {
 
     await connection.commit();
 
+    // Feature 6 — notify after successful registration (does not change capacity decision).
+    try {
+      const eventName = eventRow.event_name || "the event";
+      if (newStatus === "Confirmed") {
+        await notifications.createNotification({
+          userId: user.user_id,
+          eventId: eventId,
+          title: participationType + " place confirmed",
+          message: "Your " + participationType + " place for " + eventName + " is confirmed.",
+          type: "Registration"
+        });
+      } else if (newStatus === "Waitlisted") {
+        await notifications.createNotification({
+          userId: user.user_id,
+          eventId: eventId,
+          title: participationType + " waiting list",
+          message: "You are #" + waitingPosition + " on the " + participationType
+            + " waiting list for " + eventName + ".",
+          type: "WaitingList"
+        });
+      }
+    } catch (notifyErr) {
+      console.error("Registration notification failed:", notifyErr.message);
+    }
+
     flash(
       req,
       newStatus === "Confirmed" ? "success" : "warning",
@@ -589,7 +615,7 @@ async function cancelRegistration(req, res) {
 
     if (wasConfirmed) {
       const [waitlisted] = await connection.query(
-        `SELECT registration_id
+        `SELECT registration_id, user_id
          FROM event_registrations
          WHERE event_id = ?
            AND participation_type = ?
@@ -612,6 +638,26 @@ async function cancelRegistration(req, res) {
            WHERE registration_id = ?`,
           [waitlisted[0].registration_id]
         );
+
+        // Feature 6 — notify the promoted member (promotion decision unchanged).
+        try {
+          const [[eventInfo]] = await connection.query(
+            "SELECT event_name FROM events WHERE event_id = ? LIMIT 1",
+            [eventId]
+          );
+          const eventName = (eventInfo && eventInfo.event_name) || "the event";
+          await notifications.createNotification({
+            userId: waitlisted[0].user_id,
+            eventId: eventId,
+            title: "Promoted from waiting list",
+            message: "A " + participationType + " place opened for " + eventName
+              + ". Your registration is now confirmed.",
+            type: "Promotion",
+            connection: connection
+          });
+        } catch (notifyErr) {
+          console.error("Promotion notification failed:", notifyErr.message);
+        }
       }
     }
 

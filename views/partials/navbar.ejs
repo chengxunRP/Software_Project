@@ -28,9 +28,9 @@
         <% } else if (navRole === 'organiser') { %>
           <a href="/organiser/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
           <a href="/organiser/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Manage Events</a>
-          <a href="/organiser/events/2/registrations" class="<%= activeNav === 'registrations' ? 'active' : '' %>">Registrations</a>
-          <a href="/organiser/events/1/roles" class="<%= activeNav === 'roles' ? 'active' : '' %>">Volunteer Roles</a>
-          <a href="/organiser/events/11/attendance" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
+          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>" class="<%= activeNav === 'registrations' ? 'active' : '' %>">Registrations</a>
+          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>" class="<%= activeNav === 'roles' ? 'active' : '' %>">Volunteer Roles</a>
+          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
         <% } else if (navRole === 'admin') { %>
           <a href="/admin/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
           <a href="/admin/users" class="<%= activeNav === 'users' ? 'active' : '' %>">Users</a>
@@ -53,7 +53,7 @@
         <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
         <a href="/register" class="btn-cc btn-cc-primary btn-cc-sm">Register</a>
       <% } else if (typeof currentUser !== 'undefined' && currentUser) { %>
-        <a href="<%= navRole === 'member' ? '/member/dashboard' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (navRole === 'member') { %><span class="count">3</span><% } %></a>
+        <a href="<%= navRole === 'member' ? '/member/dashboard' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (navRole === 'member' && typeof unreadNotificationCount !== 'undefined' && unreadNotificationCount > 0) { %><span class="count"><%= unreadNotificationCount %></span><% } %></a>
         <a href="<%= navRole === 'member' ? '/member/profile' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="nav-avatar">
           <span class="avatar-cc"><%= currentUser.initials || 'CC' %></span>
           <span class="nav-avatar-name"><%= currentUser.firstName || currentUser.name || 'Account' %></span>
@@ -86,9 +86,9 @@
       <% } else if (navRole === 'organiser') { %>
         <a href="/organiser/dashboard">Dashboard</a>
         <a href="/organiser/events">Manage Events</a>
-        <a href="/organiser/events/2/registrations">Registrations</a>
-        <a href="/organiser/events/1/roles">Volunteer Roles</a>
-        <a href="/organiser/events/11/attendance">Attendance</a>
+        <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>">Registrations</a>
+        <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>">Volunteer Roles</a>
+        <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>">Attendance</a>
         <a href="/logout">Log out</a>
       <% } else if (navRole === 'admin') { %>
         <a href="/admin/dashboard">Dashboard</a>

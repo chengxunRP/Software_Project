@@ -2,7 +2,6 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const pool = require("../config/database");
 const { flash, takeFlash } = require("../lib/flash");
-const { toSessionUser, dashboardPathForRole } = require("../lib/userDisplay");
 
 const BCRYPT_ROUNDS = 10;
 const PASSWORD_MIN_LENGTH = 8;
@@ -115,10 +114,10 @@ function showLogin(req, res) {
 async function login(req, res) {
   const email = normalizeEmail(req.body.email);
   const password = String(req.body.password || "");
-  const genericError = "Unable to sign in with the details provided. Please check your information and try again.";
+  const invalidCredentials = "Unable to sign in with the details provided. Please check your information and try again.";
 
-  function backToLogin(message) {
-    return res.status(401).render("login", authLocals({
+  function backToLogin(message, statusCode) {
+    return res.status(statusCode || 401).render("login", authLocals({
       activeNav: "login",
       pageTitle: "Log in · CommunityConnect SG",
       messages: [{ type: "error", text: message }],
@@ -134,46 +133,63 @@ async function login(req, res) {
     const [rows] = await pool.query(
       `SELECT user_id, name, email, password, role, account_status, created_at
        FROM users
-       WHERE email = ?
+       WHERE LOWER(email) = LOWER(?)
        LIMIT 1`,
       [email]
     );
 
     const user = rows[0];
-    // Same generic message whether the email or the password was wrong.
     if (!user) {
-      return backToLogin(genericError);
+      return backToLogin(invalidCredentials);
     }
 
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (!passwordMatches) {
-      return backToLogin(genericError);
+      return backToLogin(invalidCredentials);
     }
 
     if (user.account_status !== "Active") {
-      return backToLogin("Your account has been suspended. Please contact a CommunityConnect administrator.");
+      return backToLogin(
+        "Your account has been suspended. Please contact a CommunityConnect administrator."
+      );
     }
 
-    const sessionUser = toSessionUser(user);
-
-    // Regenerate the session ID after authentication (prevents session fixation).
+    // Never store the password or hash in the session.
     req.session.regenerate(function (regenErr) {
       if (regenErr) {
-        console.error("session regenerate failed:", regenErr.message);
-        return backToLogin("We could not start your session. Please try again.");
+        console.error("Session regenerate failed:", regenErr.message);
+        return backToLogin("We could not start your session. Please try again.", 500);
       }
-      req.session.user = sessionUser;
+
+      req.session.user = {
+        user_id: user.user_id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      };
       flash(req, "success", "Welcome back! You have signed in successfully.");
+
       req.session.save(function (saveErr) {
         if (saveErr) {
-          console.error("session save failed:", saveErr.message);
+          console.error("Session save failed:", saveErr.message);
+          return backToLogin("Unable to complete sign in. Please try again.", 500);
         }
-        return res.redirect(dashboardPathForRole(sessionUser.role));
+
+        if (user.role === "admin") {
+          return res.redirect("/admin/dashboard");
+        }
+        if (user.role === "organiser") {
+          return res.redirect("/organiser/dashboard");
+        }
+        return res.redirect("/member/dashboard");
       });
     });
   } catch (err) {
-    console.error("login failed:", err.message);
-    return backToLogin(genericError);
+    console.error("Login database or unexpected error:", err.message);
+    return backToLogin(
+      "We could not complete sign in because of a server problem. Please try again.",
+      500
+    );
   }
 }
 

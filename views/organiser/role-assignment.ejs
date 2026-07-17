@@ -6,7 +6,7 @@
     pageEyebrow = 'Organiser';
     pageHeading = 'Volunteer Role Assignment';
     pageLead = 'Assign confirmed volunteer registrations to roles for this event.';
-    pageActions = '';
+    pageActions = '<a href="/organiser/events/' + event.id + '/volunteers" class="btn-cc btn-cc-secondary btn-cc-sm">View volunteers</a><a href="/organiser/events/' + event.id + '/roles/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add role</a>';
   %>
   <%- include('../partials/page-header') %>
 
@@ -24,6 +24,12 @@
 
       <div class="details-grid" style="grid-template-columns:1fr 320px">
         <div class="d-flex flex-column gap-3">
+          <% if (!roles.length) { %>
+            <div class="card-cc" style="padding:24px">
+              <div class="text-muted-cc" style="font-size:13.5px">No volunteer roles have been created for this event yet.</div>
+              <a href="/organiser/events/<%= event.id %>/roles/new" class="btn-cc btn-cc-primary btn-cc-sm mt-3">+ Add role</a>
+            </div>
+          <% } %>
           <% roles.forEach(function (role) { %>
             <div class="card-cc overflow-hidden">
               <div class="panel-header">
@@ -37,12 +43,18 @@
                 <div class="list-row">
                   <span class="avatar-cc sm" style="background:<%= p.avBg %>;width:30px;height:30px;font-size:11.5px"><%= p.initials %></span>
                   <span style="font-weight:600;color:#23271F;flex:1"><%= p.name %></span>
-                  <button type="button" class="btn-cc btn-cc-secondary btn-cc-xs">Unassign</button>
                 </div>
               <% }) %>
               <% if (role.hasSpace) { %>
                 <div class="px-4 py-3" style="font-size:13px;color:#8B8778;font-style:italic"><%= role.spaceNote %></div>
               <% } %>
+              <div class="d-flex gap-1 flex-wrap px-4 py-3" style="border-top:1px solid #EDEAE0">
+                <a href="/organiser/events/<%= event.id %>/roles/<%= role.volunteer_role_id %>/assign" class="btn-cc btn-cc-primary btn-cc-xs">Assign</a>
+                <a href="/organiser/events/<%= event.id %>/roles/<%= role.volunteer_role_id %>/edit" class="btn-cc btn-cc-secondary btn-cc-xs">Edit</a>
+                <form method="POST" action="/organiser/events/<%= event.id %>/roles/<%= role.volunteer_role_id %>/delete" onsubmit="return confirm('Delete role <%= role.name %>?');">
+                  <button type="submit" class="btn-cc btn-cc-danger-outline btn-cc-xs">Delete</button>
+                </form>
+              </div>
             </div>
           <% }) %>
         </div>
@@ -50,20 +62,18 @@
         <div class="card-cc overflow-hidden sticky-panel">
           <div class="panel-header flex-column align-items-start">
             <span class="h-card" style="font-size:15.5px">Unassigned volunteers</span>
-            <span style="font-size:12.5px;color:#8B8778">Assign each volunteer to a role</span>
+            <span style="font-size:12.5px;color:#8B8778">Assign each volunteer from the Assign page for a role</span>
           </div>
+          <% if (!unassigned.length) { %>
+            <div class="list-row">
+              <div class="text-muted-cc" style="font-size:13.5px">No unassigned confirmed volunteers.</div>
+            </div>
+          <% } %>
           <% unassigned.forEach(function (u) { %>
-            <form class="list-row" data-preview-only>
-              <input type="hidden" name="event_id" value="<%= event.id %>">
+            <div class="list-row">
               <span class="avatar-cc sm" style="background:<%= u.avBg %>;width:30px;height:30px;font-size:11.5px"><%= u.initials %></span>
               <span style="font-size:13.5px;font-weight:600;color:#23271F;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><%= u.name %></span>
-              <select class="form-select-cc" name="volunteer_role_id" style="width:auto;padding:6px 8px;border-radius:8px;font-size:12px;font-weight:600">
-                <option value="">Assign…</option>
-                <% roleOptions.forEach(function (r) { %>
-                  <option value="<%= r.volunteer_role_id %>"><%= r.name %></option>
-                <% }) %>
-              </select>
-            </form>
+            </div>
           <% }) %>
         </div>
       </div>

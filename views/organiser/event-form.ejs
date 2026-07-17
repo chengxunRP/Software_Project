@@ -6,7 +6,7 @@
     pageEyebrow = 'Organiser';
     pageHeading = formMode === 'create' ? 'Add Event' : 'Edit Event';
     pageLead = 'Set event details, schedule and separate participant and volunteer capacities.';
-    pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><a href="/organiser/events" class="btn-cc btn-cc-primary btn-cc-sm">Save event</a>';
+    pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><button type="submit" form="eventForm" class="btn-cc btn-cc-primary btn-cc-sm">Save event</button>';
   %>
   <%- include('../partials/page-header') %>
 
@@ -20,7 +20,7 @@
 
       <%- include('../partials/messages') %>
 
-      <form data-preview-only class="details-grid" style="grid-template-columns:1fr 320px">
+      <form id="eventForm" method="POST" action="<%= formMode === 'create' ? '/organiser/events' : '/organiser/events/' + event.id + '/edit' %>" class="details-grid" style="grid-template-columns:1fr 320px">
         <div class="d-flex flex-column gap-3">
           <div class="card-cc" style="border-radius:16px;padding:26px">
             <div class="h-card mb-3" style="font-size:15px">Event details</div>

@@ -6,7 +6,7 @@
     pageEyebrow = 'Community member';
     pageHeading = 'My Volunteer Hours';
     pageLead = 'Hours earned when you volunteered, tracked by month and by event.';
-    pageActions = '<button type="button" class="btn-cc btn-cc-secondary btn-cc-sm">Download record (PDF)</button>';
+    pageActions = '';
   %>
   <%- include('../partials/page-header') %>
 
@@ -16,10 +16,10 @@
         <div style="background:#1E2B22;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:6px">
           <span style="font-size:13px;font-weight:600;color:#A9BCA9">Total completed hours</span>
           <span style="font-size:42px;font-weight:800;color:#fff;letter-spacing:-0.02em;line-height:1"><%= summary.totalHours %></span>
-          <span style="font-size:13px;color:#7E9184">Across <%= summary.eventCount %> attended events since January 2026</span>
+          <span style="font-size:13px;color:#7E9184">Across <%= summary.eventCount %> attended events since January <%= summary.chartYear %></span>
         </div>
         <div class="stat-card" style="border-radius:16px;padding:24px">
-          <span class="stat-label">This month (July)</span>
+          <span class="stat-label">This month (<%= summary.monthLabel %>)</span>
           <span class="stat-value green" style="font-size:32px"><%= summary.monthHours %></span>
           <span class="stat-note"><%= summary.monthEvents %> events attended</span>
         </div>
@@ -31,7 +31,7 @@
       </div>
 
       <div class="card-cc" style="padding:24px">
-        <div class="h-card mb-3">Monthly contribution — 2026</div>
+        <div class="h-card mb-3">Monthly contribution — <%= summary.chartYear %></div>
         <div class="bar-chart">
           <% months.forEach(function (m) { %>
             <div class="bar-chart-item">
@@ -51,6 +51,9 @@
           <div class="table-cc-head" style="grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr">
             <span>Event</span><span>Date</span><span>Location</span><span>Status</span><span style="text-align:right">Hours</span>
           </div>
+          <% if (!history.length) { %>
+            <div class="p-4 text-muted-cc" style="font-size:13.5px">No Volunteer hours have been completed.</div>
+          <% } %>
           <% history.forEach(function (h) { %>
             <div class="table-cc-row" style="grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr">
               <span style="font-weight:600;color:#23271F"><%= h.name %></span>

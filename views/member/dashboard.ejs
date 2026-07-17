@@ -147,14 +147,27 @@
         <div class="card-cc overflow-hidden">
           <div class="panel-header">
             <span class="h-card">Recent notifications</span>
+            <form method="POST" action="/member/notifications/read-all">
+              <button type="submit" class="btn-cc btn-cc-secondary btn-cc-xs">Mark all read</button>
+            </form>
           </div>
+          <% if (!notifications.length) { %>
+            <div class="list-row">
+              <div class="text-muted-cc" style="font-size:13.5px">No notifications are available.</div>
+            </div>
+          <% } %>
           <% notifications.forEach(function (n) { %>
             <div class="list-row align-items-start">
               <span class="notif-dot <%= n.type %>"></span>
-              <div>
-                <div style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:500"><%- n.text %></div>
-                <div style="font-size:12px;color:#8B8778"><%= n.time %></div>
+              <div class="flex-fill min-w-0">
+                <div style="font-size:13.5px;color:#23271F;line-height:1.45;font-weight:<%= n.is_read ? '500' : '700' %>"><%- n.text %></div>
+                <div style="font-size:12px;color:#8B8778"><%= n.time %><%= n.is_read ? '' : ' · Unread' %></div>
               </div>
+              <% if (!n.is_read) { %>
+                <form method="POST" action="/member/notifications/<%= n.id %>/read">
+                  <button type="submit" class="btn-cc btn-cc-secondary btn-cc-xs">Mark read</button>
+                </form>
+              <% } %>
             </div>
           <% }) %>
         </div>

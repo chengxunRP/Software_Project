@@ -35,6 +35,10 @@
             <div class="list-row">
               <span style="font-weight:600;color:#23271F;flex:1"><%= person.name %></span>
               <span style="font-size:12.5px;color:#8B8778"><%= person.email %></span>
+              <form method="POST" action="/organiser/events/<%= volunteerRole.event_id %>/roles/<%= volunteerRole.role_id %>/unassign">
+                <input type="hidden" name="registration_id" value="<%= person.registration_id %>">
+                <button type="submit" class="btn-cc btn-cc-secondary btn-cc-xs">Unassign</button>
+              </form>
             </div>
           <% }) %>
         <% } else { %>

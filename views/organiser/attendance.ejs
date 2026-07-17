@@ -44,8 +44,12 @@
       <div class="table-cc">
         <div class="panel-header">
           <span class="h-card">Check-in <span style="color:#8B8778;font-weight:600;font-size:14px">(showing <%= rows.length %> of <%= summary.registered %>)</span></span>
-          <button type="button" class="btn-cc btn-cc-primary btn-cc-xs">Finalise attendance</button>
         </div>
+        <% if (!rows.length) { %>
+          <div class="list-row">
+            <div class="text-muted-cc" style="font-size:13.5px">No attendance records have been recorded.</div>
+          </div>
+        <% } %>
         <% rows.forEach(function (r) { %>
           <div class="list-row" data-attendance-row>
             <span class="avatar-cc sm" style="background:<%= r.avBg %>"><%= r.initials %></span>
@@ -67,6 +71,11 @@
                   <button type="submit" class="btn-cc btn-cc-xs btn-cc-secondary">Mark Absent</button>
                 </form>
               </div>
+            <% } else if (r.canCheckOut) { %>
+              <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance/checkout">
+                <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
+                <button type="submit" class="btn-cc btn-cc-xs btn-cc-secondary">Check out</button>
+              </form>
             <% } %>
           </div>
         <% }) %>

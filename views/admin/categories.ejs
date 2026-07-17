@@ -7,17 +7,24 @@
     pageHeading = 'Event Category Management';
     pageLead = 'Manage the event categories organisers use when creating events.';
     pageActions = '';
+    if (typeof formMode === 'undefined') formMode = 'create';
+    if (typeof form === 'undefined') form = { category_id: '', category_name: '', description: '' };
   %>
   <%- include('../partials/page-header') %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1040">
+      <%- include('../partials/messages') %>
+
       <div class="details-grid" style="grid-template-columns:1fr 340px">
         <div class="table-cc">
           <div class="table-scroll">
             <div class="table-cc-head" style="grid-template-columns:1.6fr 2.2fr 0.9fr 0.9fr 1.1fr">
               <span>Category</span><span>Description</span><span>Events</span><span>Status</span><span style="text-align:right">Actions</span>
             </div>
+            <% if (!categories.length) { %>
+              <div class="p-4 text-muted-cc" style="font-size:13.5px">No categories match the selected filters.</div>
+            <% } %>
             <% categories.forEach(function (c) { %>
               <div class="table-cc-row" style="grid-template-columns:1.6fr 2.2fr 0.9fr 0.9fr 1.1fr">
                 <div class="d-flex align-items-center gap-2">
@@ -30,23 +37,29 @@
                   <span class="badge-cc <%= c.status === 'Active' ? 'badge-cc-active' : 'badge-cc-archived' %>" style="font-size:11.5px;padding:4px 10px"><%= c.status %></span>
                 </span>
                 <div class="d-flex gap-1 justify-content-end">
-                  <button type="button" class="btn-cc btn-cc-secondary btn-cc-xs">Edit</button>
-                  <button type="button" class="btn-cc btn-cc-secondary btn-cc-xs"><%= c.status === 'Active' ? 'Archive' : 'Restore' %></button>
+                  <a href="/admin/categories?edit=<%= c.category_id %>" class="btn-cc btn-cc-secondary btn-cc-xs">Edit</a>
+                  <% if (c.eventCount === 0) { %>
+                    <form method="POST" action="/admin/categories/<%= c.category_id %>/delete" onsubmit="return confirm('Delete category <%= c.name %>?');">
+                      <button type="submit" class="btn-cc btn-cc-secondary btn-cc-xs">Delete</button>
+                    </form>
+                  <% } else { %>
+                    <button type="button" class="btn-cc btn-cc-secondary btn-cc-xs" disabled title="Cannot delete: category has linked events">Delete</button>
+                  <% } %>
                 </div>
               </div>
             <% }) %>
           </div>
         </div>
 
-        <form class="card-cc sticky-panel" style="border-radius:16px;padding:24px" data-preview-only>
-          <div class="h-card mb-3" style="font-size:15.5px">Add new category</div>
+        <form class="card-cc sticky-panel" style="border-radius:16px;padding:24px" method="POST" action="<%= formMode === 'edit' ? '/admin/categories/' + form.category_id + '/edit' : '/admin/categories' %>">
+          <div class="h-card mb-3" style="font-size:15.5px"><%= formMode === 'edit' ? 'Edit category' : 'Add new category' %></div>
           <div class="mb-3">
             <label class="form-label-cc">Category name <span class="req">*</span></label>
-            <input class="form-control-cc" type="text" name="category_name" placeholder="e.g. Animal Welfare">
+            <input class="form-control-cc" type="text" name="category_name" required value="<%= form.category_name || '' %>" placeholder="e.g. Animal Welfare">
           </div>
           <div class="mb-3">
             <label class="form-label-cc">Description</label>
-            <textarea class="form-control-cc" name="description" rows="3" placeholder="Short description shown to organisers"></textarea>
+            <textarea class="form-control-cc" name="description" rows="3" placeholder="Short description shown to organisers"><%= form.description || '' %></textarea>
           </div>
           <div class="mb-3">
             <div class="form-label-cc">Badge colour</div>
@@ -58,7 +71,10 @@
               <span class="color-swatch" style="background:#D9A08F"></span>
             </div>
           </div>
-          <button type="submit" class="btn-cc btn-cc-primary btn-cc-block">Add category</button>
+          <button type="submit" class="btn-cc btn-cc-primary btn-cc-block"><%= formMode === 'edit' ? 'Save changes' : 'Add category' %></button>
+          <% if (formMode === 'edit') { %>
+            <a href="/admin/categories" class="btn-cc btn-cc-secondary btn-cc-block mt-2" style="text-align:center">Cancel edit</a>
+          <% } %>
         </form>
       </div>
     </div>

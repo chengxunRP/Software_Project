@@ -19,17 +19,17 @@
           <span class="stat-note green"><%= stats.usersDelta %></span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Events (2026)</span>
+          <span class="stat-label">Events (<%= chartYear %>)</span>
           <span class="stat-value"><%= stats.events2026 %></span>
           <span class="stat-note"><%= stats.eventsNote %></span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Registrations (2026)</span>
+          <span class="stat-label">Registrations (<%= chartYear %>)</span>
           <span class="stat-value"><%= stats.registrations2026 %></span>
           <span class="stat-note"><%= stats.registrationsNote %></span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Volunteer hours (2026)</span>
+          <span class="stat-label">Volunteer hours (<%= chartYear %>)</span>
           <span class="stat-value green"><%= stats.hours2026 %></span>
           <span class="stat-note green"><%= stats.hoursDelta %></span>
         </div>
@@ -38,7 +38,7 @@
       <div class="dashboard-split" style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px;align-items:start">
         <div class="card-cc" style="padding:24px">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="h-card">Registrations per month — 2026</span>
+            <span class="h-card">Registrations per month — <%= chartYear %></span>
             <a href="/admin/reports" style="font-size:13.5px;font-weight:600">Full reports →</a>
           </div>
           <div class="bar-chart" style="height:170px">
@@ -69,7 +69,7 @@
           </div>
 
           <div class="card-cc" style="padding:22px">
-            <div class="h-card mb-3">Hours by category — July</div>
+            <div class="h-card mb-3">Hours by category — <%= hoursMonthLabel %></div>
             <% hoursByCat.forEach(function (h) { %>
               <div class="d-flex align-items-center gap-2 mb-2" style="font-size:13.5px">
                 <span style="width:10px;height:10px;border-radius:3px;background:<%= h.color %>;flex-shrink:0"></span>

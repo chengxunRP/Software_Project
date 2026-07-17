@@ -31,7 +31,20 @@
         <div class="stat-card">
           <span class="stat-label">Waiting lists</span>
           <span class="stat-value amber"><%= stats.participantWaitlist + stats.volunteerWaitlist %></span>
-          <span class="stat-note">P <%= stats.participantWaitlist %> · V <%= stats.volunteerWaitlist %> · avg attendance <%= stats.avgAttendance %></span>
+          <span class="stat-note">P <%= stats.participantWaitlist %> · V <%= stats.volunteerWaitlist %> · <%= stats.volunteerHours %> vol. hrs · avg attendance <%= stats.avgAttendance %></span>
+        </div>
+      </div>
+
+      <div class="card-cc" style="padding:24px">
+        <div class="h-card mb-3">Registrations per month — <%= chartYear %></div>
+        <div class="bar-chart" style="height:170px">
+          <% registrationsByMonth.forEach(function (m) { %>
+            <div class="bar-chart-item">
+              <span class="val <%= m.current ? 'current' : '' %>" style="font-size:11.5px"><%= m.val %></span>
+              <div class="bar <%= m.current ? 'current' : '' %>" style="height:<%= m.h %>px;max-width:46px"></div>
+              <span class="label"><%= m.label %></span>
+            </div>
+          <% }) %>
         </div>
       </div>
 
