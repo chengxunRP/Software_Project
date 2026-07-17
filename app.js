@@ -24,6 +24,7 @@ const adminController = require("./controllers/adminController");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === "production";
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -38,18 +39,31 @@ if (!process.env.SESSION_SECRET) {
   );
 }
 
+// Render terminates HTTPS at the reverse proxy. Trust X-Forwarded-* so
+// express-session can set Secure cookies correctly in production.
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
+
 app.use(
   session({
+    name: "communityconnect.sid",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: isProduction,
     cookie: {
       httpOnly: true,
+      secure: isProduction,
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production"
+      maxAge: 1000 * 60 * 60 * 24
     }
   })
 );
+
+console.log("NODE_ENV:", process.env.NODE_ENV || "(unset)");
+console.log("Trust proxy enabled:", isProduction);
+console.log("Secure session cookies:", isProduction);
 
 // Feature 1 — authentication (register / login / logout / password reset)
 app.use(authRoutes);

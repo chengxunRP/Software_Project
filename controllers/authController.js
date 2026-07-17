@@ -198,7 +198,7 @@ function logout(req, res) {
     if (err) {
       console.error("logout failed:", err.message);
     }
-    res.clearCookie("connect.sid");
+    res.clearCookie("communityconnect.sid");
     return res.redirect("/login");
   });
 }
