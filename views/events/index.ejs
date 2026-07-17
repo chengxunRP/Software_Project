@@ -1,0 +1,111 @@
+<%- include('../partials/header') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
+
+  <%
+    pageEyebrow = 'Organiser';
+    pageHeading = 'Manage Events';
+    pageLead = 'Create, edit and manage capacity for your community events.';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel">
+      <%- include('../partials/messages') %>
+
+      <form method="get" action="/organiser/events" class="d-flex flex-wrap gap-2 align-items-end mb-3">
+        <div style="min-width:240px; flex:1 1 240px;">
+          <label class="form-label-cc" for="search">Search</label>
+          <input class="form-control-cc" type="text" id="search" name="search" value="<%= search || '' %>" placeholder="Search events by name, location or description">
+        </div>
+        <div style="min-width:200px; flex:0 1 200px;">
+          <label class="form-label-cc" for="category_id">Category</label>
+          <select class="form-select-cc" id="category_id" name="category_id">
+            <option value="">All categories</option>
+            <% categories.forEach(function (category) { %>
+              <option value="<%= category.category_id %>" <%= String(selectedCategoryId) === String(category.category_id) ? 'selected' : '' %>><%= category.name %> (<%= category.event_count %>)</option>
+            <% }) %>
+          </select>
+        </div>
+        <div style="flex:0 1 auto; align-self:flex-end;">
+          <button type="submit" class="btn-cc btn-cc-primary">Search</button>
+        </div>
+      </form>
+
+      <% if (!events.length) { %>
+        <div class="card-cc" style="padding:28px;text-align:center">
+          <div style="font-size:16px;font-weight:700;color:#23271F">No events found.</div>
+          <div class="text-muted-cc mt-2" style="font-size:14.5px">Try a different search term or add a new event.</div>
+          <a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-block mt-3">Add event</a>
+        </div>
+      <% } else { %>
+        <div class="table-cc">
+          <div class="table-scroll">
+            <div class="table-cc-head" style="grid-template-columns:2fr 1fr 1fr 1.2fr 0.9fr 1.4fr">
+              <span>Event</span>
+              <span>Category</span>
+              <span>Date</span>
+              <span>Capacity</span>
+              <span>Status</span>
+              <span style="text-align:right">Actions</span>
+            </div>
+            <% events.forEach(function (event) { %>
+              <%
+                const statusClass = {
+                  Draft: 'badge-cc-draft',
+                  Open: 'badge-cc-success',
+                  Full: 'badge-cc-warning',
+                  Closed: 'badge-cc-muted',
+                  Cancelled: 'badge-cc-danger',
+                  Completed: 'badge-cc-completed'
+                }[event.status] || 'badge-cc-muted';
+                const dateValue = new Date(event.start_datetime);
+                const dateLabel = isNaN(dateValue.getTime()) ? '' : dateValue.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              %>
+              <div class="table-cc-row" style="grid-template-columns:2fr 1fr 1fr 1.2fr 0.9fr 1.4fr">
+                <div>
+                  <div style="font-weight:700;color:#23271F"><%= event.event_name %></div>
+                  <div style="font-size:12.5px;color:#8B8778"><%= event.location %></div>
+                </div>
+                <span class="text-muted-cc" style="font-size:13.5px"><%= event.category_name %></span>
+                <span class="text-muted-cc" style="font-size:13.5px"><%= dateLabel %></span>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:#6E7266">P <%= event.participants_filled %>/<%= event.participant_capacity %></div>
+                  <div style="font-size:12px;font-weight:600;color:#6E7266">V <%= event.volunteers_filled %>/<%= event.volunteer_capacity %></div>
+                </div>
+                <span><span class="badge-cc <%= statusClass %>" style="font-size:11.5px;padding:4px 10px"><%= event.status %></span></span>
+                <div class="d-flex gap-1 justify-content-end flex-wrap">
+                  <a href="/organiser/events/<%= event.event_id %>" class="btn-cc btn-cc-secondary btn-cc-xs">View</a>
+                  <a href="/organiser/events/<%= event.event_id %>/edit" class="btn-cc btn-cc-secondary btn-cc-xs">Edit</a>
+                  <button type="button" class="btn-cc btn-cc-danger-outline btn-cc-xs" data-open-modal data-delete-event-id="<%= event.event_id %>" data-event-name="<%= event.event_name %>">Delete</button>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+</div>
+
+<form id="deleteEventForm" method="POST" action="" style="display:none"></form>
+<div class="modal-cc" id="confirmModal">
+  <div class="modal-cc-dialog" style="width:460px">
+    <div class="modal-icon">!</div>
+    <div>
+      <div style="font-size:19px;font-weight:800;color:#23271F">Delete this event?</div>
+      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">This will remove <b id="modalEventName">this event</b> and all of its registrations. This cannot be undone.</div>
+    </div>
+    <div class="d-flex gap-2 justify-content-end">
+      <button type="button" class="btn-cc btn-cc-secondary" data-close-modal>Keep event</button>
+      <button type="button" class="btn-cc btn-cc-danger" data-confirm-delete>Yes, delete event</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

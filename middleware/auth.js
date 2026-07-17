@@ -22,4 +22,14 @@ function isOrganiser(req, res, next) {
   next();
 }
 
-module.exports = { isLoggedIn, isOrganiser };
+function isAdmin(req, res, next) {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  if (req.session.user.role !== "admin") {
+    return res.status(403).send("You do not have permission to view this page.");
+  }
+  next();
+}
+
+module.exports = { isLoggedIn, isOrganiser, isAdmin };

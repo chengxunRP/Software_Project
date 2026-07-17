@@ -10,7 +10,9 @@
  * overlapping cards + dark footer. No charcoal sidebar.
  */
 
-:root {
+ @import url("/css/events.css");
+
+ :root {
   /* Core palette */
   --cc-primary: #2E7D4F;
   --cc-primary-hover: #256741;

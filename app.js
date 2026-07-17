@@ -8,6 +8,8 @@ const registrationRoutes = require("./routes/registrationRoutes");
 const { takeFlash } = require("./controllers/registrationController");
 
 const rolesRoutes = require("./routes/roles");
+const eventRoutes = require("./routes/eventRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 const { isOrganiser } = require("./middleware/auth");
 
 const app = express();
@@ -51,6 +53,8 @@ app.use(function (req, res, next) {
 
 app.use(rolesRoutes);
 app.use(registrationRoutes);
+app.use(eventRoutes);
+app.use(categoryRoutes);
 
 
 // Temporary sample data for frontend preview only
@@ -916,49 +920,6 @@ app.get("/organiser/dashboard", function (req, res) {
   }));
 });
 
-app.get("/organiser/events", function (req, res) {
-  res.render("organiser/manage-events", appLocals("organiser", organiserUser, "events", {
-    pageTitle: "Manage Events · Organiser",
-    rows: manageEventRows,
-    categories: categories.filter(function (c) { return c.status === "Active"; })
-  }));
-});
-
-app.get("/organiser/events/new", function (req, res) {
-  res.render("organiser/event-form", appLocals("organiser", organiserUser, "events", {
-    pageTitle: "Add Event · Organiser",
-    formMode: "create",
-    event: {
-      event_name: "",
-      category_id: 1,
-      description: "",
-      start_datetime: "",
-      end_datetime: "",
-      location: "",
-      participant_capacity: "",
-      volunteer_capacity: "",
-      registration_deadline: "",
-      status: "Draft"
-    },
-    categories: categories.filter(function (c) { return c.status === "Active"; }),
-    messages: []
-  }));
-});
-
-app.get("/organiser/events/:id/edit", function (req, res) {
-  const event = findEvent(req.params.id) || events[0];
-  res.render("organiser/event-form", appLocals("organiser", organiserUser, "events", {
-    pageTitle: "Edit Event · Organiser",
-    formMode: "edit",
-    event: event,
-    categories: categories.filter(function (c) { return c.status === "Active"; }),
-    messages: [{
-      type: "warning",
-      text: "This event has " + event.participants_filled + " confirmed participants and " + event.volunteers_filled + " confirmed volunteers. Reducing a capacity below its confirmed count will move the most recent matching registrations to that waiting list."
-    }]
-  }));
-});
-
 app.get("/organiser/events/:id/registrations", function (req, res) {
   const event = findEvent(req.params.id) || events[1];
   res.render("organiser/manage-registrations", appLocals("organiser", organiserUser, "registrations", {
@@ -1145,13 +1106,6 @@ app.get("/admin/users", function (req, res) {
   res.render("admin/users", appLocals("admin", adminUser, "users", {
     pageTitle: "User Management · Admin",
     users: adminUsers
-  }));
-});
-
-app.get("/admin/categories", function (req, res) {
-  res.render("admin/categories", appLocals("admin", adminUser, "categories", {
-    pageTitle: "Event Categories · Admin",
-    categories: categories
   }));
 });
 
