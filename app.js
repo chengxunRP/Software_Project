@@ -5,14 +5,16 @@ const path = require("path");
 const pool = require("./config/database");
 const publicEvents = require("./lib/publicEvents");
 const registrationRoutes = require("./routes/registrationRoutes");
+const authRoutes = require("./routes/authRoutes");
 const { takeFlash } = require("./controllers/registrationController");
 const notificationController = require("./controllers/notificationController");
+const volunteerHistoryController = require("./controllers/volunteerHistoryController");
 const organiserStatsController = require("./controllers/organiserStatsController");
 const organiserAttendanceReportController = require("./controllers/organiserAttendanceReportController");
 const { attachCurrentUser } = require("./middleware/devUser");
 
 const rolesRoutes = require("./routes/roles");
-const { isOrganiser } = require("./middleware/auth");
+const { isOrganiser, requireCommunityMember } = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,26 +38,28 @@ app.use(
   })
 );
 
-// TODO: Remove this before final CA2 submission! (Temporary Auth Mock)
-// Must run after the session middleware above (needs req.session to exist)
-// and before any protected routes below.
+// Expose the authenticated session to every view and route without forcing
+// a mock user. This keeps the navbar, access control and route handlers in sync.
 app.use(function (req, res, next) {
-  if (!req.session.user) {
-    const devUserId = Number(process.env.DEV_USER_ID || 3);
-    const devUserRole = String(process.env.DEV_USER_ROLE || "community_member").toLowerCase();
+  const sessionUser = req.session && req.session.user ? req.session.user : null;
+  const sessionRole = sessionUser && sessionUser.role ? sessionUser.role : null;
+  const effectiveRole = sessionRole === "community_member" ? "member" : sessionRole;
 
-    req.session.user = {
-      user_id: Number.isInteger(devUserId) && devUserId > 0 ? devUserId : 3,
-      name: "Tan Wei Ling",
-      initials: "WL",
-      avatarBg: "#D99E2B",
-      role: devUserRole,
-    };
+  res.locals.currentUser = sessionUser;
+  res.locals.role = effectiveRole;
+  res.locals.layout = res.locals.layout || "public";
+  app.locals.currentUser = sessionUser;
+  app.locals.role = effectiveRole;
+
+  if (sessionUser) {
+    req.currentUser = sessionUser;
   }
+
   next();
 });
 
 app.use(rolesRoutes);
+app.use(authRoutes);
 app.use(registrationRoutes);
 
 
@@ -706,18 +710,19 @@ function publicLocals(extra) {
     layout: "public",
     activeNav: "",
     pageTitle: "CommunityConnect SG",
-    currentUser: null,
+    currentUser: app.locals.currentUser || null,
     messages: []
   }, extra || {});
 }
 
 function appLocals(role, user, activeNav, extra) {
+  const resolvedUser = user || app.locals.currentUser || null;
   return Object.assign({
     layout: "app",
     role: role,
     activeNav: activeNav,
     pageTitle: "CommunityConnect",
-    currentUser: user,
+    currentUser: resolvedUser,
     messages: []
   }, extra || {});
 }
@@ -852,7 +857,7 @@ app.get("/events/:id", async function (req, res) {
 
 // ---------- Community member GET preview routes ----------
 
-app.get("/member/dashboard", attachCurrentUser, async function (req, res) {
+app.get("/member/dashboard", attachCurrentUser, requireCommunityMember, async function (req, res) {
   try {
     const asParticipant = memberRegistrations.Confirmed
       .filter(function (r) { return r.participation_type === "Participant"; })
@@ -917,22 +922,53 @@ app.get("/member/dashboard", attachCurrentUser, async function (req, res) {
   }
 });
 
-app.get("/member/volunteer-hours", function (req, res) {
-  res.render("member/volunteer-hours", appLocals("member", memberUser, "hours", {
-    pageTitle: "Volunteer Hours · Community member",
-    summary: memberHoursSummary,
-    months: memberMonthlyHours,
-    history: memberHourHistory
-  }));
+app.get("/member/volunteer-hours", attachCurrentUser, requireCommunityMember, async function (req, res) {
+  try {
+    const historyData = await volunteerHistoryController.getVolunteerContributionHistory(req.currentUser && req.currentUser.user_id ? req.currentUser.user_id : (req.session.user && req.session.user.user_id ? req.session.user.user_id : null), {
+      page: 1,
+      limit: 50
+    });
+    const hoursViewModel = volunteerHistoryController.buildVolunteerHoursPageModel(historyData);
+
+    res.render("member/volunteer-hours", appLocals("member", req.currentUser || req.session.user || memberUser, "hours", Object.assign({
+      pageTitle: "Volunteer Hours · Community member"
+    }, hoursViewModel)));
+  } catch (err) {
+    console.error("member volunteer-hours load failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "hours",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load your volunteer hours. Please try again shortly."
+    }));
+  }
 });
 
-app.get("/member/profile", function (req, res) {
-  res.render("member/profile", appLocals("member", memberUser, "profile", {
-    pageTitle: "My Profile · Community member",
-    profile: memberUser,
-    hours: memberHoursSummary.totalHours,
-    attendedEvents: memberHoursSummary.eventCount
-  }));
+app.get("/member/profile", attachCurrentUser, requireCommunityMember, async function (req, res) {
+  try {
+    const historyData = await volunteerHistoryController.getVolunteerContributionHistory(req.currentUser && req.currentUser.user_id ? req.currentUser.user_id : (req.session.user && req.session.user.user_id ? req.session.user.user_id : null), {
+      page: 1,
+      limit: 50
+    });
+    const hoursViewModel = volunteerHistoryController.buildVolunteerHoursPageModel(historyData);
+
+    res.render("member/profile", appLocals("member", req.currentUser || req.session.user || memberUser, "profile", {
+      pageTitle: "My Profile · Community member",
+      profile: req.currentUser || req.session.user || memberUser,
+      hours: hoursViewModel.summary.totalHours,
+      attendedEvents: hoursViewModel.summary.eventCount
+    }));
+  } catch (err) {
+    console.error("member profile load failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "profile",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load your profile summary. Please try again shortly."
+    }));
+  }
 });
 
 // Compatibility redirects from former volunteer paths

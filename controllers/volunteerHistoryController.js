@@ -62,6 +62,64 @@ function buildHistoryViewModel(req, historyData) {
   };
 }
 
+function buildVolunteerHoursPageModel(historyData) {
+  const rows = historyData.rows || [];
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const currentYear = String(new Date().getFullYear());
+  const monthly = monthNames.map(function (label, index) {
+    const monthRows = rows.filter(function (row) {
+      const year = String(row.completion_value || "").slice(0, 4);
+      const month = Number(String(row.completion_value || "").slice(5, 7)) - 1;
+      return year === currentYear && month === index;
+    });
+    const totalHours = monthRows.reduce(function (sum, row) {
+      return sum + Number(row.volunteer_hours || 0);
+    }, 0);
+    const current = index === new Date().getMonth();
+    return {
+      label,
+      val: formatHours(totalHours),
+      h: Math.max(16, Math.round(totalHours * 18)),
+      current
+    };
+  });
+
+  const totalHours = rows.reduce(function (sum, row) {
+    return sum + Number(row.volunteer_hours || 0);
+  }, 0);
+  const attendedCount = rows.filter(function (row) {
+    return row.attendance_status === "Attended";
+  }).length;
+  const absentCount = rows.filter(function (row) {
+    return row.attendance_status === "Absent";
+  }).length;
+  const totalEntries = rows.length;
+  const monthHours = monthly[new Date().getMonth()].val;
+  const monthEvents = monthly[new Date().getMonth()].h > 0 ? monthly[new Date().getMonth()].h / 18 : 0;
+
+  return {
+    summary: {
+      totalHours: formatHours(totalHours),
+      eventCount: totalEntries,
+      monthHours: monthHours,
+      monthEvents: Math.round(monthEvents),
+      attendanceRate: totalEntries ? Math.round((attendedCount / totalEntries) * 100) + "%" : "0%",
+      attended: attendedCount,
+      absent: absentCount
+    },
+    months: monthly,
+    history: rows.map(function (row) {
+      return {
+        name: row.event_name,
+        date: row.completion_date,
+        loc: row.location,
+        status: row.attendance_status,
+        hours: row.volunteer_hours_display
+      };
+    })
+  };
+}
+
 async function getVolunteerContributionHistory(userId, options = {}) {
   const search = String(options.search || "").trim();
   const category = String(options.category || "").trim();
@@ -72,8 +130,7 @@ async function getVolunteerContributionHistory(userId, options = {}) {
 
   const whereClauses = [
     "er.user_id = ?",
-    "er.participation_type = 'Volunteer'",
-    "(er.status IN ('Attended', 'Absent') OR a.attendance_status IN ('Attended', 'Absent'))"
+    "er.participation_type = 'Volunteer'"
   ];
   const params = [userId];
 
@@ -134,12 +191,16 @@ async function getVolunteerContributionHistory(userId, options = {}) {
 
   const normalizedRows = rows.map(function (row) {
     const hours = Number(row.volunteer_hours || 0);
-    const attendanceStatus = row.attendance_status || row.registration_status || "Pending";
+    const rawAttendanceStatus = row.attendance_status || row.registration_status || "Pending";
+    const attendanceStatus = hours === 0 && rawAttendanceStatus === "Attended"
+      ? "Absent"
+      : rawAttendanceStatus;
     return {
       registration_id: row.registration_id,
       event_id: row.event_id,
       event_name: row.event_name,
       organiser_name: row.organiser_name,
+      location: row.location,
       category_name: row.category_name || "Uncategorised",
       attendance_status: attendanceStatus,
       volunteer_hours: hours,
@@ -259,5 +320,7 @@ async function apiVolunteerHistory(req, res) {
 module.exports = {
   renderVolunteerHistoryPage,
   apiVolunteerHistory,
-  getVolunteerContributionHistory
+  getVolunteerContributionHistory,
+  buildVolunteerHoursPageModel,
+  buildHistoryViewModel
 };

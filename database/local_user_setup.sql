@@ -19,11 +19,19 @@
 DROP USER IF EXISTS 'communityconnect_user'@'localhost';
 DROP USER IF EXISTS 'communityconnect_user'@'127.0.0.1';
 
-CREATE USER 'communityconnect_user'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'CHANGE_TO_YOUR_OWN_PASSWORD';
-CREATE USER 'communityconnect_user'@'127.0.0.1' IDENTIFIED WITH caching_sha2_password BY 'CHANGE_TO_YOUR_OWN_PASSWORD';
+CREATE USER 'communityconnect_user'@'localhost'
+IDENTIFIED BY 'RP738964$';
 
-GRANT ALL PRIVILEGES ON community_event_manager.* TO 'communityconnect_user'@'localhost';
-GRANT ALL PRIVILEGES ON community_event_manager.* TO 'communityconnect_user'@'127.0.0.1';
+CREATE USER 'communityconnect_user'@'127.0.0.1'
+IDENTIFIED BY 'RP738964$';
+
+GRANT ALL PRIVILEGES
+ON community_event_manager.*
+TO 'communityconnect_user'@'localhost';
+
+GRANT ALL PRIVILEGES
+ON community_event_manager.*
+TO 'communityconnect_user'@'127.0.0.1';
 
 FLUSH PRIVILEGES;
 

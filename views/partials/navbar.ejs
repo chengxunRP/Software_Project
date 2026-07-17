@@ -1,6 +1,8 @@
 <%
-  const isPublic = typeof layout === 'undefined' || layout === 'public';
-  const navRole = typeof role !== 'undefined' ? role : null;
+  const hasSessionUser = typeof currentUser !== 'undefined' && currentUser && currentUser.user_id;
+  const effectiveRole = (typeof role !== 'undefined' && role) ? role : (hasSessionUser && currentUser.role ? currentUser.role : null);
+  const navRole = effectiveRole === 'community_member' ? 'member' : effectiveRole;
+  const isPublic = !hasSessionUser && (typeof layout === 'undefined' || layout === 'public');
   const hideAuthLinks = typeof activeNav !== 'undefined' && (activeNav === 'login' || activeNav === 'register');
 %>
 <header class="cc-nav">
@@ -52,13 +54,13 @@
       <% } else if (isPublic) { %>
         <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
         <a href="/register" class="btn-cc btn-cc-primary btn-cc-sm">Register</a>
-      <% } else if (typeof currentUser !== 'undefined' && currentUser) { %>
+      <% } else if (hasSessionUser) { %>
         <a href="<%= navRole === 'member' ? '/member/dashboard' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (navRole === 'member') { %><span class="count">3</span><% } %></a>
         <a href="<%= navRole === 'member' ? '/member/profile' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="nav-avatar">
           <span class="avatar-cc"><%= currentUser.initials || 'CC' %></span>
           <span class="nav-avatar-name"><%= currentUser.firstName || currentUser.name || 'Account' %></span>
         </a>
-        <a href="/" class="nav-logout">Log out</a>
+        <a href="/logout" class="nav-logout">Log out</a>
       <% } %>
 
       <% if (!hideAuthLinks) { %>
@@ -82,7 +84,7 @@
         <a href="/member/registrations">My Registrations</a>
         <a href="/member/volunteer-hours">Volunteer Hours</a>
         <a href="/member/profile">My Profile</a>
-        <a href="/">Log out</a>
+        <a href="/logout">Log out</a>
       <% } else if (navRole === 'organiser') { %>
         <a href="/organiser/dashboard">Dashboard</a>
         <a href="/organiser/events">Manage Events</a>
@@ -95,7 +97,7 @@
         <a href="/admin/users">Users</a>
         <a href="/admin/categories">Categories</a>
         <a href="/admin/reports">Reports</a>
-        <a href="/">Log out</a>
+        <a href="/logout">Log out</a>
       <% } %>
     </div>
   <% } %>

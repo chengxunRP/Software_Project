@@ -565,6 +565,30 @@ INSERT INTO event_registrations (
     'Confirmed',
     NULL,
     NULL
+  ),
+  -- Confirmed Volunteer (Youth Tutoring) — user_id 3 Tan Wei Ling
+  -- preferred_role_id 9 = Tutor — Group B on event 4
+  (
+    4,
+    3,
+    'Volunteer',
+    9,
+    'Happy to support a second maths group',
+    'Confirmed',
+    NULL,
+    NULL
+  ),
+  -- Confirmed Volunteer (Park Clean-Up) — user_id 3 Tan Wei Ling
+  -- preferred_role_id 10 = Garden Planter on event 5
+  (
+    5,
+    3,
+    'Volunteer',
+    10,
+    'Available for the morning planting shift',
+    'Confirmed',
+    NULL,
+    NULL
   );
 
 -- -----------------------------------------------------------------------------
@@ -602,6 +626,36 @@ INSERT INTO attendance (
     3.00,
     2,
     'Volunteer hours recorded for Beach Sweeper duty'
+  ),
+  -- Test account volunteer contribution for Tan Wei Ling (user_id 3)
+  (
+    7,
+    'Attended',
+    '2026-09-05 09:00:00',
+    '2026-09-05 12:00:00',
+    3.00,
+    2,
+    'Volunteer hours recorded for Tan Wei Ling on the Community Food Distribution event'
+  ),
+  -- Extra volunteer contribution for Tan Wei Ling on Youth Tutoring
+  (
+    10,
+    'Attended',
+    '2026-07-29 10:00:00',
+    '2026-07-29 12:00:00',
+    2.00,
+    2,
+    'Volunteer hours recorded for Tan Wei Ling on the Youth Tutoring event'
+  ),
+  -- Extra volunteer contribution for Tan Wei Ling on Park Clean-Up
+  (
+    11,
+    'Attended',
+    '2026-08-08 07:30:00',
+    '2026-08-08 10:30:00',
+    3.00,
+    2,
+    'Volunteer hours recorded for Tan Wei Ling on the Park Clean-Up event'
   ),
   -- Structure demo: Participant attendance — volunteer_hours remains 0
   (
