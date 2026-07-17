@@ -165,12 +165,12 @@ async function insertPromotionNotification(connection, userId, eventId, eventNam
   return true;
 }
 
-async function promoteNextVolunteerWaitlist(connection, eventId, eventName) {
+async function promoteNextMatchingWaitlistedRegistration(connection, eventId, participationType, eventName) {
   const [rows] = await connection.query(
     `SELECT registration_id, user_id, waiting_position, registered_at
      FROM event_registrations
      WHERE event_id = ?
-       AND participation_type = 'Volunteer'
+       AND participation_type = ?
        AND status = 'Waitlisted'
      ORDER BY
        waiting_position ASC,
@@ -178,7 +178,7 @@ async function promoteNextVolunteerWaitlist(connection, eventId, eventName) {
        registration_id ASC
      LIMIT 1
      FOR UPDATE`,
-    [eventId]
+    [eventId, participationType]
   );
 
   const nextRegistration = pickNextWaitlistedRegistration(rows);
@@ -684,8 +684,8 @@ async function cancelRegistration(req, res) {
       [registrationId]
     );
 
-    if (wasConfirmed && participationType === "Volunteer") {
-      await promoteNextVolunteerWaitlist(connection, eventId, eventName);
+    if (wasConfirmed) {
+      await promoteNextMatchingWaitlistedRegistration(connection, eventId, participationType, eventName);
     }
 
     await recalculateWaitingPositions(connection, eventId, participationType);
@@ -717,5 +717,6 @@ module.exports = {
   cancelRegistration: cancelRegistration,
   recalculateWaitingPositions: recalculateWaitingPositions,
   pickNextWaitlistedRegistration: pickNextWaitlistedRegistration,
+  promoteNextMatchingWaitlistedRegistration: promoteNextMatchingWaitlistedRegistration,
   takeFlash: takeFlash
 };
