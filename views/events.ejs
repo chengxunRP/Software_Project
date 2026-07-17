@@ -13,23 +13,21 @@
       ? filters
       : { search: "", category: "", date: "", location: "", availability: "" };
 %>
-<div class="public-page">
+<div class="site-page public-page">
   <%- include('partials/navbar') %>
 
-  <main class="flex-fill">
-    <div class="section-wrap wide" style="padding-top:40px">
-      <div class="mb-3">
-        <h1 class="h-page">Event Catalogue</h1>
-        <p class="mb-0 text-muted-cc" style="font-size:15.5px">
-          <% if (filtersActive) { %>
-            Showing <%= events.length %> matching event<%= events.length === 1 ? '' : 's' %> (<%= databaseEventTotal %> in the database).
-          <% } else { %>
-            <%= events.length %> event<%= events.length === 1 ? '' : 's' %> across Singapore. Filter to find one near you.
-          <% } %>
-        </p>
-      </div>
+  <%
+    pageEyebrow = 'Event catalogue';
+    pageHeading = 'Find your next community event';
+    pageLead = filtersActive
+      ? ('Showing ' + events.length + ' matching event' + (events.length === 1 ? '' : 's') + ' (' + databaseEventTotal + ' in the database). Join as a Participant or Volunteer.')
+      : (events.length + ' event' + (events.length === 1 ? '' : 's') + ' across Singapore. Join as a Participant or Volunteer.');
+  %>
+  <%- include('partials/page-header') %>
 
-      <form class="filter-bar mb-4" method="get" action="/events">
+  <main class="site-main">
+    <div class="section-wrap wide overlap-panel">
+      <form class="filter-bar card-cc" method="get" action="/events">
         <div>
           <label class="form-label-cc" for="search">Search</label>
           <input class="form-control-cc" type="text" id="search" name="search" value="<%= activeFilters.search || '' %>" placeholder="Keyword, e.g. clean-up">
@@ -70,7 +68,16 @@
             <% }) %>
           </select>
         </div>
-        <button type="submit" class="btn-cc btn-cc-primary" style="padding:10px 20px;border-radius:9px">Apply</button>
+        <div>
+          <label class="form-label-cc" for="sort">Sort by</label>
+          <select class="form-select-cc" id="sort" name="sort">
+            <% const sortOptions = [{ value: 'date', label: 'Date (soonest)' }, { value: 'popularity', label: 'Popularity' }]; %>
+            <% sortOptions.forEach(function (opt) { %>
+              <option value="<%= opt.value %>" <%= (activeFilters.sort || 'date') === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+            <% }) %>
+          </select>
+        </div>
+        <button type="submit" class="btn-cc btn-cc-primary">Apply</button>
       </form>
 
       <% if (!events.length) { %>
@@ -86,20 +93,18 @@
           <% } %>
         </div>
       <% } else { %>
-        <div class="row g-4 events-grid">
+        <div class="row g-4 events-grid mt-2">
           <% events.forEach(function (ev) { %>
             <div class="col-md-6 col-lg-4">
               <div class="event-card">
-                <div class="event-card-photo" style="height:130px">
-                  <span class="photo-label"><%= ev.photoLabel %></span>
-                </div>
+                <%- include('partials/event-card-panel', { category: ev.category }) %>
                 <div class="event-card-body">
-                  <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
                     <span class="badge-cc badge-cc-cat" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>
                     <% if (ev.full) { %>
-                      <span class="badge-cc badge-cc-full" style="font-size:11.5px;padding:3px 9px">FULL</span>
+                      <span class="badge-cc badge-cc-full">FULL · WAITLIST</span>
                     <% } else if (ev.status === 'Draft') { %>
-                      <span class="badge-cc badge-cc-draft" style="font-size:11.5px;padding:3px 9px">Draft</span>
+                      <span class="badge-cc badge-cc-draft">Draft</span>
                     <% } %>
                   </div>
                   <div class="event-card-title"><%= ev.event_name %></div>
@@ -110,11 +115,20 @@
                   <div class="mt-auto">
                     <div class="cap-bar">
                       <div class="cap-bar-meta">
-                        <span style="color:#6E7266"><%= ev.capLabel %></span>
-                        <span style="color:<%= ev.capColor %>"><%= ev.full ? 'Waitlists open' : (ev.participants.left + 'P · ' + ev.volunteers.left + 'V left') %></span>
+                        <span>Participants <%= ev.participants_filled %>/<%= ev.participant_capacity %></span>
+                        <span style="color:<%= ev.participants.capColor %>"><%= ev.participants.full ? 'Waitlist' : (ev.participants.left + ' left') %></span>
                       </div>
                       <div class="cap-bar-track">
-                        <div class="cap-bar-fill" style="width:<%= ev.pct %>%;background:<%= ev.capColor %>"></div>
+                        <div class="cap-bar-fill" style="width:<%= ev.participants.pct %>%;background:<%= ev.participants.capColor %>"></div>
+                      </div>
+                    </div>
+                    <div class="cap-bar mt-2">
+                      <div class="cap-bar-meta">
+                        <span>Volunteers <%= ev.volunteers_filled %>/<%= ev.volunteer_capacity %></span>
+                        <span style="color:<%= ev.volunteers.capColor %>"><%= ev.volunteers.full ? 'Waitlist' : (ev.volunteers.left + ' left') %></span>
+                      </div>
+                      <div class="cap-bar-track">
+                        <div class="cap-bar-fill" style="width:<%= ev.volunteers.pct %>%;background:<%= ev.volunteers.capColor %>"></div>
                       </div>
                     </div>
                     <a href="/events/<%= ev.id %>" class="btn-cc btn-cc-outline btn-cc-block mt-3">View Details</a>

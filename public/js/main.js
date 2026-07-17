@@ -1,39 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Public hamburger navigation
+  // Sticky top-nav hamburger sheet (public + signed-in)
   var navToggle = document.getElementById("navToggle");
   var mobileSheet = document.getElementById("publicMobileSheet");
   if (navToggle && mobileSheet) {
     navToggle.addEventListener("click", function () {
       mobileSheet.classList.toggle("open");
+      navToggle.classList.toggle("open");
     });
-  }
-
-  // App sidebar open/close on mobile
-  var appShell = document.getElementById("appShell");
-  var sidebarOpenBtn = document.getElementById("sidebarOpenBtn");
-  var sidebarBackdrop = document.getElementById("sidebarBackdrop");
-  var sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
-
-  function closeSidebar() {
-    if (appShell) {
-      appShell.classList.remove("sidebar-open");
-    }
-  }
-
-  function openSidebar() {
-    if (appShell) {
-      appShell.classList.add("sidebar-open");
-    }
-  }
-
-  if (sidebarOpenBtn) {
-    sidebarOpenBtn.addEventListener("click", openSidebar);
-  }
-  if (sidebarBackdrop) {
-    sidebarBackdrop.addEventListener("click", closeSidebar);
-  }
-  if (sidebarCloseBtn) {
-    sidebarCloseBtn.addEventListener("click", closeSidebar);
   }
 
   // Cancellation confirmation modal — posts to /registrations/:id/cancel
@@ -88,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Preview-only forms for other teammate/demo pages: block submit
+  // Preview-only forms for teammate pages not yet wired to POST handlers
   document.querySelectorAll("form[data-preview-only]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();

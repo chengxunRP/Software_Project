@@ -3,7 +3,10 @@
 <div class="container mt-5 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Volunteer Roles for: <span class="text-primary"><%= event.event_name %></span></h2>
-        <a href="/organiser/events/<%= event.event_id %>/roles/new" class="btn btn-success">+ Create New Role</a>
+        <div class="d-flex gap-2">
+            <a href="/organiser/events/<%= event.event_id %>/volunteers" class="btn-cc btn-cc-secondary btn-cc-sm">View All Registered Volunteers</a>
+            <a href="/organiser/events/<%= event.event_id %>/roles/new" class="btn btn-success">+ Create New Role</a>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0 rounded-3">

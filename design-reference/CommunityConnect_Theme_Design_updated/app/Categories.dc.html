@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder,textarea::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Event Category Management">
+  <dc-import name="Nav" role="admin" active="categories" userName="Siti Rahman" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 84px;position:relative;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Platform administration</div>
+      <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">Event Categories</h1>
+      <p style="margin:0;font-size:16px;color:#C6E2D0">6 categories · 5 active, 1 archived. Categories organise the public event catalogue.</p>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start">
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(20,38,28,0.13);margin-top:-46px;position:relative">
+        <div style="display:grid;grid-template-columns:1.7fr 2.2fr 0.8fr 0.9fr 1.1fr;padding:13px 24px;background:#FBFAF6;border-bottom:1px solid #EDEAE0;font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">
+          <span>Category</span><span>Description</span><span>Events</span><span>Status</span><span style="text-align:right">Actions</span>
+        </div>
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:1.7fr 2.2fr 0.8fr 0.9fr 1.1fr;padding:15px 24px;border-bottom:1px solid #F2EFE7;font-size:14px;align-items:center;transition:background 0.15s" style-hover="background:#FBFAF6">
+            <div style="display:flex;align-items:center;gap:11px">
+              <span style="width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;background:{{ c.bg }};flex-shrink:0">{{ c.icon }}</span>
+              <span style="font-weight:800;color:#23271F">{{ c.name }}</span>
+            </div>
+            <span style="color:#6E7266;font-size:13px;padding-right:14px;font-weight:500">{{ c.desc }}</span>
+            <span style="font-weight:800;color:#3C4038">{{ c.count }}</span>
+            <span><span style="background:{{ c.stBg }};color:{{ c.stFg }};font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px">{{ c.status }}</span></span>
+            <div style="display:flex;gap:7px;justify-content:flex-end">
+              <button style="padding:8px 13px;border-radius:9px;border:1.5px solid #D8D4C8;color:#23271F;font-weight:700;font-size:12.5px;background:#FDFCFA;cursor:pointer;font-family:inherit" style-hover="background:#EAF1E6;border-color:#2E7D4F">Edit</button>
+              <button style="padding:8px 13px;border-radius:9px;border:1.5px solid #D8D4C8;color:#6E7266;font-weight:700;font-size:12.5px;background:#FDFCFA;cursor:pointer;font-family:inherit" style-hover="background:#F6F4EF">{{ c.toggle }}</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:16px;position:sticky;top:90px;box-shadow:0 8px 24px rgba(20,38,28,0.1);margin-top:-46px">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:34px;height:34px;border-radius:10px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:16px">＋</div>
+          <span style="font-size:16px;font-weight:800;color:#23271F">Add new category</span>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-size:13.5px;font-weight:700;color:#23271F">Category name <span style="color:#B0433B">*</span></span>
+          <input type="text" placeholder="e.g. Animal Welfare" style="padding:12px 14px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #DCEBD8"></input>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-size:13.5px;font-weight:700;color:#23271F">Description</span>
+          <textarea rows="3" placeholder="Short description shown to organisers" style="padding:12px 14px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none;resize:vertical" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #DCEBD8"></textarea>
+        </label>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-size:13.5px;font-weight:700;color:#23271F">Badge colour</span>
+          <div style="display:flex;gap:9px">
+            <span style="width:32px;height:32px;border-radius:10px;background:#2E7D4F;border:2.5px solid #1E4D33;cursor:pointer"></span>
+            <span style="width:32px;height:32px;border-radius:10px;background:#C8862B;cursor:pointer"></span>
+            <span style="width:32px;height:32px;border-radius:10px;background:#4A8FC2;cursor:pointer"></span>
+            <span style="width:32px;height:32px;border-radius:10px;background:#8E6FA8;cursor:pointer"></span>
+            <span style="width:32px;height:32px;border-radius:10px;background:#E0704F;cursor:pointer"></span>
+            <span style="width:32px;height:32px;border-radius:10px;background:#1F8A7A;cursor:pointer"></span>
+          </div>
+        </div>
+        <button style="padding:13px 0;border-radius:11px;background:#2E7D4F;color:#FFFFFF;font-weight:800;font-size:14.5px;border:none;cursor:pointer;font-family:inherit;box-shadow:0 3px 10px rgba(46,125,79,0.3)" style-hover="background:#256741">Add category</button>
+        <p style="margin:0;font-size:12.5px;color:#8B8778;line-height:1.5;text-align:center">Archiving a category hides it from new events without affecting existing ones.</p>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const active = { stBg: "#E7F2EA", stFg: "#1E4D33", status: "Active", toggle: "Archive" };
+    const archived = { stBg: "#EDEAE0", stFg: "#6E7266", status: "Archived", toggle: "Restore" };
+    return {
+      cats: [
+        { name: "Environment", desc: "Clean-ups, recycling drives, greening projects", count: "68", icon: "🌿", bg: "#E7F2EA", ...active },
+        { name: "Food Support", desc: "Food distribution, meal packing, grocery deliveries", count: "47", icon: "🥫", bg: "#FBF3DF", ...active },
+        { name: "Elderly Support", desc: "Befriending, home visits, digital literacy help", count: "39", icon: "🫶", bg: "#F1EBF6", ...active },
+        { name: "Education", desc: "Tutoring, reading programmes, enrichment support", count: "34", icon: "📚", bg: "#E9F1F8", ...active },
+        { name: "Fundraising", desc: "Charity runs, bake sales, donation drives", count: "25", icon: "❤️", bg: "#FBEAE3", ...active },
+        { name: "Blood Donation", desc: "Superseded — merged into Health & Wellness", count: "0", icon: "🩸", bg: "#EDEAE0", ...archived },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

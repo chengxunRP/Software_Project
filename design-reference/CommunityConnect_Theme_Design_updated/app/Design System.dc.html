@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+input::placeholder{color:#A5A294}
+</style>
+</helmet>
+
+<div style="min-height:100vh" data-screen-label="Design System">
+  <header style="background:#FFFFFF;border-bottom:1px solid #E6E2D8">
+    <div style="max-width:1120px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between">
+      <a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#2E7D4F,#1F8A7A);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">C</div>
+        <div style="font-weight:800;font-size:18px;color:#23271F">CommunityConnect <span style="color:#2E7D4F">SG</span> — Design System</div>
+      </a>
+      <a href="Landing.dc.html" style="font-size:14px;font-weight:700">← Back to prototype</a>
+    </div>
+  </header>
+
+  <main style="max-width:1120px;margin:0 auto;padding:36px 32px 72px;display:flex;flex-direction:column;gap:36px">
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Colour palette</h2>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#2E7D4F"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Primary green</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#2E7D4F</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#1E4D33"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Deep green</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#1E4D33</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#1F8A7A"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Teal accent</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#1F8A7A</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#E3A93C"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Amber (warning)</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#E3A93C</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#E0704F"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Warm coral (CTA)</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#E0704F</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:12px;background:#B0433B"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Red (error/full)</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#B0433B</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:52px;border-radius:12px;background:#F6F4EF;border:1px solid #E6E2D8"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Warm background</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#F6F4EF</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:52px;border-radius:12px;background:#EAF1E6;border:1px solid #E6E2D8"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Light sage</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#EAF1E6</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:52px;border-radius:12px;background:#14261C"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Footer / impact band</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#14261C</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:52px;border-radius:12px;background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A)"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Header gradient</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">green → teal</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:52px;border-radius:12px;background:linear-gradient(120deg,#C25537,#E0704F 55%,#E3A93C)"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">CTA gradient</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">coral → amber</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:52px;border-radius:12px;background:#C8862B"></div><span style="font-size:12.5px;font-weight:700;color:#23271F">Earthy brown</span><span style="font-size:12px;color:#8B8778;font-family:ui-monospace,monospace">#C8862B</span></div>
+      </div>
+      <p style="margin:0;font-size:13.5px;color:#6E7266">Ink #23271F / body #3C4038 / muted #6E7266 on white and #F6F4EF pass WCAG AA. White text on primary green, deep green and the header gradient passes AA.</p>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Typography — Figtree</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:42px;font-weight:900;color:#23271F;letter-spacing:-0.02em">Hero title / 42–56 Black</span>
+        <span style="font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;background:linear-gradient(120deg,#16382A,#1F8A7A);padding:10px 18px;border-radius:12px;align-self:flex-start">Page title on gradient / 36 Black</span>
+        <span style="font-size:22px;font-weight:800;color:#23271F">Section heading / 22 ExtraBold</span>
+        <span style="font-size:17px;font-weight:800;color:#23271F">Card heading / 17 ExtraBold</span>
+        <span style="font-size:15px;color:#3C4038">Body text / 15 Regular — friendly, clear and readable at a glance.</span>
+        <span style="font-size:13.5px;color:#6E7266">Secondary text / 13.5 Regular muted</span>
+        <span style="font-size:13px;font-weight:700;color:#1F8A7A;text-transform:uppercase;letter-spacing:0.1em">Eyebrow label / 13 Bold caps teal</span>
+        <span style="font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.05em">Table header / 12 ExtraBold caps</span>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Buttons &amp; form controls</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:26px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button style="padding:12px 22px;border-radius:11px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(46,125,79,0.3)" style-hover="background:#256741">Primary</button>
+        <button style="padding:12px 22px;border-radius:11px;border:1.5px solid #D8D4C8;background:#FFFFFF;color:#23271F;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#EAF1E6;border-color:#2E7D4F">Secondary</button>
+        <button style="padding:12px 22px;border-radius:11px;border:2px solid #2E7D4F;background:#E7F2EA;color:#1E4D33;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#DCEBD8">Volunteer outline</button>
+        <button style="padding:12px 22px;border-radius:11px;border:none;background:#B0433B;color:#FFFFFF;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit" style-hover="background:#96362F">Destructive</button>
+        <button style="padding:12px 22px;border-radius:11px;border:none;background:#EDEAE0;color:#A5A294;font-weight:700;font-size:14px;font-family:inherit;cursor:not-allowed">Disabled</button>
+        <span style="padding:12px 22px;border-radius:11px;background:#FFFFFF;color:#1E4D33;font-weight:800;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,0.18);border:1px solid #E6E2D8">White on gradient</span>
+        <input type="text" placeholder="Text input" style="padding:12px 15px;border-radius:11px;border:1.5px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F;outline:none;width:180px" style-focus="border-color:#2E7D4F;box-shadow:0 0 0 3px #DCEBD8"></input>
+        <select style="padding:12px 15px;border-radius:11px;border:1.5px solid #D8D4C8;font-size:14.5px;font-family:inherit;background:#FDFCFA;color:#23271F"><option>Select</option></select>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Status badges, category chips &amp; capacity</h2>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">✓ Confirmed</span>
+          <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">Attended</span>
+          <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">⏳ Waitlist #3</span>
+          <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">Pending</span>
+          <span style="background:#FBEAE8;color:#B0433B;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">Full</span>
+          <span style="background:#FBEAE8;color:#B0433B;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">Absent</span>
+          <span style="background:#EDEAE0;color:#6E7266;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">Cancelled</span>
+          <span style="background:#E9F1F8;color:#2F5E86;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px">Completed</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <span style="display:flex;align-items:center;gap:7px;background:#E7F2EA;color:#1E4D33;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px">🌿 Environment</span>
+          <span style="display:flex;align-items:center;gap:7px;background:#FBF3DF;color:#8A5E08;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px">🥫 Food Support</span>
+          <span style="display:flex;align-items:center;gap:7px;background:#F1EBF6;color:#5F4380;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px">🫶 Elderly Support</span>
+          <span style="display:flex;align-items:center;gap:7px;background:#E9F1F8;color:#2F5E86;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px">📚 Education</span>
+          <span style="display:flex;align-items:center;gap:7px;background:#FBEAE3;color:#B3492D;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px">❤️ Fundraising</span>
+          <span style="display:flex;align-items:center;gap:7px;background:#E3F1EE;color:#155A50;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px">🧘 Health &amp; Wellness</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;max-width:800px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700"><span style="color:#6E7266">9 of 20 filled</span><span style="color:#2E7D4F">11 left</span></div>
+            <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:45%;height:100%;border-radius:999px;background:#2E7D4F"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700"><span style="color:#6E7266">34 of 40 filled</span><span style="color:#8A5E08">6 left</span></div>
+            <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700"><span style="color:#6E7266">25 of 25 filled</span><span style="color:#B0433B">Full · waitlist open</span></div>
+            <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:100%;height:100%;border-radius:999px;background:#B0433B"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Messages</h2>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:740px">
+        <div style="display:flex;align-items:center;gap:12px;background:#E7F2EA;border:1px solid #BFDCC9;border-radius:14px;padding:14px 18px">
+          <span style="width:24px;height:24px;border-radius:50%;background:#2E7D4F;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">✓</span>
+          <span style="font-size:14px;color:#1E4D33;font-weight:600">Success — Your registration is confirmed.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;background:#FBF3DF;border:1px solid #EAD9AC;border-radius:14px;padding:14px 18px">
+          <span style="width:24px;height:24px;border-radius:50%;background:#D99E2B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">!</span>
+          <span style="font-size:14px;color:#6B4E0A;font-weight:600">Warning — This event is nearly full.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;background:#FBEAE8;border:1px solid #E8C7C4;border-radius:14px;padding:14px 18px">
+          <span style="width:24px;height:24px;border-radius:50%;background:#B0433B;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0">✕</span>
+          <span style="font-size:14px;color:#7E2B25;font-weight:600">Error — Registration deadline has passed.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;background:#E3F1EE;border:1px solid #C3E2DC;border-radius:14px;padding:14px 18px">
+          <span style="font-size:17px">💡</span>
+          <span style="font-size:14px;color:#155A50;font-weight:500">Info — After creating your account, you may join each event as a Participant or Volunteer.</span>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Cards</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Event card (gradient panel)</span>
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="height:120px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#2E7D4F,#6FBF8B)">
+              <div style="position:absolute;top:-40px;right:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.14)"></div>
+              <div style="font-size:42px;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.2))">🌊</div>
+              <span style="position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.94);color:#1E4D33;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px">Environment</span>
+            </div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:10px">
+              <span style="font-size:16px;font-weight:800;color:#23271F;line-height:1.3">Coastal Clean-Up at East Coast Park</span>
+              <span style="font-size:13px;color:#6E7266;font-weight:500">Sat 25/07/2026 · 08:00–11:00</span>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700"><span style="color:#6E7266">34 of 40 filled</span><span style="color:#8A5E08">6 left</span></div>
+                <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:85%;height:100%;border-radius:999px;background:#D99E2B"></div></div>
+              </div>
+              <a href="Event Details.dc.html" style="margin-top:4px;text-align:center;padding:11px 0;border-radius:11px;background:#2E7D4F;color:#FFFFFF;font-weight:700;font-size:14px" style-hover="background:#256741;color:#FFFFFF">View Details</a>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Stat cards</span>
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="width:38px;height:38px;border-radius:11px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:17px">🙋</div>
+            <span style="font-size:28px;font-weight:900;color:#23271F;letter-spacing:-0.02em">4</span>
+            <span style="font-size:12.5px;font-weight:700;color:#6E7266">Participant registrations</span>
+          </div>
+          <div style="background:linear-gradient(135deg,#2E7D4F,#1F8A7A);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(31,138,122,0.3)">
+            <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:17px">🌱</div>
+            <span style="font-size:28px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">38.5</span>
+            <span style="font-size:12.5px;font-weight:700;color:#D8EDDF">Verified volunteer hours (highlight card)</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">List-row card (date block)</span>
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="padding:16px 18px;display:flex;align-items:center;gap:13px;border-bottom:1px solid #F2EFE7">
+              <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#2E7D4F,#6FBF8B);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#FFFFFF">
+                <span style="font-size:10px;font-weight:800;text-transform:uppercase;opacity:0.9">Jul</span>
+                <span style="font-size:18px;font-weight:900;line-height:1">25</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                <span style="font-size:14.5px;font-weight:800;color:#23271F">Coastal Clean-Up</span>
+                <span style="font-size:12.5px;color:#6E7266;font-weight:500">08:00–11:00 · Beach Sweeper</span>
+              </div>
+              <span style="background:#E7F2EA;color:#1E4D33;font-size:12px;font-weight:800;padding:4px 11px;border-radius:999px;flex-shrink:0">✓ Confirmed</span>
+            </div>
+            <div style="padding:16px 18px;display:flex;align-items:center;gap:13px">
+              <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#C8862B,#E9BE68);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:#FFFFFF">
+                <span style="font-size:10px;font-weight:800;text-transform:uppercase;opacity:0.9">Aug</span>
+                <span style="font-size:18px;font-weight:900;line-height:1">01</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                <span style="font-size:14.5px;font-weight:800;color:#23271F">Food Distribution Drive</span>
+                <span style="font-size:12.5px;color:#6E7266;font-weight:500">09:00–13:00 · Bedok CC</span>
+              </div>
+              <span style="background:#FBF3DF;color:#8A5E08;font-size:12px;font-weight:800;padding:4px 11px;border-radius:999px;flex-shrink:0">⏳ Waitlist #3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#23271F">Page structure &amp; navigation</h2>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Gradient page header with overlapping cards (all signed-in screens)</span>
+        <div style="border-radius:16px;overflow:hidden;border:1px solid #E6E2D8">
+          <div style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);padding:26px 28px 56px;display:flex;flex-direction:column;gap:5px">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Eyebrow label</span>
+            <span style="font-size:24px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">Page title</span>
+            <span style="font-size:13px;color:#C6E2D0">Supporting line with key numbers.</span>
+          </div>
+          <div style="background:#F6F4EF;padding:0 28px 22px">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:-34px">
+              <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:13px;padding:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1);font-size:12.5px;font-weight:700;color:#6E7266">Stat / filter card</div>
+              <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:13px;padding:14px;box-shadow:0 8px 24px rgba(20,38,28,0.1);font-size:12.5px;font-weight:700;color:#6E7266">overlaps the header band</div>
+              <div style="background:linear-gradient(135deg,#2E7D4F,#1F8A7A);border-radius:13px;padding:14px;font-size:12.5px;font-weight:700;color:#FFFFFF">highlight card</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Top navigation — role-aware pill nav (Nav.dc.html)</span>
+        <dc-import name="Nav" role="member" active="dashboard" userName="Wei Ling" hint-size="100%,70px"></dc-import>
+        <dc-import name="Nav" role="public" active="events" hint-size="100%,70px"></dc-import>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:800;color:#8B8778;text-transform:uppercase;letter-spacing:0.06em">Dark footer — shared across every screen (Footer.dc.html)</span>
+        <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;line-height:1.65;color:#3C4038;max-width:80ch">
+        <span>• Every screen: sticky white top nav (role-aware pills) → gradient header band → content cards overlapping the band → dark footer.</span>
+        <span>• Nav is the shared <b>Nav.dc.html</b> component (props: role, active, userName). Footer is <b>Footer.dc.html</b>.</span>
+        <span>• Spacing scale 4/8/12/16/20/24/32. Cards: white, 1px #E6E2D8, 16–18px radius; overlapping cards get the deep 0 8px 24px shadow.</span>
+        <span>• Decorative language: soft translucent circles on gradient/dark bands, emoji-in-chip icons, category gradient panels — no stock photography required (image slots accept real photos).</span>
+        <span>• Dates DD/MM/YYYY, 24-hour times, Singapore English throughout.</span>
+        <span>• Implementation: Bootstrap 5 theme overrides (CSS variables for colours/radius) + EJS partials for navbar, header band, cards and badges.</span>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>
