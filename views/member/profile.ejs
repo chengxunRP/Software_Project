@@ -1,18 +1,23 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = 'My Profile'; %>
-    <% topbarActions = ''; %>
-    <%- include('../partials/navbar') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content max-1000">
+  <%
+    pageEyebrow = 'Community member';
+    pageHeading = 'My Profile';
+    pageLead = 'Manage your personal account details.';
+    pageActions = '';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel max-1000">
       <div class="dashboard-split" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
         <div class="card-cc" style="padding:26px">
           <div class="d-flex align-items-center gap-3 mb-4">
             <span class="avatar-cc" style="width:56px;height:56px;font-size:18px;background:<%= profile.avatarBg %>"><%= profile.initials %></span>
             <div>
-              <div style="font-size:20px;font-weight:800;color:#23271F"><%= profile.name %></div>
+              <div style="font-size:20px;font-weight:800;color:#17342C"><%= profile.name %></div>
               <div class="text-muted-cc"><%= profile.role %></div>
             </div>
           </div>
@@ -48,8 +53,8 @@
           <div class="card-cc" style="padding:20px">
             <div class="h-card mb-2">Quick links</div>
             <div class="d-flex flex-column gap-2">
-              <a href="/volunteer/registrations" style="font-weight:600">My Registrations →</a>
-              <a href="/volunteer/hours" style="font-weight:600">My Volunteer Hours →</a>
+              <a href="/member/registrations" style="font-weight:600">My Registrations →</a>
+              <a href="/member/volunteer-hours" style="font-weight:600">My Volunteer Hours →</a>
               <a href="/events" style="font-weight:600">Browse Events →</a>
             </div>
           </div>
@@ -57,14 +62,10 @@
       </div>
     </div>
   </main>
-</div>
 
-<nav class="mobile-tabbar">
-  <a href="/volunteer/dashboard"><span class="tab-icon">🏠</span>Dashboard</a>
-  <a href="/events"><span class="tab-icon">🔍</span>Events</a>
-  <a href="/volunteer/registrations"><span class="tab-icon">🗂</span>Registrations</a>
-  <a href="/volunteer/hours"><span class="tab-icon">⏱</span>Hours</a>
-</nav>
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>

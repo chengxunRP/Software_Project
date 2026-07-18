@@ -1,12 +1,17 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = formMode === 'create' ? 'Add Event' : 'Edit Event'; %>
-    <% topbarActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><a href="/organiser/events" class="btn-cc btn-cc-primary btn-cc-sm">Save event</a>'; %>
-    <%- include('../partials/navbar') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content max-1060">
+  <%
+    pageEyebrow = 'Organiser';
+    pageHeading = formMode === 'create' ? 'Add Event' : 'Edit Event';
+    pageLead = 'Set event details, schedule and separate participant and volunteer capacities.';
+    pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><button type="submit" form="eventForm" class="btn-cc btn-cc-primary btn-cc-sm">Save event</button>';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel max-1060">
       <div class="breadcrumb-cc mb-0">
         <a href="/organiser/events" style="font-weight:600">← Manage Events</a>
         <span class="sep">/</span>
@@ -15,7 +20,7 @@
 
       <%- include('../partials/messages') %>
 
-      <form data-preview-only class="details-grid" style="grid-template-columns:1fr 320px">
+      <form id="eventForm" method="POST" action="<%= formMode === 'create' ? '/organiser/events' : '/organiser/events/' + event.id + '/edit' %>" class="details-grid" style="grid-template-columns:1fr 320px">
         <div class="d-flex flex-column gap-3">
           <div class="card-cc" style="border-radius:16px;padding:26px">
             <div class="h-card mb-3" style="font-size:15px">Event details</div>
@@ -56,16 +61,21 @@
                 <input class="form-control-cc" type="datetime-local" id="end_datetime" name="end_datetime" value="<%= event.end_datetime || '' %>">
               </div>
             </div>
-            <div class="form-grid-2">
+            <div class="form-grid-2 mb-3">
               <div>
-                <label class="form-label-cc" for="capacity">Volunteer capacity <span class="req">*</span></label>
-                <input class="form-control-cc" type="number" id="capacity" name="capacity" value="<%= event.capacity || '' %>">
-                <div class="form-hint">A waiting list opens automatically once capacity is reached.</div>
+                <label class="form-label-cc" for="participant_capacity">Participant capacity <span class="req">*</span></label>
+                <input class="form-control-cc" type="number" id="participant_capacity" name="participant_capacity" value="<%= event.participant_capacity || '' %>">
+                <div class="form-hint">Ordinary community participants. A participant waiting list opens when this is full.</div>
               </div>
               <div>
-                <label class="form-label-cc" for="registration_deadline">Registration deadline <span class="req">*</span></label>
-                <input class="form-control-cc" type="datetime-local" id="registration_deadline" name="registration_deadline" value="<%= event.registration_deadline || '' %>">
+                <label class="form-label-cc" for="volunteer_capacity">Volunteer capacity <span class="req">*</span></label>
+                <input class="form-control-cc" type="number" id="volunteer_capacity" name="volunteer_capacity" value="<%= event.volunteer_capacity || '' %>">
+                <div class="form-hint">Helpers assisting at the event. A volunteer waiting list opens when this is full.</div>
               </div>
+            </div>
+            <div>
+              <label class="form-label-cc" for="registration_deadline">Registration deadline <span class="req">*</span></label>
+              <input class="form-control-cc" type="datetime-local" id="registration_deadline" name="registration_deadline" value="<%= event.registration_deadline || '' %>">
             </div>
           </div>
         </div>
@@ -76,7 +86,7 @@
             <div class="d-flex flex-column gap-2">
               <% const statuses = [
                 { value: 'Published', label: 'Published', note: 'Visible in the catalogue, open for registration' },
-                { value: 'Draft', label: 'Draft', note: 'Hidden from volunteers' },
+                { value: 'Draft', label: 'Draft', note: 'Hidden from the public catalogue' },
                 { value: 'Registration closed', label: 'Registration closed', note: 'Visible, but no new sign-ups' }
               ]; %>
               <% statuses.forEach(function (s) { %>
@@ -84,24 +94,35 @@
                 <label class="status-option <%= selected ? 'active' : '' %>">
                   <input type="radio" name="status" value="<%= s.value %>" <%= selected ? 'checked' : '' %>>
                   <div>
-                    <div style="font-size:14px;font-weight:700;color:<%= selected ? '#1E4D33' : '#23271F' %>"><%= s.label %></div>
-                    <div style="font-size:12px;color:<%= selected ? '#4E6B57' : '#8B8778' %>"><%= s.note %></div>
+                    <div style="font-size:14px;font-weight:700;color:<%= selected ? '#056047' : '#17342C' %>"><%= s.label %></div>
+                    <div style="font-size:12px;color:<%= selected ? '#3D5148' : '#8B978F' %>"><%= s.note %></div>
                   </div>
                 </label>
               <% }) %>
             </div>
           </div>
 
-          <% if (formMode === 'edit' && event.filled !== undefined) { %>
+          <% if (formMode === 'edit' && event.participants_filled !== undefined) { %>
           <div class="card-cc" style="border-radius:16px;padding:22px">
             <div class="h-card mb-2" style="font-size:15px">Current sign-ups</div>
-            <div class="cap-bar mb-2">
-              <div class="cap-bar-meta" style="font-size:13px">
-                <span style="color:#6E7266"><%= event.filled %> of <%= event.capacity %> confirmed</span>
-                <span style="color:<%= event.capColor %>"><%= event.full ? 'Full' : (event.left + ' left') %></span>
+            <div class="d-flex flex-column gap-3 mb-2">
+              <div>
+                <div class="cap-bar-meta" style="font-size:13px">
+                  <span style="color:#65756F">Participants <%= event.participants_filled %> of <%= event.participant_capacity %></span>
+                  <span style="color:<%= event.participants.capColor %>"><%= event.participants.full ? 'Full' : (event.participants.left + ' left') %></span>
+                </div>
+                <div class="cap-bar-track" style="height:7px">
+                  <div class="cap-bar-fill" style="width:<%= event.participants.pct %>%;background:<%= event.participants.capColor %>"></div>
+                </div>
               </div>
-              <div class="cap-bar-track" style="height:7px">
-                <div class="cap-bar-fill" style="width:<%= event.pct %>%;background:<%= event.capColor %>"></div>
+              <div>
+                <div class="cap-bar-meta" style="font-size:13px">
+                  <span style="color:#65756F">Volunteers <%= event.volunteers_filled %> of <%= event.volunteer_capacity %></span>
+                  <span style="color:<%= event.volunteers.capColor %>"><%= event.volunteers.full ? 'Full' : (event.volunteers.left + ' left') %></span>
+                </div>
+                <div class="cap-bar-track" style="height:7px">
+                  <div class="cap-bar-fill" style="width:<%= event.volunteers.pct %>%;background:<%= event.volunteers.capColor %>"></div>
+                </div>
               </div>
             </div>
             <a href="/organiser/events/<%= event.id %>/registrations" style="font-size:13.5px;font-weight:600">Manage registrations →</a>
@@ -111,7 +132,11 @@
       </form>
     </div>
   </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>
 </body>

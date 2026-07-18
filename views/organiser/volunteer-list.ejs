@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+<div class="app-shell" id="appShell">
+  <%- include('../partials/sidebar') %>
+  <main class="app-main">
+    <% topbarTitle = 'Event Volunteers'; %>
+    <% topbarActions = '<a href="/organiser/events/' + event.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Back to roles</a>'; %>
+    <%- include('../partials/navbar') %>
+
+    <div class="app-content max-1040">
+      <div class="breadcrumb-cc mb-0">
+        <%= event.event_name %>
+        <span class="sep">/</span>
+        Volunteers
+      </div>
+
+      <%- include('../partials/messages') %>
+
+      <% const statusBadgeClass = {
+        Confirmed: 'badge-cc-confirmed',
+        Waitlisted: 'badge-cc-waitlist',
+        Cancelled: 'badge-cc-cancelled',
+        Attended: 'badge-cc-attended',
+        Absent: 'badge-cc-absent'
+      }; %>
+
+      <div class="table-cc">
+        <div class="panel-header">
+          <span class="h-card">Volunteers <span style="color:#8B978F;font-weight:600;font-size:14px">(<%= volunteers.length %>)</span></span>
+        </div>
+        <% if (volunteers.length) { %>
+          <div class="table-scroll">
+            <div class="table-cc-head" style="grid-template-columns:1.6fr 1.8fr 1fr 1.3fr">
+              <span>Name</span><span>Email</span><span>Status</span><span>Assigned Role</span>
+            </div>
+            <% volunteers.forEach(function (v) { %>
+              <div class="table-cc-row" style="grid-template-columns:1.6fr 1.8fr 1fr 1.3fr">
+                <span style="font-weight:600;color:#17342C"><%= v.volunteer_name %></span>
+                <span class="text-muted-cc" style="font-size:13px"><%= v.email %></span>
+                <span>
+                  <span class="badge-cc <%= statusBadgeClass[v.registration_status] || 'badge-cc-muted' %>">
+                    <%= v.registration_status %>
+                  </span>
+                </span>
+                <% if (v.assigned_role_name) { %>
+                  <span style="font-weight:600;color:#17342C"><%= v.assigned_role_name %></span>
+                <% } else { %>
+                  <span class="text-muted-cc" style="font-style:italic;font-size:13px">Not yet assigned</span>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <div class="px-4 py-3" style="font-size:13px;color:#8B978F;font-style:italic">No volunteers registered yet.</div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

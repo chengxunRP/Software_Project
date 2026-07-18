@@ -1,12 +1,17 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = 'System Reports'; %>
-    <% topbarActions = '<select class="form-select-cc" style="width:auto;padding:9px 14px;border-radius:10px;font-size:13.5px;font-weight:600"><option>01/01/2026 – 15/07/2026</option><option>Last 30 days</option><option>Last quarter</option></select><button type="button" class="btn-cc btn-cc-secondary btn-cc-sm">Export CSV</button>'; %>
-    <%- include('../partials/navbar') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content max-1060">
+  <%
+    pageEyebrow = 'Admin';
+    pageHeading = 'System Reports';
+    pageLead = 'Performance metrics across categories and events.';
+    pageActions = '';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel max-1060">
       <div class="stat-row-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
         <div class="stat-card" style="padding:18px 20px">
           <span class="stat-label" style="font-size:12.5px">Events completed</span>
@@ -38,17 +43,17 @@
             <div class="table-cc-row" style="grid-template-columns:1.6fr 0.9fr 1.1fr 1.1fr 1.1fr 1.3fr">
               <div class="d-flex align-items-center gap-2">
                 <span style="width:11px;height:11px;border-radius:4px;background:<%= c.color %>;flex-shrink:0"></span>
-                <span style="font-weight:700;color:#23271F"><%= c.name %></span>
+                <span style="font-weight:700;color:#17342C"><%= c.name %></span>
               </div>
-              <span style="font-weight:600;color:#3C4038"><%= c.events %></span>
-              <span style="font-weight:600;color:#3C4038"><%= c.regs %></span>
-              <span style="font-weight:600;color:#3C4038"><%= c.att %></span>
-              <span style="font-weight:600;color:#3C4038"><%= c.hours %></span>
+              <span style="font-weight:600;color:#22403A"><%= c.events %></span>
+              <span style="font-weight:600;color:#22403A"><%= c.regs %></span>
+              <span style="font-weight:600;color:#22403A"><%= c.att %></span>
+              <span style="font-weight:600;color:#22403A"><%= c.hours %></span>
               <div class="d-flex align-items-center gap-2">
                 <div class="cap-bar-track flex-fill" style="max-width:100px">
                   <div class="cap-bar-fill" style="width:<%= c.fill %>;background:<%= c.color %>"></div>
                 </div>
-                <span style="font-size:13px;font-weight:700;color:#23271F"><%= c.fill %></span>
+                <span style="font-size:13px;font-weight:700;color:#17342C"><%= c.fill %></span>
               </div>
             </div>
           <% }) %>
@@ -61,18 +66,22 @@
         </div>
         <% topEvents.forEach(function (t) { %>
           <div class="list-row">
-            <span style="width:26px;height:26px;border-radius:8px;background:#E7F2EA;color:#1E4D33;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0"><%= t.rank %></span>
+            <span style="width:26px;height:26px;border-radius:8px;background:#E8F7F0;color:#056047;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0"><%= t.rank %></span>
             <div class="flex-fill min-w-0">
-              <div style="font-weight:600;color:#23271F"><%= t.name %></div>
-              <div style="font-size:12.5px;color:#8B8778"><%= t.date %></div>
+              <div style="font-weight:600;color:#17342C"><%= t.name %></div>
+              <div style="font-size:12.5px;color:#8B978F"><%= t.date %></div>
             </div>
-            <span style="font-weight:700;color:#23271F"><%= t.attendees %> attended</span>
+            <span style="font-weight:700;color:#17342C"><%= t.attendees %> attended</span>
           </div>
         <% }) %>
       </div>
     </div>
   </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>
 </body>

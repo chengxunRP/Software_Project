@@ -1,8 +1,8 @@
 <% if (typeof messages !== 'undefined' && messages && messages.length) { %>
   <% messages.forEach(function (msg) { %>
-    <div class="msg-cc msg-cc-<%= msg.type === 'error' ? 'error' : (msg.type === 'warning' ? 'warning' : 'success') %>">
+    <div class="msg-cc msg-cc-<%= msg.type === 'error' ? 'error' : (msg.type === 'warning' ? 'warning' : (msg.type === 'info' ? 'info' : 'success')) %>">
       <span class="msg-icon">
-        <%= msg.type === 'error' ? '✕' : (msg.type === 'warning' ? '!' : '✓') %>
+        <%= msg.type === 'error' ? '✕' : (msg.type === 'warning' ? '!' : (msg.type === 'info' ? 'i' : '✓')) %>
       </span>
       <span class="msg-text"><%- msg.text %></span>
     </div>

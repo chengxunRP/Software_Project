@@ -1,52 +1,72 @@
 <%- include('partials/header') %>
-<div class="public-page">
+<div class="site-page public-page">
   <%- include('partials/navbar') %>
 
-  <main class="auth-main">
-    <div class="auth-card-wrap wide">
-      <div class="text-center">
-        <h1 class="h-page" style="font-size:28px">Create your account</h1>
-        <p class="mb-0 text-muted-cc">Join 1,240 volunteers serving communities across Singapore.</p>
+  <main class="auth-split">
+    <aside class="auth-split-panel teal">
+      <div class="auth-split-brand">
+        <span class="brand-mark">C</span>
+        <span class="brand-name light">CommunityConnect <span class="sg">SG</span></span>
       </div>
+        <h2>One account. Every way to take part.</h2>
+      <p>Everyone registers as a Community Member. For each event, you choose Participant or Volunteer.</p>
+      <div class="twin-cards compact">
+        <div class="twin-card participant">
+          <div class="twin-card-head">
+            <div class="twin-card-icon">🙋</div>
+            <div class="twin-card-title" style="font-size:16px">Participant</div>
+          </div>
+          <p style="font-size:13.5px">Attend activities and programmes.</p>
+        </div>
+        <div class="twin-card volunteer">
+          <div class="twin-card-head">
+            <div class="twin-card-icon">🤝</div>
+            <div class="twin-card-title" style="font-size:16px">Volunteer</div>
+          </div>
+          <p style="font-size:13.5px">Help out and earn volunteer hours.</p>
+        </div>
+      </div>
+    </aside>
 
-      <form class="auth-card" data-preview-only>
-        <div class="form-grid-2">
+    <div class="auth-split-form">
+      <div class="auth-split-form-inner">
+        <h2 class="h-page" style="font-size:28px">Create your account</h2>
+        <p class="text-muted-cc mb-3">Join community members taking part across Singapore.</p>
+        <div class="msg-cc msg-cc-info mb-3">
+          <span class="msg-icon">i</span>
+          <span class="msg-text">Public sign-ups create a Community Member account. Organiser and Admin roles are assigned separately.</span>
+        </div>
+
+        <%- include('partials/messages') %>
+
+        <form class="auth-card flat" method="POST" action="/register">
           <div>
             <label class="form-label-cc" for="full_name">Full name</label>
-            <input class="form-control-cc" type="text" id="full_name" name="full_name" placeholder="Tan Wei Ling">
+            <input class="form-control-cc" type="text" id="full_name" name="full_name" autocomplete="name" required value="<%= typeof form !== 'undefined' && form.full_name ? form.full_name : '' %>" placeholder="Tan Wei Ling">
           </div>
           <div>
-            <label class="form-label-cc" for="mobile">Mobile number</label>
-            <input class="form-control-cc" type="tel" id="mobile" name="mobile" placeholder="9123 4567">
+            <label class="form-label-cc" for="email">Email address</label>
+            <input class="form-control-cc" type="email" id="email" name="email" autocomplete="email" required value="<%= typeof form !== 'undefined' && form.email ? form.email : '' %>" placeholder="you@example.sg">
           </div>
-        </div>
-        <div>
-          <label class="form-label-cc" for="email">Email address</label>
-          <input class="form-control-cc" type="email" id="email" name="email" placeholder="you@example.sg">
-        </div>
-        <div class="form-grid-2">
-          <div>
-            <label class="form-label-cc" for="password">Password</label>
-            <input class="form-control-cc" type="password" id="password" name="password" placeholder="Min. 8 characters">
+          <div class="form-grid-2">
+            <div>
+              <label class="form-label-cc" for="password">Password</label>
+              <input class="form-control-cc" type="password" id="password" name="password" autocomplete="new-password" required minlength="8" placeholder="Min. 8 characters">
+            </div>
+            <div>
+              <label class="form-label-cc" for="confirm_password">Confirm password</label>
+              <input class="form-control-cc" type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required minlength="8" placeholder="Re-enter password">
+            </div>
           </div>
-          <div>
-            <label class="form-label-cc" for="confirm_password">Confirm password</label>
-            <input class="form-control-cc" type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password">
-          </div>
-        </div>
-        <div>
-          <label class="form-label-cc" for="join_as">I want to join as</label>
-          <select class="form-select-cc" id="join_as" name="join_as">
-            <option>Volunteer</option>
-            <option>Organiser (requires approval)</option>
-          </select>
-        </div>
-        <label class="form-check-cc" style="font-size:13.5px;line-height:1.5">
-          <input type="checkbox" name="terms">
-          <span>I agree to the <a href="/register" style="font-weight:600">Terms of Use</a> and consent to being contacted about events I register for.</span>
-        </label>
-        <a href="/volunteer/dashboard" class="btn-cc btn-cc-primary btn-cc-block" style="padding:12px 0;border-radius:11px;font-size:15px">Create account</a>
-      </form>
+          <label class="form-check-cc" style="font-size:13.5px;line-height:1.5">
+            <input type="checkbox" name="terms" required>
+            <span>I agree to the <a href="/register" style="font-weight:600">Terms of Use</a> and consent to being contacted about events I register for.</span>
+          </label>
+          <button type="submit" class="btn-cc btn-cc-primary btn-cc-block btn-cc-lg">Create account</button>
+        </form>
+
+        <p class="auth-switch text-muted-cc">Already have an account? <a href="/login">Log in</a></p>
+      </div>
     </div>
   </main>
 </div>

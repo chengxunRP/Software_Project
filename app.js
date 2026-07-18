@@ -1,603 +1,97 @@
+require("dotenv").config();
 const express = require("express");
+const session = require("express-session");
 const path = require("path");
+const pool = require("./config/database");
+const publicEvents = require("./lib/publicEvents");
+const registrationRoutes = require("./routes/registrationRoutes");
+const { takeFlash } = require("./controllers/registrationController");
+
+const rolesRoutes = require("./routes/roles");
+const authRoutes = require("./routes/authRoutes");
+const adminUserRoutes = require("./routes/adminUserRoutes");
+const {
+  isOrganiser,
+  requireCommunityMember,
+  requireOrganiser,
+  requireAdmin
+} = require("./middleware/auth");
+const { toViewUser } = require("./lib/userDisplay");
+const memberController = require("./controllers/memberController");
+const organiserController = require("./controllers/organiserController");
+const adminController = require("./controllers/adminController");
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === "production";
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// Temporary sample data for frontend preview only
-// Replace with MySQL results during backend implementation
-
-const categories = [
-  { category_id: 1, name: "Environment", color: "#2E7D4F", badgeBg: "#E7F2EA", badgeFg: "#1E4D33", desc: "Clean-ups, recycling drives, greening projects", eventCount: 68, status: "Active" },
-  { category_id: 2, name: "Food Support", color: "#D99E2B", badgeBg: "#FBF3DF", badgeFg: "#8A5E08", desc: "Food distribution, meal packing, grocery deliveries", eventCount: 47, status: "Active" },
-  { category_id: 3, name: "Elderly Support", color: "#C08FBB", badgeBg: "#F3E9F2", badgeFg: "#7A4472", desc: "Befriending, home visits, digital literacy help", eventCount: 39, status: "Active" },
-  { category_id: 4, name: "Education", color: "#7FA8D9", badgeBg: "#E9EDF6", badgeFg: "#3B5384", desc: "Tutoring, reading programmes, enrichment support", eventCount: 34, status: "Active" },
-  { category_id: 5, name: "Fundraising", color: "#D9A08F", badgeBg: "#FBEAE8", badgeFg: "#9C4038", desc: "Charity runs, bake sales, donation drives", eventCount: 25, status: "Active" },
-  { category_id: 6, name: "Blood Donation", color: "#B9B5A8", badgeBg: "#EDEAE0", badgeFg: "#6E7266", desc: "Superseded — merged into Health & Wellness", eventCount: 0, status: "Archived" }
-];
-
-const volunteerRoles = [
-  { volunteer_role_id: 1, event_id: 1, name: "Beach Sweeper", description: "Collect litter along the assigned zone", filled: 24, capacity: 28 },
-  { volunteer_role_id: 2, event_id: 1, name: "Data Recorder", description: "Log litter types for the waste audit", filled: 7, capacity: 8 },
-  { volunteer_role_id: 3, event_id: 1, name: "Team Lead", description: "Guide a team of 8–10 volunteers (experience required)", filled: 4, capacity: 4 }
-];
-
-function capacityMeta(filled, capacity) {
-  const pct = capacity ? Math.round((filled / capacity) * 100) : 0;
-  const left = capacity - filled;
-  const full = left <= 0;
-  return {
-    filled,
-    capacity,
-    pct,
-    left,
-    full,
-    capLabel: filled + " of " + capacity + " spaces filled",
-    capNote: full ? "Full · waitlist open" : left + " left",
-    capColor: full ? "#B0433B" : pct >= 80 ? "#D99E2B" : "#2E7D4F",
-    statusLabel: full ? "Full" : "Open"
-  };
+if (!process.env.SESSION_SECRET) {
+  throw new Error(
+    "SESSION_SECRET is not set. Add it to your .env file, then restart the server " +
+    "(dotenv only reads .env once, at startup — editing it while the server is still running has no effect)."
+  );
 }
 
-const events = [
-  {
-    id: 1,
-    event_name: "Coastal Clean-Up at East Coast Park",
-    category_id: 1,
-    category: "Environment",
-    description: "Join us for a Saturday morning shoreline clean-up along East Coast Park, Area C. Volunteers will work in small teams to collect and sort litter, record data for our marine waste audit, and help keep one of Singapore's favourite parks clean. Gloves, tongs and trash bags are provided — just bring a water bottle, sun protection and covered shoes. Suitable for ages 13 and up; volunteers under 16 must be accompanied by an adult.",
-    start_datetime: "2026-07-25T08:00",
-    end_datetime: "2026-07-25T11:00",
-    when: "Sat 25/07/2026 · 08:00–11:00",
-    dateLabel: "Sat 25/07/2026",
-    timeLabel: "08:00–11:00",
-    month: "Jul",
-    day: "25",
-    location: "East Coast Park, Area C",
-    capacity: 40,
-    filled: 34,
-    registration_deadline: "2026-07-23T23:59",
-    deadlineLabel: "23/07/2026, 23:59",
-    status: "Published",
-    organiser: "CommunityConnect SG — Green Team",
-    photoLabel: "photo: beach clean-up",
-    area: "East"
-  },
-  {
-    id: 2,
-    event_name: "Food Distribution Drive",
-    category_id: 2,
-    category: "Food Support",
-    description: "Help pack and distribute food parcels to households registered with our partner organisations. Shifts include packing, labelling and handover at Bedok Community Centre.",
-    start_datetime: "2026-08-01T09:00",
-    end_datetime: "2026-08-01T13:00",
-    when: "Sat 01/08/2026 · 09:00–13:00",
-    dateLabel: "Sat 01/08/2026",
-    timeLabel: "09:00–13:00",
-    month: "Aug",
-    day: "01",
-    location: "Bedok Community Centre",
-    capacity: 25,
-    filled: 25,
-    registration_deadline: "2026-07-30T23:59",
-    deadlineLabel: "30/07/2026, 23:59",
-    status: "Full",
-    organiser: "CommunityConnect SG — Food Team",
-    photoLabel: "photo: food packing",
-    area: "East",
-    waitlistCount: 6
-  },
-  {
-    id: 3,
-    event_name: "Weekend Tutoring — Primary Maths",
-    category_id: 4,
-    category: "Education",
-    description: "Support Primary 4–6 students with maths revision in small groups. Lesson materials are provided by our partner tutors.",
-    start_datetime: "2026-07-26T10:00",
-    end_datetime: "2026-07-26T12:00",
-    when: "Sun 26/07/2026 · 10:00–12:00",
-    dateLabel: "Sun 26/07/2026",
-    timeLabel: "10:00–12:00",
-    month: "Jul",
-    day: "26",
-    location: "Tampines Community Club",
-    capacity: 20,
-    filled: 9,
-    registration_deadline: "2026-07-24T23:59",
-    deadlineLabel: "24/07/2026, 23:59",
-    status: "Published",
-    organiser: "CommunityConnect SG — Education Wing",
-    photoLabel: "photo: tutoring session",
-    area: "East"
-  },
-  {
-    id: 4,
-    event_name: "Elderly Befriending Visits",
-    category_id: 3,
-    category: "Elderly Support",
-    description: "Spend an afternoon visiting seniors in Tampines. Volunteers pair up for home visits that include light conversation and check-ins.",
-    start_datetime: "2026-07-29T14:00",
-    end_datetime: "2026-07-29T17:00",
-    when: "Wed 29/07/2026 · 14:00–17:00",
-    dateLabel: "Wed 29/07/2026",
-    timeLabel: "14:00–17:00",
-    month: "Jul",
-    day: "29",
-    location: "Tampines Community Club",
-    capacity: 18,
-    filled: 14,
-    registration_deadline: "2026-07-27T23:59",
-    deadlineLabel: "27/07/2026, 23:59",
-    status: "Published",
-    organiser: "CommunityConnect SG — Care Team",
-    photoLabel: "photo: befriending visit",
-    area: "East"
-  },
-  {
-    id: 5,
-    event_name: "Park Clean-Up & Recycling Drive",
-    category_id: 1,
-    category: "Environment",
-    description: "Join a morning clean-up and recycling sort at Bishan-Ang Mo Kio Park.",
-    start_datetime: "2026-08-08T07:30",
-    end_datetime: "2026-08-08T10:30",
-    when: "Sat 08/08/2026 · 07:30–10:30",
-    dateLabel: "Sat 08/08/2026",
-    timeLabel: "07:30–10:30",
-    month: "Aug",
-    day: "08",
-    location: "Bishan-Ang Mo Kio Park",
-    capacity: 50,
-    filled: 22,
-    registration_deadline: "2026-08-06T23:59",
-    deadlineLabel: "06/08/2026, 23:59",
-    status: "Published",
-    organiser: "CommunityConnect SG — Green Team",
-    photoLabel: "photo: park clean-up",
-    area: "Central"
-  },
-  {
-    id: 6,
-    event_name: "Charity Fun Run — Route Marshals",
-    category_id: 5,
-    category: "Fundraising",
-    description: "Marshal the charity fun run route at Jurong Lake Gardens and keep runners safe along the course.",
-    start_datetime: "2026-08-16T06:30",
-    end_datetime: "2026-08-16T11:00",
-    when: "Sun 16/08/2026 · 06:30–11:00",
-    dateLabel: "Sun 16/08/2026",
-    timeLabel: "06:30–11:00",
-    month: "Aug",
-    day: "16",
-    location: "Jurong Lake Gardens",
-    capacity: 45,
-    filled: 41,
-    registration_deadline: "2026-08-14T23:59",
-    deadlineLabel: "14/08/2026, 23:59",
-    status: "Published",
-    organiser: "CommunityConnect SG — Events Team",
-    photoLabel: "photo: fun run marshals",
-    area: "West"
-  },
-  {
-    id: 7,
-    event_name: "Community Garden Planting Day",
-    category_id: 1,
-    category: "Environment",
-    description: "Plant herbs and greens with residents at the Jurong Lake Gardens community plot.",
-    start_datetime: "2026-08-15T08:00",
-    end_datetime: "2026-08-15T11:00",
-    when: "Sat 15/08/2026 · 08:00–11:00",
-    dateLabel: "Sat 15/08/2026",
-    timeLabel: "08:00–11:00",
-    month: "Aug",
-    day: "15",
-    location: "Jurong Lake Gardens",
-    capacity: 30,
-    filled: 12,
-    registration_deadline: "2026-08-13T23:59",
-    deadlineLabel: "13/08/2026, 23:59",
-    status: "Published",
-    organiser: "CommunityConnect SG — Green Team",
-    photoLabel: "photo: garden planting",
-    area: "West"
-  },
-  {
-    id: 8,
-    event_name: "Grocery Delivery for Seniors",
-    category_id: 3,
-    category: "Elderly Support",
-    description: "Deliver grocery packs to seniors living near Bedok Community Centre.",
-    start_datetime: "2026-08-22T09:00",
-    end_datetime: "2026-08-22T12:00",
-    when: "Sat 22/08/2026 · 09:00–12:00",
-    dateLabel: "Sat 22/08/2026",
-    timeLabel: "09:00–12:00",
-    month: "Aug",
-    day: "22",
-    location: "Bedok Community Centre",
-    capacity: 16,
-    filled: 16,
-    registration_deadline: "2026-08-20T23:59",
-    deadlineLabel: "20/08/2026, 23:59",
-    status: "Full",
-    organiser: "CommunityConnect SG — Care Team",
-    photoLabel: "photo: grocery delivery",
-    area: "East",
-    waitlistCount: 4
-  },
-  {
-    id: 9,
-    event_name: "Fundraising Bake Sale Helpers",
-    category_id: 5,
-    category: "Fundraising",
-    description: "Help run a fundraising bake sale stall and manage cash collections.",
-    start_datetime: "2026-08-23T11:00",
-    end_datetime: "2026-08-23T16:00",
-    when: "Sun 23/08/2026 · 11:00–16:00",
-    dateLabel: "Sun 23/08/2026",
-    timeLabel: "11:00–16:00",
-    month: "Aug",
-    day: "23",
-    location: "Tampines Community Club",
-    capacity: 15,
-    filled: 7,
-    registration_deadline: "2026-08-21T23:59",
-    deadlineLabel: "21/08/2026, 23:59",
-    status: "Published",
-    organiser: "CommunityConnect SG — Events Team",
-    photoLabel: "photo: bake sale",
-    area: "East"
-  },
-  {
-    id: 10,
-    event_name: "Coastal Clean-Up — September",
-    category_id: 1,
-    category: "Environment",
-    description: "Draft event for the September shoreline clean-up at East Coast Park, Area F.",
-    start_datetime: "2026-09-12T08:00",
-    end_datetime: "2026-09-12T11:00",
-    when: "Sat 12/09/2026 · 08:00",
-    dateLabel: "Sat 12/09/2026",
-    timeLabel: "08:00–11:00",
-    month: "Sep",
-    day: "12",
-    location: "East Coast Park, Area F",
-    capacity: 40,
-    filled: 0,
-    registration_deadline: "2026-09-10T23:59",
-    deadlineLabel: "10/09/2026, 23:59",
-    status: "Draft",
-    organiser: "CommunityConnect SG — Green Team",
-    photoLabel: "photo: beach clean-up",
-    area: "East"
-  },
-  {
-    id: 11,
-    event_name: "Weekend Tutoring — Completed Session",
-    category_id: 4,
-    category: "Education",
-    description: "Completed tutoring session used for attendance and hours previews.",
-    start_datetime: "2026-07-12T10:00",
-    end_datetime: "2026-07-12T12:00",
-    when: "Sun 12/07/2026 · 10:00–12:00",
-    dateLabel: "Sun 12/07/2026",
-    timeLabel: "10:00–12:00",
-    month: "Jul",
-    day: "12",
-    location: "Tampines Community Club",
-    capacity: 20,
-    filled: 20,
-    registration_deadline: "2026-07-10T23:59",
-    deadlineLabel: "10/07/2026, 23:59",
-    status: "Completed",
-    organiser: "CommunityConnect SG — Education Wing",
-    photoLabel: "photo: tutoring session",
-    area: "East"
-  }
-];
+// Render terminates HTTPS at the reverse proxy. Trust X-Forwarded-* so
+// express-session can set Secure cookies correctly in production.
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
 
-events.forEach(function (ev) {
-  const meta = capacityMeta(ev.filled, ev.capacity);
-  Object.assign(ev, meta);
-  const cat = categories.find(function (c) { return c.category_id === ev.category_id; });
-  if (cat) {
-    ev.badgeBg = cat.badgeBg;
-    ev.badgeFg = cat.badgeFg;
-    ev.catColor = cat.color;
-  }
-});
-
-const impactStats = {
-  activeVolunteers: "1,240",
-  eventsHosted: "386",
-  volunteerHours: "12,450",
-  partnerOrgs: "28"
-};
-
-const volunteerUser = {
-  name: "Tan Wei Ling",
-  firstName: "Wei Ling",
-  initials: "WL",
-  role: "Volunteer",
-  email: "weiling.tan@example.sg",
-  mobile: "9123 4567",
-  joined: "14/01/2026",
-  avatarBg: "#D99E2B"
-};
-
-const organiserUser = {
-  name: "Marcus Lim",
-  firstName: "Marcus",
-  initials: "ML",
-  role: "Organiser · Green Team",
-  email: "marcus.lim@example.sg",
-  mobile: "9812 3344",
-  joined: "03/11/2025",
-  avatarBg: "#7FA8D9"
-};
-
-const adminUser = {
-  name: "Siti Rahman",
-  firstName: "Siti",
-  initials: "SR",
-  role: "Administrator",
-  email: "siti.r@communityconnect.sg",
-  mobile: "9001 2200",
-  joined: "01/09/2025",
-  avatarBg: "#C08FBB"
-};
-
-const volunteerRegistrations = {
-  Confirmed: [
-    { eventId: 1, name: "Coastal Clean-Up at East Coast Park", meta: "Sat 25/07/2026 · 08:00–11:00 · East Coast Park, Area C · Role: Beach Sweeper", month: "Jul", day: "25", badge: "Confirmed", tone: "green", cancellable: true },
-    { eventId: 4, name: "Elderly Befriending Visits", meta: "Wed 29/07/2026 · 14:00–17:00 · Tampines Community Club · Role: Befriender", month: "Jul", day: "29", badge: "Confirmed", tone: "green", cancellable: true }
-  ],
-  Waitlisted: [
-    { eventId: 2, name: "Food Distribution Drive", meta: "Sat 01/08/2026 · 09:00–13:00 · Bedok Community Centre", month: "Aug", day: "01", badge: "Waitlist #3", tone: "amber", cancellable: true, note: "You are position 3 of 6 — we'll notify you if a space opens." }
-  ],
-  Cancelled: [
-    { eventId: 9, name: "Fundraising Bake Sale Helpers", meta: "Sun 05/07/2026 · 11:00–16:00 · Tampines Community Club · Cancelled by you on 30/06/2026", month: "Jul", day: "05", badge: "Cancelled", tone: "grey", cancellable: false }
-  ],
-  Attended: [
-    { eventId: 11, name: "Weekend Tutoring — Primary Maths", meta: "Sun 12/07/2026 · 10:00–12:00 · Tampines Community Club · 3.0 hours recorded", month: "Jul", day: "12", badge: "Attended", tone: "green", cancellable: false },
-    { eventId: 5, name: "Park Clean-Up & Recycling Drive", meta: "Sat 27/06/2026 · 07:30–10:30 · Bishan-Ang Mo Kio Park · 3.0 hours recorded", month: "Jun", day: "27", badge: "Attended", tone: "green", cancellable: false },
-    { eventId: 8, name: "Grocery Delivery for Seniors", meta: "Sat 13/06/2026 · 09:00–12:00 · Bedok Community Centre · 3.5 hours recorded", month: "Jun", day: "13", badge: "Attended", tone: "green", cancellable: false }
-  ]
-};
-
-const volunteerNotifications = [
-  { type: "success", text: "Your registration for <b>Coastal Clean-Up</b> is confirmed.", time: "Today, 09:14" },
-  { type: "warning", text: "You moved up to <b>position #3</b> on the Food Distribution Drive waiting list.", time: "Yesterday, 16:40" },
-  { type: "success", text: "<b>3.0 hours</b> recorded for Weekend Tutoring on 12/07/2026.", time: "12/07/2026, 13:05" },
-  { type: "muted", text: "Reminder: Elderly Befriending Visits starts in 3 days.", time: "11/07/2026, 08:00" }
-];
-
-const volunteerHoursSummary = {
-  totalHours: "38.5",
-  eventCount: 11,
-  monthHours: "6.0",
-  monthEvents: 2,
-  attendanceRate: "92%",
-  attended: 11,
-  absent: 1
-};
-
-const volunteerMonthlyHours = [
-  { label: "Jan", val: "4.5", h: 60, current: false },
-  { label: "Feb", val: "5.0", h: 67, current: false },
-  { label: "Mar", val: "7.5", h: 100, current: false },
-  { label: "Apr", val: "4.0", h: 53, current: false },
-  { label: "May", val: "6.0", h: 80, current: false },
-  { label: "Jun", val: "5.5", h: 73, current: false },
-  { label: "Jul", val: "6.0", h: 80, current: true }
-];
-
-const volunteerHourHistory = [
-  { name: "Weekend Tutoring — Primary Maths", date: "12/07/2026", loc: "Tampines CC", status: "Attended", hours: "3.0" },
-  { name: "Community Garden Planting Day", date: "04/07/2026", loc: "Jurong Lake Gardens", status: "Attended", hours: "3.0" },
-  { name: "Park Clean-Up & Recycling Drive", date: "27/06/2026", loc: "Bishan-AMK Park", status: "Attended", hours: "3.0" },
-  { name: "Grocery Delivery for Seniors", date: "13/06/2026", loc: "Bedok CC", status: "Attended", hours: "3.5" },
-  { name: "Charity Fun Run — Route Marshals", date: "24/05/2026", loc: "Jurong Lake Gardens", status: "Absent", hours: "0.0" },
-  { name: "Food Distribution Drive", date: "09/05/2026", loc: "Bedok CC", status: "Attended", hours: "4.0" },
-  { name: "Elderly Befriending Visits", date: "22/04/2026", loc: "Tampines CC", status: "Attended", hours: "3.0" }
-];
-
-const organiserStats = {
-  totalEvents: 24,
-  completed: 18,
-  upcoming: 6,
-  confirmedVolunteers: 138,
-  waitlisted: 14,
-  avgAttendance: "89%"
-};
-
-const organiserAlerts = [
-  { tone: "danger", text: "Food Distribution Drive is full with 6 on the waiting list", link: "/organiser/events/2/registrations", linkText: "Review waiting list →" },
-  { tone: "warning", text: "Coastal Clean-Up: 3 Team Lead roles still unassigned", link: "/organiser/events/1/roles", linkText: "Assign roles →" },
-  { tone: "warning", text: "Attendance for Weekend Tutoring (12/07) not yet finalised", link: "/organiser/events/11/attendance", linkText: "Record attendance →" }
-];
-
-const organiserAttendanceSummary = [
-  { name: "Weekend Tutoring (12/07)", rate: "90%" },
-  { name: "Garden Planting (04/07)", rate: "93%" },
-  { name: "Park Clean-Up (27/06)", rate: "84%" }
-];
-
-const manageEventRows = [
-  { id: 1, name: "Coastal Clean-Up at East Coast Park", loc: "East Coast Park, Area C", cat: "Environment", when: "25/07/2026 · 08:00", filled: 34, capacity: 40, status: "Published", cancellable: true },
-  { id: 2, name: "Food Distribution Drive", loc: "Bedok Community Centre", cat: "Food Support", when: "01/08/2026 · 09:00", filled: 25, capacity: 25, status: "Full", cancellable: true },
-  { id: 5, name: "Park Clean-Up & Recycling Drive", loc: "Bishan-Ang Mo Kio Park", cat: "Environment", when: "08/08/2026 · 07:30", filled: 22, capacity: 50, status: "Published", cancellable: true },
-  { id: 7, name: "Community Garden Planting Day", loc: "Jurong Lake Gardens", cat: "Environment", when: "15/08/2026 · 08:00", filled: 12, capacity: 30, status: "Published", cancellable: true },
-  { id: 10, name: "Coastal Clean-Up — September", loc: "East Coast Park, Area F", cat: "Environment", when: "12/09/2026 · 08:00", filled: 0, capacity: 40, status: "Draft", cancellable: false },
-  { id: 11, name: "Weekend Tutoring — Primary Maths", loc: "Tampines Community Club", cat: "Education", when: "12/07/2026 · 10:00", filled: 20, capacity: 20, status: "Completed", cancellable: false }
-];
-
-manageEventRows.forEach(function (row) {
-  Object.assign(row, capacityMeta(row.filled, row.capacity));
-});
-
-const confirmedRegistrants = [
-  { name: "Nurul Aisyah", initials: "NA", contact: "nurul.a@example.sg · 9122 1188", date: "18/07/2026", avBg: "#C08FBB" },
-  { name: "David Ong", initials: "DO", contact: "david.ong@example.sg · 9788 0021", date: "19/07/2026", avBg: "#7FA8D9" },
-  { name: "Priya Nair", initials: "PN", contact: "priya.n@example.sg · 9011 4455", date: "20/07/2026", avBg: "#D99E2B" },
-  { name: "Rajesh Kumar", initials: "RK", contact: "rajesh.k@example.sg · 9333 6701", date: "21/07/2026", avBg: "#8FBF9A" },
-  { name: "Aisha Abdullah", initials: "AA", contact: "aisha.a@example.sg · 9555 2010", date: "22/07/2026", avBg: "#D9A08F" }
-];
-
-const waitlistRegistrants = [
-  { pos: 1, name: "Tan Wei Ling", initials: "WL", contact: "weiling.tan@example.sg", date: "23/07/2026", avBg: "#D99E2B" },
-  { pos: 2, name: "Jason Teo", initials: "JT", contact: "jason.teo@example.sg", date: "23/07/2026", avBg: "#B9C98F" },
-  { pos: 3, name: "Mei Ling Ho", initials: "MH", contact: "meiling.ho@example.sg", date: "24/07/2026", avBg: "#7FA8D9" },
-  { pos: 4, name: "Farhan Ismail", initials: "FI", contact: "farhan.i@example.sg", date: "24/07/2026", avBg: "#C08FBB" }
-];
-
-const roleAssignmentData = {
-  roles: [
-    {
-      name: "Beach Sweeper",
-      desc: "Collect litter along the assigned zone",
-      cap: "24 of 28 filled",
-      capBg: "#E7F2EA",
-      capFg: "#1E4D33",
-      people: [
-        { name: "Nurul Aisyah", initials: "NA", avBg: "#C08FBB" },
-        { name: "David Ong", initials: "DO", avBg: "#7FA8D9" }
-      ],
-      hasSpace: true,
-      spaceNote: "4 spaces remaining"
-    },
-    {
-      name: "Data Recorder",
-      desc: "Log litter types for the waste audit",
-      cap: "7 of 8 filled",
-      capBg: "#FBF3DF",
-      capFg: "#8A5E08",
-      people: [
-        { name: "Priya Nair", initials: "PN", avBg: "#D99E2B" }
-      ],
-      hasSpace: true,
-      spaceNote: "1 space remaining"
-    },
-    {
-      name: "Team Lead",
-      desc: "Guide a team of 8–10 volunteers",
-      cap: "4 of 4 filled",
-      capBg: "#FBEAE8",
-      capFg: "#B0433B",
-      people: [
-        { name: "Rajesh Kumar", initials: "RK", avBg: "#8FBF9A" },
-        { name: "Aisha Abdullah", initials: "AA", avBg: "#D9A08F" }
-      ],
-      hasSpace: false,
-      spaceNote: ""
+app.use(
+  session({
+    name: "communityconnect.sid",
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    proxy: isProduction,
+    cookie: {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24
     }
-  ],
-  unassigned: [
-    { name: "Mei Ling Ho", initials: "MH", avBg: "#7FA8D9" },
-    { name: "Farhan Ismail", initials: "FI", avBg: "#C08FBB" },
-    { name: "Grace Chua", initials: "GC", avBg: "#8FBF9A" },
-    { name: "Ethan Wong", initials: "EW", avBg: "#D9A08F" },
-    { name: "Siti Aminah", initials: "SA", avBg: "#B9C98F" },
-    { name: "Lucas Tan", initials: "LT", avBg: "#D99E2B" }
-  ]
-};
+  })
+);
 
-const attendanceRows = [
-  { name: "Nurul Aisyah", initials: "NA", role: "Tutor — Group A", status: "Attended", avBg: "#D99E2B" },
-  { name: "David Ong", initials: "DO", role: "Tutor — Group A", status: "Attended", avBg: "#7FA8D9" },
-  { name: "Priya Nair", initials: "PN", role: "Tutor — Group B", status: "Attended", avBg: "#C08FBB" },
-  { name: "Rajesh Kumar", initials: "RK", role: "Tutor — Group B", status: "Absent", avBg: "#8FBF9A" },
-  { name: "Aisha Abdullah", initials: "AA", role: "Helper", status: "Attended", avBg: "#D9A08F" },
-  { name: "Mei Ling Ho", initials: "MH", role: "Helper", status: "Pending", avBg: "#B9C98F" },
-  { name: "Farhan Ismail", initials: "FI", role: "Helper", status: "Pending", avBg: "#7FA8D9" },
-  { name: "Ethan Wong", initials: "EW", role: "Helper", status: "Pending", avBg: "#C08FBB" }
-];
+console.log("NODE_ENV:", process.env.NODE_ENV || "(unset)");
+console.log("Trust proxy enabled:", isProduction);
+console.log("Secure session cookies:", isProduction);
 
-const adminStats = {
-  totalUsers: "1,318",
-  usersDelta: "+46 this month",
-  events2026: "213",
-  eventsNote: "31 upcoming · 182 completed",
-  registrations2026: "5,872",
-  registrationsNote: "312 currently waitlisted",
-  hours2026: "12,450",
-  hoursDelta: "+1,204 this month"
-};
+// Feature 1 — authentication (register / login / logout / password reset)
+app.use(authRoutes);
+// Feature 1 — admin user account management (all routes require admin role)
+app.use(adminUserRoutes);
 
-const adminMonthlyRegs = [
-  { label: "Jan", val: "620", h: 56, current: false },
-  { label: "Feb", val: "710", h: 64, current: false },
-  { label: "Mar", val: "890", h: 80, current: false },
-  { label: "Apr", val: "764", h: 69, current: false },
-  { label: "May", val: "902", h: 82, current: false },
-  { label: "Jun", val: "880", h: 80, current: false },
-  { label: "Jul", val: "1,106", h: 100, current: true }
-];
+app.use(rolesRoutes);
+app.use(registrationRoutes);
 
-const adminUserRoles = [
-  { label: "Volunteers", count: "1,240", pct: 94, color: "#2E7D4F" },
-  { label: "Organisers", count: "72", pct: 6, color: "#D99E2B" },
-  { label: "Admins", count: "6", pct: 2, color: "#7FA8D9" }
-];
+// Unread notification badge for community members (MySQL).
+app.use(async function (req, res, next) {
+  res.locals.unreadNotificationCount = 0;
+  try {
+    const user = req.session && req.session.user;
+    if (user && user.role === "community_member" && user.user_id) {
+      const [[row]] = await pool.query(
+        "SELECT COUNT(*) AS total FROM notifications WHERE user_id = ? AND is_read = 0",
+        [user.user_id]
+      );
+      res.locals.unreadNotificationCount = Number(row.total) || 0;
+    }
+  } catch (err) {
+    console.error("Unread notification count failed:", err.message);
+  }
+  next();
+});
 
-const adminHoursByCat = [
-  { label: "Environment", val: "412 h", color: "#2E7D4F" },
-  { label: "Food Support", val: "318 h", color: "#D99E2B" },
-  { label: "Elderly Support", val: "226 h", color: "#C08FBB" },
-  { label: "Education", val: "158 h", color: "#7FA8D9" },
-  { label: "Fundraising", val: "90 h", color: "#D9A08F" }
-];
-
-const adminUsers = [
-  { name: "Tan Wei Ling", email: "weiling.tan@example.sg", role: "Volunteer", joined: "14/01/2026", status: "Active", initials: "WL", avBg: "#D99E2B" },
-  { name: "Marcus Lim", email: "marcus.lim@example.sg", role: "Organiser", joined: "03/11/2025", status: "Active", initials: "ML", avBg: "#7FA8D9" },
-  { name: "Nurul Aisyah", email: "nurul.a@example.sg", role: "Volunteer", joined: "22/02/2026", status: "Active", initials: "NA", avBg: "#C08FBB" },
-  { name: "Grace Chua", email: "grace.chua@example.sg", role: "Organiser", joined: "12/07/2026", status: "Pending", initials: "GC", avBg: "#8FBF9A" },
-  { name: "Rajesh Kumar", email: "rajesh.k@example.sg", role: "Volunteer", joined: "08/03/2026", status: "Active", initials: "RK", avBg: "#D9A08F" },
-  { name: "Jason Teo", email: "jason.teo@example.sg", role: "Volunteer", joined: "19/05/2026", status: "Suspended", initials: "JT", avBg: "#B9C98F" },
-  { name: "Siti Rahman", email: "siti.r@communityconnect.sg", role: "Admin", joined: "01/09/2025", status: "Active", initials: "SR", avBg: "#C08FBB" }
-];
-
-const reportKpis = {
-  eventsCompleted: "182",
-  avgFillRate: "87%",
-  avgAttendance: "89%",
-  cancellationRate: "6.4%"
-};
-
-const reportByCategory = [
-  { name: "Environment", color: "#2E7D4F", events: "68", regs: "2,140", att: "1,910", hours: "4,820", fill: "91%" },
-  { name: "Food Support", color: "#D99E2B", events: "47", regs: "1,420", att: "1,260", hours: "3,110", fill: "88%" },
-  { name: "Elderly Support", color: "#C08FBB", events: "39", regs: "980", att: "870", hours: "2,240", fill: "84%" },
-  { name: "Education", color: "#7FA8D9", events: "34", regs: "860", att: "790", hours: "1,580", fill: "86%" },
-  { name: "Fundraising", color: "#D9A08F", events: "25", regs: "472", att: "410", hours: "700", fill: "79%" }
-];
-
-const topEvents = [
-  { rank: 1, name: "Coastal Clean-Up at East Coast Park", date: "25/07/2026", attendees: "38" },
-  { rank: 2, name: "Charity Fun Run — Route Marshals", date: "16/08/2026", attendees: "41" },
-  { rank: 3, name: "Food Distribution Drive", date: "01/08/2026", attendees: "25" },
-  { rank: 4, name: "Park Clean-Up & Recycling Drive", date: "08/08/2026", attendees: "44" },
-  { rank: 5, name: "Community Garden Planting Day", date: "15/08/2026", attendees: "28" }
-];
-
-function findEvent(id) {
-  return events.find(function (ev) { return String(ev.id) === String(id); });
-}
-
-function withTone(row) {
-  const tones = {
-    green: { badgeBg: "#E7F2EA", badgeFg: "#1E4D33", dateBg: "#E7F2EA", dateFg: "#1E4D33" },
-    amber: { badgeBg: "#FBF3DF", badgeFg: "#8A5E08", dateBg: "#FBF3DF", dateFg: "#8A5E08" },
-    grey: { badgeBg: "#EDEAE0", badgeFg: "#6E7266", dateBg: "#EDEAE0", dateFg: "#6E7266" }
-  };
-  return Object.assign({}, row, tones[row.tone] || tones.green);
-}
+// Sample preview datasets removed — pages load from MySQL via controllers.
 
 function publicLocals(extra) {
   return Object.assign({
@@ -620,271 +114,531 @@ function appLocals(role, user, activeNav, extra) {
   }, extra || {});
 }
 
-// ---------- Public GET preview routes ----------
+// ---------- Public GET routes (MySQL-backed) ----------
 
-app.get("/", function (req, res) {
-  const featured = events.filter(function (ev) {
-    return [1, 2, 3].indexOf(ev.id) !== -1;
-  });
-  res.render("index", publicLocals({
-    activeNav: "home",
-    pageTitle: "CommunityConnect SG",
-    impactStats: impactStats,
-    featuredEvents: featured,
-    heroBadge: "Serving neighbourhoods across Singapore"
-  }));
+app.get("/", async function (req, res) {
+  try {
+    const [impactStats, featuredEvents] = await Promise.all([
+      publicEvents.getLandingStats(),
+      publicEvents.getFeaturedEvents(3)
+    ]);
+
+    res.render("index", publicLocals({
+      activeNav: "home",
+      pageTitle: "CommunityConnect SG",
+      impactStats: impactStats,
+      featuredEvents: featuredEvents,
+      heroBadge: "Serving neighbourhoods across Singapore"
+    }));
+  } catch (err) {
+    console.error("Landing page query failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "home",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load the latest community events. Please try again shortly."
+    }));
+  }
 });
 
-app.get("/login", function (req, res) {
-  res.render("login", publicLocals({
-    activeNav: "login",
-    pageTitle: "Log in · CommunityConnect SG"
-  }));
+// GET /login and GET /register are served by routes/authRoutes.js (Feature 1).
+
+app.get("/events", async function (req, res) {
+  try {
+    const search = (req.query.search || req.query.q || "").trim();
+    const category = (req.query.category || req.query.category_id || "").trim();
+    const date = (req.query.date || "").trim();
+    const location = (req.query.location || "").trim();
+    const availability = (req.query.availability || "").trim();
+    const sort = (req.query.sort || "date").trim().toLowerCase();
+
+    const filters = {
+      search: search,
+      category: category,
+      date: date,
+      location: location,
+      availability: availability,
+      sort: sort === "popularity" ? "popularity" : "date"
+    };
+
+    const hasFilters = Boolean(
+      search
+      || category
+      || (date && date !== "Any date")
+      || (location && location !== "All areas")
+      || (availability && availability !== "All events")
+    );
+
+    const [catalogue, dbCategories, totalEventsInDatabase] = await Promise.all([
+      publicEvents.getCatalogueEvents(filters),
+      publicEvents.getPublicCategories(),
+      publicEvents.countEvents()
+    ]);
+
+    res.render("events", publicLocals({
+      activeNav: "events",
+      pageTitle: "Event Catalogue · CommunityConnect SG",
+      events: catalogue.events,
+      categories: dbCategories,
+      filters: filters,
+      hasFilters: hasFilters,
+      totalEventsInDatabase: totalEventsInDatabase
+    }));
+  } catch (err) {
+    console.error("Event catalogue query failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "events",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load the event catalogue. Please try again shortly."
+    }));
+  }
 });
 
-app.get("/register", function (req, res) {
-  res.render("register", publicLocals({
-    activeNav: "register",
-    pageTitle: "Register · CommunityConnect SG"
-  }));
-});
+/**
+ * Decide whether the join form may show. Uses raw MySQL datetimes + status ENUM.
+ * Full still allows waiting-list registration.
+ */
+function registrationPanelState(event, currentRegistration) {
+  const now = new Date();
+  const status = event.status;
+  const deadline = event.registration_deadline
+    ? new Date(event.registration_deadline)
+    : null;
+  const start = event.start_datetime ? new Date(event.start_datetime) : null;
+  const eventStarted = !!(start && start.getTime() <= now.getTime());
 
-app.get("/events", function (req, res) {
-  const catalogue = events.filter(function (ev) {
-    return ev.status === "Published" || ev.status === "Full";
-  });
-  res.render("events", publicLocals({
-    activeNav: "events",
-    pageTitle: "Event Catalogue · CommunityConnect SG",
-    events: catalogue,
-    categories: categories.filter(function (c) { return c.status === "Active"; })
-  }));
-});
+  const activeStatuses = { Confirmed: true, Waitlisted: true, Attended: true, Absent: true };
+  const hasBlockingRegistration = !!(
+    currentRegistration && activeStatuses[currentRegistration.status]
+  );
 
-app.get("/events/:id", function (req, res) {
-  const event = findEvent(req.params.id) || events[0];
-  const roles = volunteerRoles.filter(function (r) { return r.event_id === event.id; });
-  res.render("event-details", publicLocals({
-    activeNav: "events",
-    pageTitle: event.event_name + " · CommunityConnect SG",
-    event: event,
-    roles: roles.length ? roles : volunteerRoles
-  }));
-});
+  let canRegister = false;
+  let registrationUnavailableReason = null;
 
-// ---------- Volunteer GET preview routes ----------
+  if (hasBlockingRegistration) {
+    registrationUnavailableReason = null;
+  } else if (status === "Cancelled") {
+    registrationUnavailableReason = "Event cancelled";
+  } else if (status === "Completed") {
+    registrationUnavailableReason = "Event completed";
+  } else if (status === "Closed") {
+    registrationUnavailableReason = "Registration closed";
+  } else if (status !== "Open" && status !== "Full") {
+    registrationUnavailableReason = "Registration closed";
+  } else if (deadline && deadline.getTime() < now.getTime()) {
+    registrationUnavailableReason = "Registration deadline has passed";
+  } else if (eventStarted) {
+    registrationUnavailableReason = "Event has started";
+  } else {
+    canRegister = true;
+  }
 
-app.get("/volunteer/dashboard", function (req, res) {
-  const upcoming = volunteerRegistrations.Confirmed.concat(volunteerRegistrations.Waitlisted).map(withTone);
-  const recommended = [events[4], events[6]];
-  res.render("volunteer/dashboard", appLocals("volunteer", volunteerUser, "dashboard", {
-    pageTitle: "Dashboard · Volunteer",
-    upcoming: upcoming,
-    recommended: recommended,
-    notifications: volunteerNotifications,
-    stats: {
-      upcoming: 2,
-      waitlist: 1,
-      hours: "38.5",
-      nextDate: "Sat 25/07/2026",
-      waitlistNote: "Position #3 of 6",
-      hoursNote: "Across 11 events since Jan 2026"
+  const canCancelRegistration = !!(
+    currentRegistration
+    && (currentRegistration.status === "Confirmed" || currentRegistration.status === "Waitlisted")
+    && !eventStarted
+  );
+
+  return {
+    canRegister: canRegister,
+    registrationUnavailableReason: registrationUnavailableReason,
+    canCancelRegistration: canCancelRegistration,
+    eventStarted: eventStarted
+  };
+}
+
+app.get("/events/:id", async function (req, res) {
+  try {
+    const event = await publicEvents.getEventById(req.params.id);
+    if (!event) {
+      return res.status(404).render("error", publicLocals({
+        activeNav: "events",
+        pageTitle: "Event not found · CommunityConnect SG",
+        statusCode: 404,
+        errorTitle: "Event not found",
+        errorMessage: "This event does not exist or is no longer available."
+      }));
     }
-  }));
+
+    const roles = await publicEvents.getVolunteerRolesForEvent(event.event_id);
+
+    // Only community_member session identity — never URL/query/form user_id.
+    let currentRegistration = null;
+    const sessionUser = req.session && req.session.user;
+    if (
+      sessionUser
+      && sessionUser.role === "community_member"
+      && sessionUser.user_id
+    ) {
+      const memberId = Number(sessionUser.user_id);
+      if (Number.isInteger(memberId) && memberId > 0) {
+        const [regRows] = await pool.query(
+          `SELECT
+             r.registration_id,
+             r.participation_type,
+             r.status,
+             r.waiting_position,
+             r.preferred_role_id,
+             vr.role_name AS volunteer_role_name
+           FROM event_registrations r
+           LEFT JOIN volunteer_roles vr ON vr.role_id = r.preferred_role_id
+           WHERE r.event_id = ?
+             AND r.user_id = ?
+           LIMIT 1`,
+          [event.event_id, memberId]
+        );
+        if (regRows.length) {
+          currentRegistration = regRows[0];
+        }
+      }
+    }
+
+    const panel = registrationPanelState(event, currentRegistration);
+    const viewUser = sessionUser ? toViewUser(sessionUser) : null;
+
+    res.render("event-details", publicLocals({
+      activeNav: "events",
+      pageTitle: event.event_name + " · CommunityConnect SG",
+      currentUser: viewUser,
+      event: event,
+      roles: roles,
+      currentRegistration: currentRegistration,
+      canRegister: panel.canRegister,
+      registrationUnavailableReason: panel.registrationUnavailableReason,
+      canCancelRegistration: panel.canCancelRegistration,
+      messages: takeFlash(req)
+    }));
+  } catch (err) {
+    console.error("Event details query failed:", err.message);
+    res.status(500).render("error", publicLocals({
+      activeNav: "events",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load this event. Please try again shortly."
+    }));
+  }
 });
 
-app.get("/volunteer/registrations", function (req, res) {
-  const tab = req.query.tab || "Confirmed";
-  const tabs = ["Confirmed", "Waitlisted", "Cancelled", "Attended"];
-  const safeTab = tabs.indexOf(tab) !== -1 ? tab : "Confirmed";
-  const rows = (volunteerRegistrations[safeTab] || []).map(withTone);
-  res.render("volunteer/my-registrations", appLocals("volunteer", volunteerUser, "registrations", {
-    pageTitle: "My Registrations · Volunteer",
-    tabs: tabs,
-    activeTab: safeTab,
-    tabCounts: {
-      Confirmed: volunteerRegistrations.Confirmed.length,
-      Waitlisted: volunteerRegistrations.Waitlisted.length,
-      Cancelled: volunteerRegistrations.Cancelled.length,
-      Attended: volunteerRegistrations.Attended.length
-    },
-    rows: rows,
-    messages: [{
-      type: "success",
-      text: "Your registration for <b>Coastal Clean-Up at East Coast Park</b> was confirmed. A reminder will be sent one day before the event."
-    }]
-  }));
-});
+// ---------- Community member routes (MySQL) ----------
+app.get("/member/dashboard", requireCommunityMember, memberController.dashboard);
+app.get("/member/volunteer-hours", requireCommunityMember, memberController.volunteerHours);
+app.get("/member/profile", requireCommunityMember, memberController.profile);
+app.post("/member/notifications/:id/read", requireCommunityMember, memberController.markNotificationRead);
+app.post("/member/notifications/read-all", requireCommunityMember, memberController.markAllNotificationsRead);
 
-app.get("/volunteer/hours", function (req, res) {
-  res.render("volunteer/volunteer-hours", appLocals("volunteer", volunteerUser, "hours", {
-    pageTitle: "My Hours · Volunteer",
-    summary: volunteerHoursSummary,
-    months: volunteerMonthlyHours,
-    history: volunteerHourHistory
-  }));
-});
+// Compatibility redirects from former volunteer paths
+app.get("/volunteer/dashboard", function (req, res) { res.redirect("/member/dashboard"); });
+app.get("/volunteer/registrations", function (req, res) { res.redirect("/member/registrations"); });
+app.get("/volunteer/hours", function (req, res) { res.redirect("/member/volunteer-hours"); });
+app.get("/volunteer/profile", function (req, res) { res.redirect("/member/profile"); });
 
-app.get("/volunteer/profile", function (req, res) {
-  res.render("volunteer/profile", appLocals("volunteer", volunteerUser, "profile", {
-    pageTitle: "My Profile · Volunteer",
-    profile: volunteerUser,
-    hours: volunteerHoursSummary.totalHours,
-    attendedEvents: volunteerHoursSummary.eventCount
-  }));
-});
+// ---------- Organiser routes (MySQL) ----------
+app.get("/organiser/dashboard", requireOrganiser, organiserController.dashboard);
+app.get("/organiser/events", requireOrganiser, organiserController.listEvents);
+app.get("/organiser/registrations", requireOrganiser, organiserController.registrationsHub);
+app.get("/organiser/roles", requireOrganiser, organiserController.rolesHub);
+app.get("/organiser/attendance", requireOrganiser, organiserController.attendanceHub);
+app.get("/organiser/events/new", requireOrganiser, organiserController.newEventForm);
+app.post("/organiser/events", requireOrganiser, organiserController.createEvent);
+app.get("/organiser/events/:id/edit", requireOrganiser, organiserController.editEventForm);
+app.post("/organiser/events/:id/edit", requireOrganiser, organiserController.updateEvent);
+app.post("/organiser/events/:id/delete", requireOrganiser, organiserController.deleteEvent);
+app.get("/organiser/events/:id/registrations", requireOrganiser, organiserController.manageRegistrations);
+app.get("/organiser/events/:id/roles", requireOrganiser, organiserController.roleAssignment);
 
-// ---------- Organiser GET preview routes ----------
+// GET /organiser/events/:id/attendance
+// User action  -> organiser opens the Attendance page for one event
+// Route        -> confirms ownership, then loads every eligible registration
+// SQL          -> event_registrations LEFT JOIN volunteer_assignments/volunteer_roles
+//                 (to show which role a Volunteer holds) LEFT JOIN attendance
+//                 (registration_id) so a registration with no attendance row yet
+//                 shows as "Pending" instead of being excluded
+// DB           -> events, event_registrations, users, volunteer_assignments,
+//                 volunteer_roles, attendance
+// Response     -> renders the attendance page with real data (no attendance
+//                 marking yet — POST /organiser/events/:id/attendance is next step)
+const AVATAR_COLORS = ["#7FA8D9", "#D99E2B", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
 
-app.get("/organiser/dashboard", function (req, res) {
-  const upcoming = [events[0], events[1], events[4], events[6]];
-  res.render("organiser/dashboard", appLocals("organiser", organiserUser, "dashboard", {
-    pageTitle: "Dashboard · Organiser",
-    stats: organiserStats,
-    upcoming: upcoming,
-    alerts: organiserAlerts,
-    attendance: organiserAttendanceSummary
-  }));
-});
+app.get("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
+  const eventId = req.params.id;
 
-app.get("/organiser/events", function (req, res) {
-  res.render("organiser/manage-events", appLocals("organiser", organiserUser, "events", {
-    pageTitle: "Manage Events · Organiser",
-    rows: manageEventRows,
-    categories: categories.filter(function (c) { return c.status === "Active"; })
-  }));
-});
+  try {
+  const [eventRows] = await pool.query(
+    "SELECT event_id, event_name, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
 
-app.get("/organiser/events/new", function (req, res) {
-  res.render("organiser/event-form", appLocals("organiser", organiserUser, "events", {
-    pageTitle: "Add Event · Organiser",
-    formMode: "create",
-    event: {
-      event_name: "",
-      category_id: 1,
-      description: "",
-      start_datetime: "",
-      end_datetime: "",
-      location: "",
-      capacity: "",
-      registration_deadline: "",
-      status: "Draft"
-    },
-    categories: categories.filter(function (c) { return c.status === "Active"; }),
-    messages: []
-  }));
-});
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
+    return res.status(403).send("You do not have permission to manage this event.");
+  }
 
-app.get("/organiser/events/:id/edit", function (req, res) {
-  const event = findEvent(req.params.id) || events[0];
-  res.render("organiser/event-form", appLocals("organiser", organiserUser, "events", {
-    pageTitle: "Edit Event · Organiser",
-    formMode: "edit",
-    event: event,
-    categories: categories.filter(function (c) { return c.status === "Active"; }),
-    messages: [{
-      type: "warning",
-      text: "This event already has " + event.filled + " confirmed volunteers. Reducing the capacity below " + event.filled + " will move the most recent registrations to the waiting list."
-    }]
-  }));
-});
+  // Only registrations that actually held (or hold) a place are attendance-eligible.
+  // Waitlisted/Cancelled registrations never had a place to check in for.
+  const [regRows] = await pool.query(
+    `SELECT er.registration_id, u.name, er.participation_type,
+            vr.role_name, a.attendance_status, a.check_in_time, a.check_out_time
+     FROM event_registrations er
+     JOIN users u ON u.user_id = er.user_id
+     LEFT JOIN volunteer_assignments va ON va.registration_id = er.registration_id
+     LEFT JOIN volunteer_roles vr ON vr.role_id = va.role_id
+     LEFT JOIN attendance a ON a.registration_id = er.registration_id
+     WHERE er.event_id = ? AND er.status IN ('Confirmed', 'Attended', 'Absent')
+     ORDER BY u.name ASC`,
+    [eventId]
+  );
 
-app.get("/organiser/events/:id/registrations", function (req, res) {
-  const event = findEvent(req.params.id) || events[1];
-  res.render("organiser/manage-registrations", appLocals("organiser", organiserUser, "registrations", {
-    pageTitle: "Manage Registrations · Organiser",
-    event: event,
-    eventOptions: manageEventRows.filter(function (r) { return r.status !== "Draft"; }),
-    confirmed: confirmedRegistrants,
-    waitlist: waitlistRegistrants,
-    summary: {
-      capacity: event.capacity,
-      confirmed: event.filled,
-      waitlist: event.waitlistCount || waitlistRegistrants.length,
-      cancellations: 3
-    },
-    messages: event.full ? [{
-      type: "warning",
-      text: "This event is at full capacity. If a confirmed volunteer cancels, the first person on the waiting list is offered the space automatically."
-    }] : []
-  }));
-});
+  const rows = regRows.map(function (r, i) {
+    const initials = r.name.split(" ").map(function (part) { return part[0]; }).join("").slice(0, 2).toUpperCase();
+    return {
+      registration_id: r.registration_id,
+      name: r.name,
+      initials: initials,
+      avBg: AVATAR_COLORS[i % AVATAR_COLORS.length],
+      participation_type: r.participation_type,
+      role: r.role_name || "—",
+      status: r.attendance_status || "Pending",
+      check_in_time: r.check_in_time,
+      check_out_time: r.check_out_time,
+      canCheckOut: r.attendance_status === "Attended" && r.check_in_time && !r.check_out_time
+    };
+  });
 
-app.get("/organiser/events/:id/roles", function (req, res) {
-  const event = findEvent(req.params.id) || events[0];
-  res.render("organiser/role-assignment", appLocals("organiser", organiserUser, "roles", {
-    pageTitle: "Role Assignment · Organiser",
-    event: event,
-    eventOptions: [events[0], events[1]],
-    roles: roleAssignmentData.roles,
-    unassigned: roleAssignmentData.unassigned,
-    roleOptions: volunteerRoles,
-    messages: [{
-      type: "warning",
-      text: "6 confirmed volunteers have not been assigned a role yet. All volunteers must have a role before event day."
-    }]
-  }));
-});
+  const attendedCount = rows.filter(function (r) { return r.status === "Attended"; }).length;
+  const absentCount = rows.filter(function (r) { return r.status === "Absent"; }).length;
+  const pendingCount = rows.filter(function (r) { return r.status === "Pending"; }).length;
 
-app.get("/organiser/events/:id/attendance", function (req, res) {
-  const event = findEvent(req.params.id) || events[10];
-  const attendedCount = attendanceRows.filter(function (r) { return r.status === "Attended"; }).length;
-  const absentCount = attendanceRows.filter(function (r) { return r.status === "Absent"; }).length;
-  const pendingCount = attendanceRows.filter(function (r) { return r.status === "Pending"; }).length;
-  res.render("organiser/attendance", appLocals("organiser", organiserUser, "attendance", {
+  const [eventOptionRows] = await pool.query(
+    `SELECT event_id, event_name, start_datetime
+     FROM events
+     WHERE organiser_id = ?
+     ORDER BY start_datetime DESC`,
+    [req.session.user.user_id]
+  );
+  const eventOptions = eventOptionRows.map(function (row) {
+    const d = row.start_datetime instanceof Date ? row.start_datetime : new Date(row.start_datetime);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const dateLabel = Number.isNaN(d.getTime())
+      ? ""
+      : day + "/" + month + "/" + d.getFullYear();
+    return {
+      id: row.event_id,
+      event_id: row.event_id,
+      event_name: row.event_name,
+      dateLabel: dateLabel
+    };
+  });
+
+  res.render("organiser/attendance", {
+    layout: "app",
+    role: "organiser",
+    activeNav: "attendance",
     pageTitle: "Attendance · Organiser",
-    event: event,
-    eventOptions: [events[10], events[6]],
-    rows: attendanceRows,
+    currentUser: req.session.user,
+    navEventId: event.event_id,
+    event: {
+      id: event.event_id,
+      event_id: event.event_id,
+      event_name: event.event_name
+    },
+    eventOptions: eventOptions,
+    rows: rows,
     summary: {
-      registered: 20,
+      registered: rows.length,
       attended: attendedCount,
       absent: absentCount,
       pending: pendingCount
     },
-    messages: [{
-      type: "success",
-      text: "Marking a volunteer as <b>Attended</b> records 2.0 hours (event duration) to their volunteer record automatically."
-    }]
-  }));
+    messages: takeFlash(req)
+  });
+  } catch (err) {
+    console.error("Attendance page query failed:", err.message);
+    return res.status(500).send("We could not load attendance. Please try again shortly.");
+  }
 });
 
-// ---------- Admin GET preview routes ----------
+// POST /organiser/events/:id/attendance
+// User action  -> organiser clicks "Mark Attended" / "Mark Absent" on a row
+// Route        -> confirms ownership, validates registration belongs to event,
+//                 blocks duplicates, then INSERT attendance
+//                 (Attended sets check_in_time; Absent leaves check-in null;
+//                  volunteer_hours always starts at 0 — hour totals are Feature 6)
+// SQL          -> SELECT registration + existing attendance; INSERT attendance
+// DB           -> events, event_registrations, attendance
+app.post("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
+  const eventId = req.params.id;
+  const attendancePath = "/organiser/events/" + eventId + "/attendance";
 
-app.get("/admin/dashboard", function (req, res) {
-  res.render("admin/dashboard", appLocals("admin", adminUser, "dashboard", {
-    pageTitle: "Admin Dashboard",
-    stats: adminStats,
-    months: adminMonthlyRegs,
-    userRoles: adminUserRoles,
-    hoursByCat: adminHoursByCat,
-    asOf: "15/07/2026, 14:00"
-  }));
+  const [eventRows] = await pool.query(
+    "SELECT event_id, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
+
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
+    return res.status(403).send("You do not have permission to manage this event.");
+  }
+
+  const registration_id = parseInt(req.body.registration_id, 10);
+  const attendance_status = req.body.attendance_status;
+
+  if (!Number.isInteger(registration_id) || registration_id < 1) {
+    req.session.flash = { type: "error", text: "Select a valid registration." };
+    return res.redirect(attendancePath);
+  }
+  if (attendance_status !== "Attended" && attendance_status !== "Absent") {
+    req.session.flash = { type: "error", text: "Attendance status must be Attended or Absent." };
+    return res.redirect(attendancePath);
+  }
+
+  // Registration must belong to this event and be attendance-eligible.
+  const [regRows] = await pool.query(
+    `SELECT registration_id, participation_type, status
+     FROM event_registrations
+     WHERE registration_id = ? AND event_id = ?
+       AND status IN ('Confirmed', 'Attended', 'Absent')
+     LIMIT 1`,
+    [registration_id, eventId]
+  );
+  if (!regRows[0]) {
+    req.session.flash = { type: "error", text: "That registration is not eligible for attendance on this event." };
+    return res.redirect(attendancePath);
+  }
+
+  const [existingRows] = await pool.query(
+    "SELECT attendance_id FROM attendance WHERE registration_id = ?",
+    [registration_id]
+  );
+
+  if (existingRows.length > 0) {
+    req.session.flash = { type: "error", text: "Attendance has already been recorded for this registration." };
+    return res.redirect(attendancePath);
+  }
+
+  // Participant hours must remain 0. Volunteer hour aggregation is Feature 6 —
+  // store 0 here so Feature 5 does not invent contribution totals.
+  const checkInSql = attendance_status === "Attended" ? "NOW()" : "NULL";
+  await pool.query(
+    `INSERT INTO attendance
+       (registration_id, attendance_status, check_in_time, check_out_time, volunteer_hours, recorded_by, recorded_at)
+     VALUES (?, ?, ${checkInSql}, NULL, 0, ?, NOW())`,
+    [registration_id, attendance_status, req.session.user.user_id]
+  );
+
+  res.redirect(attendancePath);
 });
 
-app.get("/admin/users", function (req, res) {
-  res.render("admin/users", appLocals("admin", adminUser, "users", {
-    pageTitle: "User Management · Admin",
-    users: adminUsers
-  }));
+// POST /organiser/events/:id/attendance/checkout
+// User action  -> organiser clicks "Check out" after a check-in (Attended)
+// Route        -> ownership + registration-in-event checks; requires existing
+//                 Attended row with check_in_time and no check_out_time yet
+// SQL          -> UPDATE attendance SET check_out_time = NOW()
+// DB           -> attendance, event_registrations, events
+app.post("/organiser/events/:id/attendance/checkout", isOrganiser, async function (req, res) {
+  const eventId = req.params.id;
+  const attendancePath = "/organiser/events/" + eventId + "/attendance";
+
+  const [eventRows] = await pool.query(
+    "SELECT event_id, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
+
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
+    return res.status(403).send("You do not have permission to manage this event.");
+  }
+
+  const registration_id = parseInt(req.body.registration_id, 10);
+  if (!Number.isInteger(registration_id) || registration_id < 1) {
+    req.session.flash = { type: "error", text: "Select a valid registration." };
+    return res.redirect(attendancePath);
+  }
+
+  const [rows] = await pool.query(
+    `SELECT a.attendance_id, a.attendance_status, a.check_in_time, a.check_out_time
+     FROM attendance a
+     INNER JOIN event_registrations er ON er.registration_id = a.registration_id
+     WHERE a.registration_id = ? AND er.event_id = ?
+     LIMIT 1`,
+    [registration_id, eventId]
+  );
+  const record = rows[0];
+
+  if (!record) {
+    req.session.flash = { type: "error", text: "Record attendance (check-in) before check-out." };
+    return res.redirect(attendancePath);
+  }
+  if (record.attendance_status !== "Attended" || !record.check_in_time) {
+    req.session.flash = { type: "error", text: "Check-out is only allowed after an Attended check-in." };
+    return res.redirect(attendancePath);
+  }
+  if (record.check_out_time) {
+    req.session.flash = { type: "error", text: "Check-out has already been recorded for this registration." };
+    return res.redirect(attendancePath);
+  }
+
+  // Feature 6 — on check-out, store Volunteer hours from check-in duration.
+  // Participant hours remain 0. Does not change attendance status decisions.
+  const [result] = await pool.query(
+    `UPDATE attendance a
+     INNER JOIN event_registrations er ON er.registration_id = a.registration_id
+     SET a.check_out_time = NOW(),
+         a.volunteer_hours = CASE
+           WHEN er.participation_type = 'Volunteer' AND a.attendance_status = 'Attended'
+           THEN ROUND(GREATEST(TIMESTAMPDIFF(MINUTE, a.check_in_time, NOW()), 0) / 60, 2)
+           ELSE 0
+         END
+     WHERE a.attendance_id = ?
+       AND a.check_out_time IS NULL
+       AND a.check_in_time IS NOT NULL
+       AND NOW() >= a.check_in_time`,
+    [record.attendance_id]
+  );
+
+  if (!result.affectedRows) {
+    req.session.flash = { type: "error", text: "Check-out could not be recorded (check-out cannot precede check-in)." };
+    return res.redirect(attendancePath);
+  }
+
+  res.redirect(attendancePath);
 });
 
-app.get("/admin/categories", function (req, res) {
-  res.render("admin/categories", appLocals("admin", adminUser, "categories", {
-    pageTitle: "Event Categories · Admin",
-    categories: categories
-  }));
-});
+// ---------- Admin routes (MySQL) ----------
+// GET /admin/users lives in routes/adminUserRoutes.js
+app.get("/admin/dashboard", requireAdmin, adminController.dashboard);
+app.get("/admin/categories", requireAdmin, adminController.categories);
+app.post("/admin/categories", requireAdmin, adminController.createCategory);
+app.post("/admin/categories/:id/edit", requireAdmin, adminController.updateCategory);
+app.post("/admin/categories/:id/delete", requireAdmin, adminController.deleteCategory);
+app.get("/admin/reports", requireAdmin, adminController.reports);
 
-app.get("/admin/reports", function (req, res) {
-  res.render("admin/reports", appLocals("admin", adminUser, "reports", {
-    pageTitle: "System Reports · Admin",
-    kpis: reportKpis,
-    byCategory: reportByCategory,
-    topEvents: topEvents
-  }));
-});
+async function startServer() {
+  try {
+    await pool.query("SELECT 1 AS connection_test");
+    console.log("Connected to CommunityConnect MySQL database");
 
-app.listen(PORT, function () {
-  console.log("CommunityConnect running at http://localhost:" + PORT);
-});
+    app.listen(PORT, function () {
+      console.log("CommunityConnect running at http://localhost:" + PORT);
+    });
+  } catch (err) {
+    console.error("Database connection failed. CommunityConnect could not start.");
+    console.error(err.message);
+    process.exit(1);
+  }
+}
+
+startServer();

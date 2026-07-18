@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F4EF;font-family:'Figtree',system-ui,sans-serif;color:#3C4038;-webkit-font-smoothing:antialiased}
+a{color:#2E7D4F;text-decoration:none}
+a:hover{color:#1E4D33}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column" data-screen-label="Admin Dashboard">
+  <dc-import name="Nav" role="admin" active="dashboard" userName="Siti Rahman" hint-size="100%,70px"></dc-import>
+
+  <section style="background:linear-gradient(120deg,#16382A,#1E4D33 55%,#1F8A7A);position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="max-width:1240px;margin:0 auto;padding:40px 32px 96px;position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#7FC99E">Platform administration</div>
+        <h1 style="margin:0;font-size:36px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">Admin Dashboard</h1>
+        <p style="margin:0;font-size:16px;color:#C6E2D0">Platform health at a glance — users, events and community impact.</p>
+      </div>
+      <span style="font-size:13px;color:#9CC9BE;font-weight:600;flex-shrink:0">Data as of 15/07/2026, 14:00</span>
+    </div>
+  </section>
+
+  <main style="flex:1">
+    <div style="max-width:1240px;margin:0 auto;padding:0 32px 64px;display:flex;flex-direction:column;gap:24px">
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:-56px;position:relative">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#E9F1F8;display:flex;align-items:center;justify-content:center;font-size:17px">👥</div>
+          <span style="font-size:30px;font-weight:900;color:#23271F;letter-spacing:-0.02em">1,318</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Total users · <span style="color:#2E7D4F">+46 this month</span></span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#E7F2EA;display:flex;align-items:center;justify-content:center;font-size:17px">📅</div>
+          <span style="font-size:30px;font-weight:900;color:#23271F;letter-spacing:-0.02em">213</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Events 2026 · 31 upcoming</span>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(20,38,28,0.1)">
+          <div style="width:38px;height:38px;border-radius:11px;background:#FBF3DF;display:flex;align-items:center;justify-content:center;font-size:17px">🗓</div>
+          <span style="font-size:30px;font-weight:900;color:#23271F;letter-spacing:-0.02em">5,872</span>
+          <span style="font-size:12.5px;font-weight:700;color:#6E7266">Registrations · 312 waitlisted</span>
+        </div>
+        <div style="background:linear-gradient(135deg,#2E7D4F,#1F8A7A);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(31,138,122,0.3)">
+          <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:17px">🌱</div>
+          <span style="font-size:30px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em">12,450</span>
+          <span style="font-size:12.5px;font-weight:700;color:#D8EDDF">Volunteer hours · +1,204 this month</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:start">
+        <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:20px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:17px;font-weight:800;color:#23271F">Registrations per month — 2026</span>
+            <a href="Reports.dc.html" style="font-size:13.5px;font-weight:700">Full reports →</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:14px;align-items:end;height:190px">
+            <sc-for list="{{ months }}" as="m" hint-placeholder-count="7">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end">
+                <span style="font-size:12px;font-weight:800;color:{{ m.valColor }}">{{ m.val }}</span>
+                <div style="width:100%;max-width:48px;height:{{ m.h }};border-radius:9px 9px 4px 4px;background:{{ m.color }}"></div>
+                <span style="font-size:12.5px;font-weight:700;color:#8B8778">{{ m.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:15px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:17px;font-weight:800;color:#23271F">Users by role</span>
+              <a href="User Management.dc.html" style="font-size:13px;font-weight:700">Manage →</a>
+            </div>
+            <sc-for list="{{ userRoles }}" as="u" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:13.5px"><span style="font-weight:700;color:#3C4038">{{ u.label }}</span><span style="font-weight:800;color:#23271F">{{ u.count }}</span></div>
+                <div style="height:7px;border-radius:999px;background:#EDEAE0;overflow:hidden"><div style="width:{{ u.pct }};height:100%;border-radius:999px;background:{{ u.color }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 8px rgba(35,39,31,0.06)">
+            <span style="font-size:17px;font-weight:800;color:#23271F">Hours by category — July</span>
+            <sc-for list="{{ hoursByCat }}" as="h" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:11px;font-size:13.5px">
+                <span style="width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;background:{{ h.bg }};flex-shrink:0">{{ h.icon }}</span>
+                <span style="font-weight:700;color:#3C4038;flex:1">{{ h.label }}</span>
+                <span style="font-weight:800;color:#23271F">{{ h.val }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="Footer" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const vals = [620, 710, 890, 764, 902, 880, 1106];
+    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+    const max = Math.max(...vals);
+    return {
+      months: vals.map((v, i) => ({
+        val: v.toLocaleString(),
+        h: Math.round((v / max) * 135) + "px",
+        label: labels[i],
+        color: i === vals.length - 1 ? "linear-gradient(180deg,#2E7D4F,#1F8A7A)" : "#C6DCCB",
+        valColor: i === vals.length - 1 ? "#2E7D4F" : "#8B8778",
+      })),
+      userRoles: [
+        { label: "Community Members", count: "1,240", pct: "94%", color: "#2E7D4F" },
+        { label: "Organisers", count: "72", pct: "6%", color: "#C8862B" },
+        { label: "Admins", count: "6", pct: "2%", color: "#4A8FC2" },
+      ],
+      hoursByCat: [
+        { label: "Environment", val: "412 h", icon: "🌿", bg: "#E7F2EA" },
+        { label: "Food Support", val: "318 h", icon: "🥫", bg: "#FBF3DF" },
+        { label: "Elderly Support", val: "226 h", icon: "🫶", bg: "#F1EBF6" },
+        { label: "Education", val: "158 h", icon: "📚", bg: "#E9F1F8" },
+        { label: "Fundraising", val: "90 h", icon: "❤️", bg: "#FBEAE3" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

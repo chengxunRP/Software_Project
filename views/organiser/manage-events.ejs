@@ -1,12 +1,17 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = 'Manage Events'; %>
-    <% topbarActions = '<a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>'; %>
-    <%- include('../partials/navbar') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content">
+  <%
+    pageEyebrow = 'Organiser';
+    pageHeading = 'Manage Events';
+    pageLead = 'Create, edit and manage capacity for your community events.';
+    pageActions = '<a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>';
+  %>
+  <%- include('../partials/page-header') %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel">
       <div class="d-flex gap-2 align-items-center flex-wrap">
         <input type="text" class="form-control-cc" style="max-width:320px;padding:10px 14px;border-radius:10px;font-size:14px;background:#fff" placeholder="Search events…" data-preview-only>
         <select class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
@@ -18,14 +23,19 @@
             <option><%= c.name %></option>
           <% }) %>
         </select>
-        <span class="ms-auto text-soft" style="font-size:13.5px">Showing <%= rows.length %> of 24 events</span>
+        <span class="ms-auto text-soft" style="font-size:13.5px">Showing <%= rows.length %> of <%= rows.length %> events</span>
       </div>
+
+      <%- include('../partials/messages') %>
 
       <div class="table-cc mt-1">
         <div class="table-scroll">
-          <div class="table-cc-head" style="grid-template-columns:2.4fr 1fr 1.2fr 1.2fr 1fr 1.4fr">
+          <div class="table-cc-head" style="grid-template-columns:2.2fr 0.9fr 1.1fr 1.4fr 0.9fr 1.4fr">
             <span>Event</span><span>Category</span><span>Date & time</span><span>Capacity</span><span>Status</span><span style="text-align:right">Actions</span>
           </div>
+          <% if (!rows.length) { %>
+            <div class="p-4 text-muted-cc" style="font-size:13.5px">No events are currently available.</div>
+          <% } %>
           <% rows.forEach(function (r) { %>
             <%
               const statusClass = {
@@ -36,25 +46,26 @@
                 Cancelled: 'badge-cc-danger'
               }[r.status] || 'badge-cc-muted';
             %>
-            <div class="table-cc-row" style="grid-template-columns:2.4fr 1fr 1.2fr 1.2fr 1fr 1.4fr">
+            <div class="table-cc-row" style="grid-template-columns:2.2fr 0.9fr 1.1fr 1.4fr 0.9fr 1.4fr">
               <div>
-                <div style="font-weight:700;color:#23271F"><%= r.name %></div>
-                <div style="font-size:12.5px;color:#8B8778"><%= r.loc %></div>
+                <div style="font-weight:700;color:#17342C"><%= r.name %></div>
+                <div style="font-size:12.5px;color:#8B978F"><%= r.loc %></div>
               </div>
               <span class="text-muted-cc" style="font-size:13.5px"><%= r.cat %></span>
               <span class="text-muted-cc" style="font-size:13.5px"><%= r.when %></span>
               <div>
-                <div style="font-size:12.5px;font-weight:600;color:#6E7266"><%= r.filled %> / <%= r.capacity %></div>
-                <div class="cap-bar-track mt-1" style="height:5px;max-width:110px">
-                  <div class="cap-bar-fill" style="width:<%= r.pct %>%;background:<%= r.capColor %>"></div>
-                </div>
+                <div style="font-size:12px;font-weight:600;color:#65756F">P <%= r.participants_filled %>/<%= r.participant_capacity %></div>
+                <div style="font-size:12px;font-weight:600;color:#65756F">V <%= r.volunteers_filled %>/<%= r.volunteer_capacity %></div>
               </div>
               <span><span class="badge-cc <%= statusClass %>" style="font-size:11.5px;padding:4px 10px"><%= r.status %></span></span>
               <div class="d-flex gap-1 justify-content-end flex-wrap">
                 <a href="/events/<%= r.id %>" class="btn-cc btn-cc-secondary btn-cc-xs">View</a>
                 <a href="/organiser/events/<%= r.id %>/edit" class="btn-cc btn-cc-secondary btn-cc-xs">Edit</a>
+                <a href="/organiser/events/<%= r.id %>/registrations" class="btn-cc btn-cc-secondary btn-cc-xs">Regs</a>
+                <a href="/organiser/events/<%= r.id %>/roles" class="btn-cc btn-cc-secondary btn-cc-xs">Roles</a>
+                <a href="/organiser/events/<%= r.id %>/attendance" class="btn-cc btn-cc-secondary btn-cc-xs">Attend</a>
                 <% if (r.cancellable) { %>
-                  <button type="button" class="btn-cc btn-cc-danger-outline btn-cc-xs" data-open-modal data-event-name="<%= r.name %>">Cancel</button>
+                  <button type="button" class="btn-cc btn-cc-danger-outline btn-cc-xs" data-open-modal data-event-name="<%= r.name %>" data-delete-event-id="<%= r.id %>">Cancel</button>
                 <% } %>
               </div>
             </div>
@@ -63,23 +74,40 @@
       </div>
     </div>
   </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
 </div>
 
 <div class="modal-cc" id="confirmModal">
   <div class="modal-cc-dialog" style="width:460px">
     <div class="modal-icon">!</div>
     <div>
-      <div style="font-size:19px;font-weight:800;color:#23271F">Cancel this event?</div>
-      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">Cancelling <b style="color:#3C4038" id="modalEventName">this event</b> will notify all confirmed and waitlisted volunteers by email. This cannot be undone.</div>
+      <div style="font-size:19px;font-weight:800;color:#17342C">Cancel this event?</div>
+      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">Cancelling <b style="color:#22403A" id="modalEventName">this event</b> will permanently remove it and related registrations. This cannot be undone.</div>
     </div>
     <div class="d-flex gap-2 justify-content-end">
       <button type="button" class="btn-cc btn-cc-secondary" data-close-modal>Keep event</button>
-      <button type="button" class="btn-cc btn-cc-danger" data-close-modal>Yes, cancel event</button>
+      <form id="deleteEventForm" method="POST" action="">
+        <button type="submit" class="btn-cc btn-cc-danger">Yes, cancel event</button>
+      </form>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>
+<script>
+  (function () {
+    var deleteForm = document.getElementById("deleteEventForm");
+    document.querySelectorAll("[data-delete-event-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (deleteForm) {
+          deleteForm.action = "/organiser/events/" + btn.getAttribute("data-delete-event-id") + "/delete";
+        }
+      });
+    });
+  })();
+</script>
 </body>
 </html>

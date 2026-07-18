@@ -1,100 +1,146 @@
 <%- include('partials/header') %>
-<div class="public-page">
+<%
+  const filtersActive =
+    typeof hasFilters !== "undefined" ? hasFilters : false;
+
+  const databaseEventTotal =
+    typeof totalEventsInDatabase !== "undefined"
+      ? totalEventsInDatabase
+      : (typeof events !== "undefined" ? events.length : 0);
+
+  const activeFilters =
+    typeof filters !== "undefined" && filters
+      ? filters
+      : { search: "", category: "", date: "", location: "", availability: "" };
+%>
+<div class="site-page public-page">
   <%- include('partials/navbar') %>
 
-  <main class="flex-fill">
-    <div class="section-wrap wide" style="padding-top:40px">
-      <div class="mb-3">
-        <h1 class="h-page">Event Catalogue</h1>
-        <p class="mb-0 text-muted-cc" style="font-size:15.5px"><%= events.length %> upcoming events across Singapore. Filter to find one near you.</p>
-      </div>
+  <%
+    pageEyebrow = 'Event catalogue';
+    pageHeading = 'Find your next community event';
+    pageLead = filtersActive
+      ? ('Showing ' + events.length + ' matching event' + (events.length === 1 ? '' : 's') + ' (' + databaseEventTotal + ' in the database). Join as a Participant or Volunteer.')
+      : (events.length + ' event' + (events.length === 1 ? '' : 's') + ' across Singapore. Join as a Participant or Volunteer.');
+  %>
+  <%- include('partials/page-header') %>
 
-      <form class="filter-bar mb-4" data-preview-only>
+  <main class="site-main">
+    <div class="section-wrap wide overlap-panel">
+      <form class="filter-bar card-cc" method="get" action="/events">
         <div>
-          <label class="form-label-cc">Search</label>
-          <input class="form-control-cc" type="text" name="q" placeholder="Keyword, e.g. clean-up">
+          <label class="form-label-cc" for="search">Search</label>
+          <input class="form-control-cc" type="text" id="search" name="search" value="<%= activeFilters.search || '' %>" placeholder="Keyword, e.g. clean-up">
         </div>
         <div>
-          <label class="form-label-cc">Category</label>
-          <select class="form-select-cc" name="category_id">
+          <label class="form-label-cc" for="category">Category</label>
+          <select class="form-select-cc" id="category" name="category">
             <option value="">All categories</option>
             <% categories.forEach(function (c) { %>
-              <option value="<%= c.category_id %>"><%= c.name %></option>
+              <option value="<%= c.category_id %>" <%= String(activeFilters.category) === String(c.category_id) ? 'selected' : '' %>><%= c.name %></option>
             <% }) %>
           </select>
         </div>
         <div>
-          <label class="form-label-cc">Date</label>
-          <select class="form-select-cc" name="date">
-            <option>Any date</option>
-            <option>This weekend</option>
-            <option>Next 7 days</option>
-            <option>Next 30 days</option>
+          <label class="form-label-cc" for="date">Date</label>
+          <select class="form-select-cc" id="date" name="date">
+            <% const dateOptions = ['Any date', 'This weekend', 'Next 7 days', 'Next 30 days']; %>
+            <% dateOptions.forEach(function (opt) { %>
+              <option value="<%= opt %>" <%= (activeFilters.date || 'Any date') === opt ? 'selected' : '' %>><%= opt %></option>
+            <% }) %>
           </select>
         </div>
         <div>
-          <label class="form-label-cc">Location</label>
-          <select class="form-select-cc" name="location">
-            <option>All areas</option>
-            <option>East</option>
-            <option>West</option>
-            <option>North</option>
-            <option>Central</option>
+          <label class="form-label-cc" for="location">Location</label>
+          <select class="form-select-cc" id="location" name="location">
+            <% const locationOptions = ['All areas', 'East', 'West', 'North', 'Central']; %>
+            <% locationOptions.forEach(function (opt) { %>
+              <option value="<%= opt %>" <%= (activeFilters.location || 'All areas') === opt ? 'selected' : '' %>><%= opt %></option>
+            <% }) %>
           </select>
         </div>
         <div>
-          <label class="form-label-cc">Availability</label>
-          <select class="form-select-cc" name="availability">
-            <option>All events</option>
-            <option>Spaces available</option>
-            <option>Waitlist only</option>
+          <label class="form-label-cc" for="availability">Availability</label>
+          <select class="form-select-cc" id="availability" name="availability">
+            <% const availabilityOptions = ['All events', 'Participant spaces available', 'Volunteer spaces available', 'Waiting list available']; %>
+            <% availabilityOptions.forEach(function (opt) { %>
+              <option value="<%= opt %>" <%= (activeFilters.availability || 'All events') === opt ? 'selected' : '' %>><%= opt %></option>
+            <% }) %>
           </select>
         </div>
-        <button type="submit" class="btn-cc btn-cc-primary" style="padding:10px 20px;border-radius:9px">Apply</button>
+        <div>
+          <label class="form-label-cc" for="sort">Sort by</label>
+          <select class="form-select-cc" id="sort" name="sort">
+            <% const sortOptions = [{ value: 'date', label: 'Date (soonest)' }, { value: 'popularity', label: 'Popularity' }]; %>
+            <% sortOptions.forEach(function (opt) { %>
+              <option value="<%= opt.value %>" <%= (activeFilters.sort || 'date') === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+            <% }) %>
+          </select>
+        </div>
+        <button type="submit" class="btn-cc btn-cc-primary">Apply</button>
       </form>
 
-      <div class="row g-4 events-grid">
-        <% events.forEach(function (ev) { %>
-          <div class="col-md-6 col-lg-4">
-            <div class="event-card">
-              <div class="event-card-photo" style="height:130px">
-                <span class="photo-label"><%= ev.photoLabel %></span>
-              </div>
-              <div class="event-card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="badge-cc badge-cc-cat" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>
-                  <% if (ev.full) { %>
-                    <span class="badge-cc badge-cc-full" style="font-size:11.5px;padding:3px 9px">FULL</span>
-                  <% } %>
-                </div>
-                <div class="event-card-title"><%= ev.event_name %></div>
-                <div class="event-card-meta">
-                  <span><%= ev.when %></span>
-                  <span><%= ev.location %></span>
-                </div>
-                <div class="mt-auto">
-                  <div class="cap-bar">
-                    <div class="cap-bar-meta">
-                      <span style="color:#6E7266"><%= ev.capLabel %></span>
-                      <span style="color:<%= ev.capColor %>"><%= ev.full ? 'Waitlist open' : (ev.left + ' left') %></span>
-                    </div>
-                    <div class="cap-bar-track">
-                      <div class="cap-bar-fill" style="width:<%= ev.pct %>%;background:<%= ev.capColor %>"></div>
-                    </div>
+      <% if (!events.length) { %>
+        <div class="card-cc" style="padding:28px;text-align:center">
+          <div style="font-size:16px;font-weight:700;color:#17342C">
+            <%= filtersActive ? 'No events match your filters.' : 'No upcoming events are currently available.' %>
+          </div>
+          <div class="text-muted-cc mt-1" style="font-size:14.5px">
+            <%= filtersActive ? 'Try clearing a filter or broadening your search.' : 'Please check back later.' %>
+          </div>
+          <% if (filtersActive) { %>
+            <a href="/events" class="btn-cc btn-cc-secondary mt-3">Clear filters</a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="row g-4 events-grid mt-2">
+          <% events.forEach(function (ev) { %>
+            <div class="col-md-6 col-lg-4">
+              <div class="event-card">
+                <%- include('partials/event-card-panel', { category: ev.category }) %>
+                <div class="event-card-body">
+                  <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                    <span class="badge-cc badge-cc-cat" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>
+                    <% if (ev.full) { %>
+                      <span class="badge-cc badge-cc-full">FULL · WAITLIST</span>
+                    <% } else if (ev.status === 'Closed') { %>
+                      <span class="badge-cc badge-cc-muted">Registration closed</span>
+                    <% } else if (ev.status === 'Full') { %>
+                      <span class="badge-cc badge-cc-warning">Full — waiting list</span>
+                    <% } %>
                   </div>
-                  <a href="/events/<%= ev.id %>" class="btn-cc btn-cc-outline btn-cc-block mt-3">View Details</a>
+                  <div class="event-card-title"><%= ev.event_name %></div>
+                  <div class="event-card-meta">
+                    <span><%= ev.when %></span>
+                    <span><%= ev.location %></span>
+                  </div>
+                  <div class="mt-auto">
+                    <div class="cap-bar">
+                      <div class="cap-bar-meta">
+                        <span>Participants <%= ev.participants_filled %>/<%= ev.participant_capacity %></span>
+                        <span style="color:<%= ev.participants.capColor %>"><%= ev.participants.full ? 'Waitlist' : (ev.participants.left + ' left') %></span>
+                      </div>
+                      <div class="cap-bar-track">
+                        <div class="cap-bar-fill" style="width:<%= ev.participants.pct %>%;background:<%= ev.participants.capColor %>"></div>
+                      </div>
+                    </div>
+                    <div class="cap-bar mt-2">
+                      <div class="cap-bar-meta">
+                        <span>Volunteers <%= ev.volunteers_filled %>/<%= ev.volunteer_capacity %></span>
+                        <span style="color:<%= ev.volunteers.capColor %>"><%= ev.volunteers.full ? 'Waitlist' : (ev.volunteers.left + ' left') %></span>
+                      </div>
+                      <div class="cap-bar-track">
+                        <div class="cap-bar-fill" style="width:<%= ev.volunteers.pct %>%;background:<%= ev.volunteers.capColor %>"></div>
+                      </div>
+                    </div>
+                    <a href="/events/<%= ev.id %>" class="btn-cc btn-cc-outline btn-cc-block mt-3">View Details</a>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        <% }) %>
-      </div>
-
-      <div class="pagination-cc mt-4">
-        <span class="active">1</span>
-        <a href="/events">2</a>
-        <a href="/events">→</a>
-      </div>
+          <% }) %>
+        </div>
+      <% } %>
     </div>
   </main>
 

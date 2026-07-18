@@ -1,0 +1,8 @@
+<% if (typeof role !== 'undefined' && role === 'member') { %>
+<nav class="mobile-tabbar" aria-label="Member shortcuts">
+  <a href="/member/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>"><span class="tab-icon">🏠</span>Dashboard</a>
+  <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>"><span class="tab-icon">🔍</span>Events</a>
+  <a href="/member/registrations" class="<%= activeNav === 'registrations' ? 'active' : '' %>"><span class="tab-icon">🗂</span>Registrations</a>
+  <a href="/member/volunteer-hours" class="<%= activeNav === 'hours' ? 'active' : '' %>"><span class="tab-icon">⏱</span>Hours</a>
+</nav>
+<% } %>
