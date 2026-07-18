@@ -17,6 +17,7 @@ const pool = require("../config/database");
 const { toViewUser } = require("../lib/userDisplay");
 const { flash, takeFlash } = require("../lib/flash");
 const notifications = require("../lib/notifications");
+const notificationEmails = require("../services/notificationEmailService");
 
 const ALLOWED_EVENT_STATUSES = ["Draft", "Open", "Full", "Closed", "Cancelled", "Completed"];
 const FORM_STATUS_VALUES = ["Published", "Draft", "Registration closed"];
@@ -1168,27 +1169,44 @@ async function updateEvent(req, res) {
     // Feature 6 — notify registrants after a successful event update (decision unchanged).
     try {
       const [regUsers] = await pool.query(
-        `SELECT DISTINCT user_id
-         FROM event_registrations
-         WHERE event_id = ? AND status IN ('Confirmed', 'Waitlisted')`,
+        `SELECT DISTINCT u.user_id, u.name, u.email
+         FROM event_registrations r
+         INNER JOIN users u ON u.user_id = r.user_id
+         WHERE r.event_id = ? AND r.status IN ('Confirmed', 'Waitlisted')`,
         [eventId]
       );
-      const userIds = regUsers.map(function (r) { return r.user_id; });
-      if (userIds.length) {
-        if (d.status === "Cancelled" && previousStatus !== "Cancelled") {
-          await notifications.notifyUsers(userIds, {
+      if (regUsers.length) {
+        const isCancellation = d.status === "Cancelled" && previousStatus !== "Cancelled";
+        if (isCancellation) {
+          await notifications.notifyUsers(regUsers.map(function (r) { return r.user_id; }), {
             eventId: eventId,
             title: "Event cancelled",
             message: d.event_name + " has been cancelled by the organiser.",
             type: "EventCancellation"
           });
+          for (let i = 0; i < regUsers.length; i++) {
+            await notificationEmails.sendEventCancelledEmail({
+              email: regUsers[i].email,
+              name: regUsers[i].name,
+              eventName: d.event_name
+            });
+          }
         } else {
-          await notifications.notifyUsers(userIds, {
+          await notifications.notifyUsers(regUsers.map(function (r) { return r.user_id; }), {
             eventId: eventId,
             title: "Event updated",
             message: "Details for " + d.event_name + " have been updated. Please review the event page.",
             type: "EventUpdate"
           });
+          for (let i = 0; i < regUsers.length; i++) {
+            await notificationEmails.sendEventUpdatedEmail({
+              email: regUsers[i].email,
+              name: regUsers[i].name,
+              eventName: d.event_name,
+              startDatetime: d.start_datetime,
+              location: d.location
+            });
+          }
         }
       }
     } catch (notifyErr) {

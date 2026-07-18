@@ -2,10 +2,12 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const pool = require("../config/database");
 const { flash, takeFlash } = require("../lib/flash");
+const passwordResetService = require("../services/passwordResetService");
 
 const BCRYPT_ROUNDS = 10;
 const PASSWORD_MIN_LENGTH = 8;
-const RESET_TOKEN_HOURS = 1;
+const GENERIC_RESET_MESSAGE =
+  "If an account with that email exists, a password reset link has been sent.";
 
 function authLocals(extra) {
   return Object.assign({
@@ -28,7 +30,7 @@ function isValidEmail(email) {
 
 // Only SHA-256 hashes of reset tokens are stored — never the raw token.
 function hashResetToken(rawToken) {
-  return crypto.createHash("sha256").update(rawToken).digest("hex");
+  return passwordResetService.hashResetToken(rawToken);
 }
 
 // ---------- Registration ----------
@@ -215,8 +217,6 @@ function showForgotPassword(req, res) {
 
 async function requestPasswordReset(req, res) {
   const email = normalizeEmail(req.body.email);
-  // Same response whether or not the account exists — do not confirm accounts.
-  const genericMessage = "If an account exists for that email address, a password reset has been prepared.";
 
   if (!email || !isValidEmail(email)) {
     flash(req, "error", "Please enter a valid email address.");
@@ -225,7 +225,7 @@ async function requestPasswordReset(req, res) {
 
   try {
     const [rows] = await pool.query(
-      "SELECT user_id, email, account_status FROM users WHERE email = ? LIMIT 1",
+      "SELECT user_id, name, email, account_status FROM users WHERE email = ? LIMIT 1",
       [email]
     );
     const user = rows[0];
@@ -233,63 +233,85 @@ async function requestPasswordReset(req, res) {
     if (user && user.account_status === "Active") {
       const rawToken = crypto.randomBytes(32).toString("hex");
       const tokenHash = hashResetToken(rawToken);
-      const expiresAt = new Date(Date.now() + RESET_TOKEN_HOURS * 60 * 60 * 1000);
+      const expiresMinutes = passwordResetService.getPasswordResetExpiresMinutes();
 
       // Invalidate previous unused tokens so only the newest link works.
       await pool.query(
-        "UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = ? AND used_at IS NULL",
+        "UPDATE password_reset_tokens SET used_at = UTC_TIMESTAMP() WHERE user_id = ? AND used_at IS NULL",
         [user.user_id]
       );
       await pool.query(
-        "INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)",
-        [user.user_id, tokenHash, expiresAt]
+        `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+         VALUES (?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? MINUTE))`,
+        [user.user_id, tokenHash, expiresMinutes]
       );
 
-      // No email service is configured for this CA2 project (per CLAUDE.md
-      // stack). In development the link goes to the server console only —
-      // never into the browser response.
-      if (process.env.NODE_ENV !== "production") {
-        console.log(
-          "[password-reset] Development-only reset link for " + user.email + ": " +
-          "/reset-password?token=" + rawToken
-        );
+      const resetUrl = passwordResetService.buildPasswordResetUrl(rawToken);
+      try {
+        await passwordResetService.sendPasswordResetEmail({
+          to: user.email,
+          name: user.name,
+          resetUrl: resetUrl,
+          expiresMinutes: expiresMinutes
+        });
+      } catch (mailErr) {
+        // Same public response whether delivery fails — do not reveal account existence.
+        console.error("Password reset email failed:", mailErr && mailErr.message
+          ? mailErr.message
+          : "unknown error");
       }
     }
 
-    flash(req, "success", genericMessage + " Development note: the reset link is printed in the server console.");
+    flash(req, "success", GENERIC_RESET_MESSAGE);
     return res.redirect("/forgot-password");
   } catch (err) {
     console.error("requestPasswordReset failed:", err.message);
-    flash(req, "error", "We could not start a password reset. Please try again.");
+    // Still use the same generic success message to avoid account enumeration.
+    flash(req, "success", GENERIC_RESET_MESSAGE);
     return res.redirect("/forgot-password");
   }
 }
 
-async function findValidToken(connectionOrPool, rawToken) {
-  const [rows] = await connectionOrPool.query(
-    `SELECT token_id, user_id, expires_at, used_at
-     FROM password_reset_tokens
-     WHERE token_hash = ?
-     LIMIT 1`,
-    [hashResetToken(rawToken)]
-  );
-  const row = rows[0];
-  if (!row || row.used_at || new Date(row.expires_at) < new Date()) {
+async function findValidToken(connectionOrPool, rawToken, forUpdate) {
+  if (!passwordResetService.isValidRawResetToken(rawToken)) {
     return null;
   }
-  return row;
+
+  const sql = `
+    SELECT token_id, user_id, expires_at, used_at
+    FROM password_reset_tokens
+    WHERE token_hash = ?
+      AND used_at IS NULL
+      AND expires_at > UTC_TIMESTAMP()
+    LIMIT 1
+    ${forUpdate ? "FOR UPDATE" : ""}
+  `;
+  const [rows] = await connectionOrPool.query(sql, [hashResetToken(rawToken)]);
+  return rows[0] || null;
 }
 
 async function showResetPassword(req, res) {
   const token = String(req.query.token || "").trim();
-  if (!token) {
+  if (!passwordResetService.isValidRawResetToken(token)) {
     flash(req, "error", "This password-reset link is invalid or has expired.");
     return res.redirect("/forgot-password");
   }
 
   try {
-    const valid = await findValidToken(pool, token);
+    const valid = await findValidToken(pool, token, false);
     if (!valid) {
+      flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
+      return res.redirect("/forgot-password");
+    }
+
+    const [[userRow]] = await pool.query(
+      `SELECT user_id, account_status
+       FROM users
+       WHERE user_id = ?
+       LIMIT 1`,
+      [valid.user_id]
+    );
+    if (!userRow || userRow.account_status !== "Active") {
       flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
       return res.redirect("/forgot-password");
     }
@@ -312,7 +334,7 @@ async function resetPassword(req, res) {
   const password = String(req.body.password || "");
   const confirmPassword = String(req.body.confirm_password || "");
 
-  if (!token) {
+  if (!passwordResetService.isValidRawResetToken(token)) {
     flash(req, "error", "This password-reset link is invalid or has expired.");
     return res.redirect("/forgot-password");
   }
@@ -330,8 +352,22 @@ async function resetPassword(req, res) {
     connection = await pool.getConnection();
     await connection.beginTransaction();
 
-    const valid = await findValidToken(connection, token);
+    const valid = await findValidToken(connection, token, true);
     if (!valid) {
+      await connection.rollback();
+      flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
+      return res.redirect("/forgot-password");
+    }
+
+    const [[userRow]] = await connection.query(
+      `SELECT user_id, account_status
+       FROM users
+       WHERE user_id = ?
+       LIMIT 1
+       FOR UPDATE`,
+      [valid.user_id]
+    );
+    if (!userRow || userRow.account_status !== "Active") {
       await connection.rollback();
       flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
       return res.redirect("/forgot-password");
@@ -344,7 +380,7 @@ async function resetPassword(req, res) {
     );
     // Mark this token used and invalidate any other outstanding tokens.
     await connection.query(
-      "UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = ? AND used_at IS NULL",
+      "UPDATE password_reset_tokens SET used_at = UTC_TIMESTAMP() WHERE user_id = ? AND used_at IS NULL",
       [valid.user_id]
     );
 
