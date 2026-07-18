@@ -94,8 +94,8 @@
                 <label class="status-option <%= selected ? 'active' : '' %>">
                   <input type="radio" name="status" value="<%= s.value %>" <%= selected ? 'checked' : '' %>>
                   <div>
-                    <div style="font-size:14px;font-weight:700;color:<%= selected ? '#1E4D33' : '#23271F' %>"><%= s.label %></div>
-                    <div style="font-size:12px;color:<%= selected ? '#4E6B57' : '#8B8778' %>"><%= s.note %></div>
+                    <div style="font-size:14px;font-weight:700;color:<%= selected ? '#056047' : '#17342C' %>"><%= s.label %></div>
+                    <div style="font-size:12px;color:<%= selected ? '#3D5148' : '#8B978F' %>"><%= s.note %></div>
                   </div>
                 </label>
               <% }) %>
@@ -108,7 +108,7 @@
             <div class="d-flex flex-column gap-3 mb-2">
               <div>
                 <div class="cap-bar-meta" style="font-size:13px">
-                  <span style="color:#6E7266">Participants <%= event.participants_filled %> of <%= event.participant_capacity %></span>
+                  <span style="color:#65756F">Participants <%= event.participants_filled %> of <%= event.participant_capacity %></span>
                   <span style="color:<%= event.participants.capColor %>"><%= event.participants.full ? 'Full' : (event.participants.left + ' left') %></span>
                 </div>
                 <div class="cap-bar-track" style="height:7px">
@@ -117,7 +117,7 @@
               </div>
               <div>
                 <div class="cap-bar-meta" style="font-size:13px">
-                  <span style="color:#6E7266">Volunteers <%= event.volunteers_filled %> of <%= event.volunteer_capacity %></span>
+                  <span style="color:#65756F">Volunteers <%= event.volunteers_filled %> of <%= event.volunteer_capacity %></span>
                   <span style="color:<%= event.volunteers.capColor %>"><%= event.volunteers.full ? 'Full' : (event.volunteers.left + ' left') %></span>
                 </div>
                 <div class="cap-bar-track" style="height:7px">

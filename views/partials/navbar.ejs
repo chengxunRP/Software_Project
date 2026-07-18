@@ -51,7 +51,7 @@
         </div>
       <% } else if (isPublic) { %>
         <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
-        <a href="/register" class="btn-cc btn-cc-primary btn-cc-sm">Register</a>
+        <a href="/register" class="btn-cc btn-cc-coral btn-cc-sm">Register</a>
       <% } else if (typeof currentUser !== 'undefined' && currentUser) { %>
         <a href="<%= navRole === 'member' ? '/member/dashboard' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (navRole === 'member' && typeof unreadNotificationCount !== 'undefined' && unreadNotificationCount > 0) { %><span class="count"><%= unreadNotificationCount %></span><% } %></a>
         <a href="<%= navRole === 'member' ? '/member/profile' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="nav-avatar">

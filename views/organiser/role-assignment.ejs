@@ -34,21 +34,21 @@
             <div class="card-cc overflow-hidden">
               <div class="panel-header">
                 <div>
-                  <div style="font-size:15.5px;font-weight:700;color:#23271F"><%= role.name %></div>
-                  <div style="font-size:13px;color:#6E7266"><%= role.desc %></div>
+                  <div style="font-size:15.5px;font-weight:700;color:#17342C"><%= role.name %></div>
+                  <div style="font-size:13px;color:#65756F"><%= role.desc %></div>
                 </div>
                 <span class="badge-cc" style="background:<%= role.capBg %>;color:<%= role.capFg %>"><%= role.cap %></span>
               </div>
               <% role.people.forEach(function (p) { %>
                 <div class="list-row">
                   <span class="avatar-cc sm" style="background:<%= p.avBg %>;width:30px;height:30px;font-size:11.5px"><%= p.initials %></span>
-                  <span style="font-weight:600;color:#23271F;flex:1"><%= p.name %></span>
+                  <span style="font-weight:600;color:#17342C;flex:1"><%= p.name %></span>
                 </div>
               <% }) %>
               <% if (role.hasSpace) { %>
-                <div class="px-4 py-3" style="font-size:13px;color:#8B8778;font-style:italic"><%= role.spaceNote %></div>
+                <div class="px-4 py-3" style="font-size:13px;color:#8B978F;font-style:italic"><%= role.spaceNote %></div>
               <% } %>
-              <div class="d-flex gap-1 flex-wrap px-4 py-3" style="border-top:1px solid #EDEAE0">
+              <div class="d-flex gap-1 flex-wrap px-4 py-3" style="border-top:1px solid #E1EEE8">
                 <a href="/organiser/events/<%= event.id %>/roles/<%= role.volunteer_role_id %>/assign" class="btn-cc btn-cc-primary btn-cc-xs">Assign</a>
                 <a href="/organiser/events/<%= event.id %>/roles/<%= role.volunteer_role_id %>/edit" class="btn-cc btn-cc-secondary btn-cc-xs">Edit</a>
                 <form method="POST" action="/organiser/events/<%= event.id %>/roles/<%= role.volunteer_role_id %>/delete" onsubmit="return confirm('Delete role <%= role.name %>?');">
@@ -62,7 +62,7 @@
         <div class="card-cc overflow-hidden sticky-panel">
           <div class="panel-header flex-column align-items-start">
             <span class="h-card" style="font-size:15.5px">Unassigned volunteers</span>
-            <span style="font-size:12.5px;color:#8B8778">Assign each volunteer from the Assign page for a role</span>
+            <span style="font-size:12.5px;color:#8B978F">Assign each volunteer from the Assign page for a role</span>
           </div>
           <% if (!unassigned.length) { %>
             <div class="list-row">
@@ -72,7 +72,7 @@
           <% unassigned.forEach(function (u) { %>
             <div class="list-row">
               <span class="avatar-cc sm" style="background:<%= u.avBg %>;width:30px;height:30px;font-size:11.5px"><%= u.initials %></span>
-              <span style="font-size:13.5px;font-weight:600;color:#23271F;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><%= u.name %></span>
+              <span style="font-size:13.5px;font-weight:600;color:#17342C;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><%= u.name %></span>
             </div>
           <% }) %>
         </div>
