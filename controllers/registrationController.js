@@ -1,5 +1,6 @@
 const pool = require("../config/database");
 const notifications = require("../lib/notifications");
+const notificationEmails = require("../services/notificationEmailService");
 
 const ALLOWED_PARTICIPATION_TYPES = ["Participant", "Volunteer"];
 const NOTES_MAX_LENGTH = 500;
@@ -221,7 +222,7 @@ async function registerForEvent(req, res) {
     await connection.beginTransaction();
 
     const [eventRows] = await connection.query(
-      `SELECT event_id, event_name, participant_capacity, volunteer_capacity,
+      `SELECT event_id, event_name, location, participant_capacity, volunteer_capacity,
               registration_deadline, start_datetime, status
        FROM events
        WHERE event_id = ?
@@ -360,6 +361,15 @@ async function registerForEvent(req, res) {
     // Feature 6 — notify after successful registration (does not change capacity decision).
     try {
       const eventName = eventRow.event_name || "the event";
+      let roleName = null;
+      if (participationType === "Volunteer" && preferredRoleId) {
+        const [[roleRow]] = await pool.query(
+          "SELECT role_name FROM volunteer_roles WHERE role_id = ? LIMIT 1",
+          [preferredRoleId]
+        );
+        roleName = roleRow ? roleRow.role_name : null;
+      }
+
       if (newStatus === "Confirmed") {
         await notifications.createNotification({
           userId: user.user_id,
@@ -367,6 +377,15 @@ async function registerForEvent(req, res) {
           title: participationType + " place confirmed",
           message: "Your " + participationType + " place for " + eventName + " is confirmed.",
           type: "Registration"
+        });
+        await notificationEmails.sendRegistrationConfirmedEmail({
+          email: user.email,
+          name: user.name,
+          eventName: eventName,
+          startDatetime: eventRow.start_datetime,
+          location: eventRow.location,
+          participationType: participationType,
+          roleName: roleName
         });
       } else if (newStatus === "Waitlisted") {
         await notifications.createNotification({
@@ -376,6 +395,15 @@ async function registerForEvent(req, res) {
           message: "You are #" + waitingPosition + " on the " + participationType
             + " waiting list for " + eventName + ".",
           type: "WaitingList"
+        });
+        await notificationEmails.sendRegistrationWaitlistedEmail({
+          email: user.email,
+          name: user.name,
+          eventName: eventName,
+          startDatetime: eventRow.start_datetime,
+          location: eventRow.location,
+          participationType: participationType,
+          waitingPosition: waitingPosition
         });
       }
     } catch (notifyErr) {
@@ -602,6 +630,7 @@ async function cancelRegistration(req, res) {
     const wasConfirmed = registration.status === "Confirmed";
     const participationType = registration.participation_type;
     const eventId = registration.event_id;
+    let promotionPayload = null;
 
     await connection.query(
       `UPDATE event_registrations
@@ -642,8 +671,13 @@ async function cancelRegistration(req, res) {
         // Feature 6 — notify the promoted member (promotion decision unchanged).
         try {
           const [[eventInfo]] = await connection.query(
-            "SELECT event_name FROM events WHERE event_id = ? LIMIT 1",
+            `SELECT event_name, start_datetime, location
+             FROM events WHERE event_id = ? LIMIT 1`,
             [eventId]
+          );
+          const [[promotedUser]] = await connection.query(
+            `SELECT name, email FROM users WHERE user_id = ? LIMIT 1`,
+            [waitlisted[0].user_id]
           );
           const eventName = (eventInfo && eventInfo.event_name) || "the event";
           await notifications.createNotification({
@@ -655,6 +689,16 @@ async function cancelRegistration(req, res) {
             type: "Promotion",
             connection: connection
           });
+          if (promotedUser && promotedUser.email) {
+            promotionPayload = {
+              email: promotedUser.email,
+              name: promotedUser.name,
+              eventName: eventName,
+              startDatetime: eventInfo && eventInfo.start_datetime,
+              location: eventInfo && eventInfo.location,
+              participationType: participationType
+            };
+          }
         } catch (notifyErr) {
           console.error("Promotion notification failed:", notifyErr.message);
         }
@@ -663,6 +707,16 @@ async function cancelRegistration(req, res) {
 
     await recalculateWaitingPositions(connection, eventId, participationType);
     await connection.commit();
+
+    if (promotionPayload) {
+      try {
+        await notificationEmails.sendWaitlistPromotionEmail(promotionPayload);
+      } catch (mailErr) {
+        console.error("Promotion email failed:", mailErr && mailErr.message
+          ? mailErr.message
+          : "unknown error");
+      }
+    }
 
     flash(req, "success", "Your registration has been cancelled.");
     return res.redirect("/member/registrations");
