@@ -31,7 +31,7 @@ function accessDenied(req, res) {
     layout: "public",
     activeNav: "",
     pageTitle: "Access denied · CommunityConnect SG",
-    currentUser: null,
+    currentUser: req.session.user || null,
     messages: [],
     statusCode: 403,
     errorTitle: "You do not have permission to access this page",

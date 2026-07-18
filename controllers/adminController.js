@@ -316,7 +316,7 @@ async function dashboard(req, res) {
       layout: "public",
       activeNav: "",
       pageTitle: "Something went wrong · CommunityConnect SG",
-      currentUser: null,
+      currentUser: req.session.user || null,
       messages: [],
       statusCode: 500,
       errorTitle: "Something went wrong",

@@ -93,12 +93,12 @@ app.use(async function (req, res, next) {
 
 // Sample preview datasets removed — pages load from MySQL via controllers.
 
-function publicLocals(extra) {
+function publicLocals(req, extra) {
   return Object.assign({
     layout: "public",
     activeNav: "",
     pageTitle: "CommunityConnect SG",
-    currentUser: null,
+    currentUser: req.session.user || null,
     messages: []
   }, extra || {});
 }
@@ -123,7 +123,7 @@ app.get("/", async function (req, res) {
       publicEvents.getFeaturedEvents(3)
     ]);
 
-    res.render("index", publicLocals({
+    res.render("index", publicLocals(req, {
       activeNav: "home",
       pageTitle: "CommunityConnect SG",
       impactStats: impactStats,
@@ -132,7 +132,7 @@ app.get("/", async function (req, res) {
     }));
   } catch (err) {
     console.error("Landing page query failed:", err.message);
-    res.status(500).render("error", publicLocals({
+    res.status(500).render("error", publicLocals(req, {
       activeNav: "home",
       pageTitle: "Something went wrong · CommunityConnect SG",
       statusCode: 500,
@@ -176,7 +176,7 @@ app.get("/events", async function (req, res) {
       publicEvents.countEvents()
     ]);
 
-    res.render("events", publicLocals({
+    res.render("events", publicLocals(req, {
       activeNav: "events",
       pageTitle: "Event Catalogue · CommunityConnect SG",
       events: catalogue.events,
@@ -187,7 +187,7 @@ app.get("/events", async function (req, res) {
     }));
   } catch (err) {
     console.error("Event catalogue query failed:", err.message);
-    res.status(500).render("error", publicLocals({
+    res.status(500).render("error", publicLocals(req, {
       activeNav: "events",
       pageTitle: "Something went wrong · CommunityConnect SG",
       statusCode: 500,
@@ -254,7 +254,7 @@ app.get("/events/:id", async function (req, res) {
   try {
     const event = await publicEvents.getEventById(req.params.id);
     if (!event) {
-      return res.status(404).render("error", publicLocals({
+      return res.status(404).render("error", publicLocals(req, {
         activeNav: "events",
         pageTitle: "Event not found · CommunityConnect SG",
         statusCode: 404,
@@ -299,7 +299,7 @@ app.get("/events/:id", async function (req, res) {
     const panel = registrationPanelState(event, currentRegistration);
     const viewUser = sessionUser ? toViewUser(sessionUser) : null;
 
-    res.render("event-details", publicLocals({
+    res.render("event-details", publicLocals(req, {
       activeNav: "events",
       pageTitle: event.event_name + " · CommunityConnect SG",
       currentUser: viewUser,
@@ -313,7 +313,7 @@ app.get("/events/:id", async function (req, res) {
     }));
   } catch (err) {
     console.error("Event details query failed:", err.message);
-    res.status(500).render("error", publicLocals({
+    res.status(500).render("error", publicLocals(req, {
       activeNav: "events",
       pageTitle: "Something went wrong · CommunityConnect SG",
       statusCode: 500,
@@ -613,6 +613,45 @@ app.post("/organiser/events/:id/attendance/checkout", isOrganiser, async functio
     req.session.flash = { type: "error", text: "Check-out could not be recorded (check-out cannot precede check-in)." };
     return res.redirect(attendancePath);
   }
+
+  res.redirect(attendancePath);
+});
+
+// POST /organiser/events/:id/attendance/undo
+// User action  -> organiser clicks "Undo" next to a recorded attendance row
+// Route        -> confirms ownership, then deletes the attendance record so
+//                 the registration reverts to "Pending" (no attendance row)
+// SQL          -> DELETE attendance row joined to this event's registrations
+// DB           -> attendance, event_registrations, events
+app.post("/organiser/events/:id/attendance/undo", isOrganiser, async function (req, res) {
+  const eventId = req.params.id;
+  const attendancePath = "/organiser/events/" + eventId + "/attendance";
+
+  const [eventRows] = await pool.query(
+    "SELECT event_id, organiser_id FROM events WHERE event_id = ?",
+    [eventId]
+  );
+  const event = eventRows[0];
+
+  if (!event) {
+    return res.status(404).send("Event not found.");
+  }
+  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
+    return res.status(403).send("You do not have permission to manage this event.");
+  }
+
+  const registration_id = parseInt(req.body.registration_id, 10);
+  if (!Number.isInteger(registration_id) || registration_id < 1) {
+    req.session.flash = { type: "error", text: "Select a valid registration." };
+    return res.redirect(attendancePath);
+  }
+
+  await pool.query(
+    `DELETE a FROM attendance a
+     INNER JOIN event_registrations er ON er.registration_id = a.registration_id
+     WHERE a.registration_id = ? AND er.event_id = ?`,
+    [registration_id, eventId]
+  );
 
   res.redirect(attendancePath);
 });

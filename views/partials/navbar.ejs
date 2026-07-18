@@ -28,9 +28,11 @@
         <% } else if (navRole === 'organiser') { %>
           <a href="/organiser/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
           <a href="/organiser/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Manage Events</a>
+          <!--
           <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>" class="<%= activeNav === 'registrations' ? 'active' : '' %>">Registrations</a>
           <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>" class="<%= activeNav === 'roles' ? 'active' : '' %>">Volunteer Roles</a>
           <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
+          -->
         <% } else if (navRole === 'admin') { %>
           <a href="/admin/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
           <a href="/admin/users" class="<%= activeNav === 'users' ? 'active' : '' %>">Users</a>
@@ -49,16 +51,25 @@
             Already have an account? <a href="/login">Log in</a>
           <% } %>
         </div>
-      <% } else if (isPublic) { %>
-        <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
-        <a href="/register" class="btn-cc btn-cc-coral btn-cc-sm">Register</a>
       <% } else if (typeof currentUser !== 'undefined' && currentUser) { %>
-        <a href="<%= navRole === 'member' ? '/member/dashboard' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (navRole === 'member' && typeof unreadNotificationCount !== 'undefined' && unreadNotificationCount > 0) { %><span class="count"><%= unreadNotificationCount %></span><% } %></a>
-        <a href="<%= navRole === 'member' ? '/member/profile' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="nav-avatar">
+        <%
+          // currentUser.role is sometimes the raw DB enum ("organiser") and
+          // sometimes a display label ("Organiser") depending on which
+          // controller rendered the page — compare lowercase so both work.
+          const roleLower = String(currentUser.role || '').toLowerCase();
+          const dashboardHref = roleLower === 'admin' || roleLower === 'administrator'
+            ? '/admin/dashboard'
+            : (roleLower === 'organiser' ? '/organiser/dashboard' : '/member/dashboard');
+        %>
+        <a href="<%= dashboardHref %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (roleLower !== 'admin' && roleLower !== 'administrator' && roleLower !== 'organiser' && typeof unreadNotificationCount !== 'undefined' && unreadNotificationCount > 0) { %><span class="count"><%= unreadNotificationCount %></span><% } %></a>
+        <a href="<%= dashboardHref %>" class="nav-avatar">
           <span class="avatar-cc"><%= currentUser.initials || 'CC' %></span>
           <span class="nav-avatar-name"><%= currentUser.firstName || currentUser.name || 'Account' %></span>
         </a>
         <a href="/logout" class="nav-logout">Log out</a>
+      <% } else if (isPublic) { %>
+        <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
+        <a href="/register" class="btn-cc btn-cc-coral btn-cc-sm">Register</a>
       <% } %>
 
       <% if (!hideAuthLinks) { %>
@@ -86,9 +97,11 @@
       <% } else if (navRole === 'organiser') { %>
         <a href="/organiser/dashboard">Dashboard</a>
         <a href="/organiser/events">Manage Events</a>
+        <!--
         <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>">Registrations</a>
         <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>">Volunteer Roles</a>
         <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>">Attendance</a>
+        -->
         <a href="/logout">Log out</a>
       <% } else if (navRole === 'admin') { %>
         <a href="/admin/dashboard">Dashboard</a>

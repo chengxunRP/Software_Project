@@ -71,11 +71,19 @@
                   <button type="submit" class="btn-cc btn-cc-xs btn-cc-secondary">Mark Absent</button>
                 </form>
               </div>
-            <% } else if (r.canCheckOut) { %>
-              <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance/checkout">
-                <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
-                <button type="submit" class="btn-cc btn-cc-xs btn-cc-secondary">Check out</button>
-              </form>
+            <% } else { %>
+              <div class="d-flex gap-2">
+                <% if (r.canCheckOut) { %>
+                  <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance/checkout">
+                    <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
+                    <button type="submit" class="btn-cc btn-cc-xs btn-cc-secondary">Check out</button>
+                  </form>
+                <% } %>
+                <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance/undo" onsubmit="return confirm('Undo this attendance record?');">
+                  <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
+                  <button type="submit" class="btn-cc btn-cc-xs btn-cc-outline">Undo</button>
+                </form>
+              </div>
             <% } %>
           </div>
         <% }) %>
