@@ -1,0 +1,17 @@
+.site-content .details-grid {
+  gap: 24px;
+}
+
+.table-cc-row button[data-open-modal], .table-cc-row a.btn-cc {
+  white-space: nowrap;
+}
+
+.modal-cc .modal-cc-dialog {
+  max-width: 480px;
+}
+
+@media (max-width: 900px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

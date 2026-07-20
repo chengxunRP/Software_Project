@@ -13,15 +13,32 @@ document.addEventListener("DOMContentLoaded", function () {
   var modal = document.getElementById("confirmModal");
   var modalEventName = document.getElementById("modalEventName");
   var cancelForm = document.getElementById("cancelRegistrationForm");
-  var pendingCancelId = null;
+  var deleteEventForm = document.getElementById("deleteEventForm");
+  var deleteCategoryForm = document.getElementById("deleteCategoryForm");
+  var pendingForm = null;
   var openButtons = document.querySelectorAll("[data-open-modal]");
   var closeButtons = document.querySelectorAll("[data-close-modal]");
-  var confirmCancelBtn = document.querySelector("[data-confirm-cancel]");
+  var confirmButtons = document.querySelectorAll("[data-confirm-cancel], [data-confirm-delete]");
 
   openButtons.forEach(function (btn) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
-      pendingCancelId = btn.getAttribute("data-cancel-registration-id");
+      var cancelId = btn.getAttribute("data-cancel-registration-id");
+      var deleteEventId = btn.getAttribute("data-delete-event-id");
+      var deleteCategoryId = btn.getAttribute("data-delete-category-id");
+      pendingForm = null;
+
+      if (cancelId && cancelForm) {
+        pendingForm = cancelForm;
+        cancelForm.action = "/registrations/" + encodeURIComponent(cancelId) + "/cancel";
+      } else if (deleteEventId && deleteEventForm) {
+        pendingForm = deleteEventForm;
+        deleteEventForm.action = "/organiser/events/" + encodeURIComponent(deleteEventId) + "/delete";
+      } else if (deleteCategoryId && deleteCategoryForm) {
+        pendingForm = deleteCategoryForm;
+        deleteCategoryForm.action = "/admin/categories/" + encodeURIComponent(deleteCategoryId) + "/delete";
+      }
+
       if (modalEventName) {
         modalEventName.textContent = btn.getAttribute("data-event-name") || "this item";
       }
@@ -34,23 +51,22 @@ document.addEventListener("DOMContentLoaded", function () {
   closeButtons.forEach(function (btn) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
-      pendingCancelId = null;
+      pendingForm = null;
       if (modal) {
         modal.classList.remove("open");
       }
     });
   });
 
-  if (confirmCancelBtn) {
-    confirmCancelBtn.addEventListener("click", function (e) {
+  confirmButtons.forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
       e.preventDefault();
-      if (!cancelForm || !pendingCancelId) {
+      if (!pendingForm) {
         return;
       }
-      cancelForm.action = "/registrations/" + encodeURIComponent(pendingCancelId) + "/cancel";
-      cancelForm.submit();
+      pendingForm.submit();
     });
-  }
+  });
 
   if (modal) {
     modal.addEventListener("click", function (e) {
