@@ -9,6 +9,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/database");
 const { isOrganiser } = require("../middleware/auth");
+const { toViewUser } = require("../lib/userDisplay");
 
 // Loads a volunteer role together with its parent event, and confirms the
 // logged-in organiser owns that event. Joining on both role_id AND event_id
@@ -99,7 +100,7 @@ router.get("/organiser/events/:id/roles/new", isOrganiser, async function (req, 
     role: "organiser",
     activeNav: "roles",
     pageTitle: "Add Volunteer Role · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
     navEventId: event.event_id,
     event: event,
     formMode: "create",
@@ -154,7 +155,7 @@ router.post("/organiser/events/:id/roles", isOrganiser, async function (req, res
       role: "organiser",
       activeNav: "roles",
       pageTitle: "Add Volunteer Role · Organiser",
-      currentUser: req.session.user,
+      currentUser: toViewUser(req.session.user),
       navEventId: event.event_id,
       event: event,
       formMode: "create",
@@ -182,7 +183,7 @@ router.post("/organiser/events/:id/roles", isOrganiser, async function (req, res
       role: "organiser",
       activeNav: "roles",
       pageTitle: "Add Volunteer Role · Organiser",
-      currentUser: req.session.user,
+      currentUser: toViewUser(req.session.user),
       navEventId: event.event_id,
       event: event,
       formMode: "create",
@@ -241,7 +242,7 @@ router.get("/organiser/events/:eventId/volunteers", isOrganiser, async function 
     role: "organiser",
     activeNav: "roles",
     pageTitle: "Event Volunteers · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
     navEventId: event.event_id,
     event: event,
     volunteers: volunteers,
@@ -272,7 +273,7 @@ router.get("/organiser/events/:eventId/roles/:roleId/assign", isOrganiser, async
     role: "organiser",
     activeNav: "roles",
     pageTitle: "Assign Volunteers · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
     navEventId: Number(eventId),
     volunteerRole: volunteerRole,
     assignedCount: data.assignedCount,
@@ -315,7 +316,7 @@ router.post("/organiser/events/:eventId/roles/:roleId/assign", isOrganiser, asyn
       role: "organiser",
       activeNav: "roles",
       pageTitle: "Assign Volunteers · Organiser",
-      currentUser: req.session.user,
+      currentUser: toViewUser(req.session.user),
       navEventId: Number(eventId),
       volunteerRole: volunteerRole,
       assignedCount: data.assignedCount,
@@ -432,7 +433,7 @@ router.get("/organiser/events/:eventId/roles/:roleId/edit", isOrganiser, async f
     role: "organiser",
     activeNav: "roles",
     pageTitle: "Edit Volunteer Role · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
     navEventId: Number(eventId),
     event: {
       event_id: volunteerRole.event_id,
@@ -484,7 +485,7 @@ router.post("/organiser/events/:eventId/roles/:roleId/edit", isOrganiser, async 
       role: "organiser",
       activeNav: "roles",
       pageTitle: "Edit Volunteer Role · Organiser",
-      currentUser: req.session.user,
+      currentUser: toViewUser(req.session.user),
       navEventId: Number(eventId),
       event: {
         event_id: volunteerRole.event_id,

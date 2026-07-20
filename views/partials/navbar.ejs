@@ -2,11 +2,41 @@
   const isPublic = typeof layout === 'undefined' || layout === 'public';
   const navRole = typeof role !== 'undefined' ? role : null;
   const hideAuthLinks = typeof activeNav !== 'undefined' && (activeNav === 'login' || activeNav === 'register');
+
+  // Each page shows a different title-card photo, explicitly assigned so
+  // that the tabs within any one role's own nav bar never repeat an image.
+  // A value of `false` means that page deliberately shows no title-card at
+  // all (e.g. the landing page's own Our Impact section).
+  const TITLE_CARD_BY_PAGE = {
+    'public:home': false,
+    'public:events': 'title-card2.jpg',
+    'member:dashboard': 'title-card3.jpg',
+    'member:events': 'title-card4.jpg',
+    'member:registrations': 'title-card5.jpg',
+    'member:hours': 'title-card.jpg',
+    'member:history': 'title-card2.jpg',
+    'member:profile': 'title-card3.jpg',
+    'organiser:dashboard': 'title-card4.jpg',
+    'organiser:events': 'title-card5.jpg',
+    'organiser:registrations': 'title-card.jpg',
+    'organiser:roles': 'title-card2.jpg',
+    'organiser:attendance': 'title-card3.jpg',
+    'admin:dashboard': 'title-card4.jpg',
+    'admin:users': 'title-card5.jpg',
+    'admin:categories': 'title-card.jpg',
+    'admin:reports': 'title-card2.jpg'
+  };
+  const titleCardKey = String(navRole || 'public') + ':' + String(typeof activeNav !== 'undefined' ? activeNav : '');
+  const titleCardEntry = Object.prototype.hasOwnProperty.call(TITLE_CARD_BY_PAGE, titleCardKey)
+    ? TITLE_CARD_BY_PAGE[titleCardKey]
+    : 'title-card.jpg';
+  const showTitleCard = !hideAuthLinks && titleCardEntry !== false;
+  const titleCardImage = titleCardEntry || 'title-card.jpg';
 %>
 <header class="cc-nav">
   <div class="cc-nav-inner">
     <a href="/" class="cc-brand">
-      <span class="brand-mark">C</span>
+      <img src="/images/logo.png" alt="CommunityConnect SG" class="brand-mark">
       <span class="brand-name">CommunityConnect <span class="sg">SG</span></span>
       <% if (navRole === 'organiser') { %>
         <span class="role-badge-nav">Organiser</span>
@@ -17,25 +47,26 @@
 
     <% if (!hideAuthLinks) { %>
       <nav class="pill-nav" aria-label="Primary">
-        <% if (isPublic) { %>
-          <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Browse Events</a>
-          <a href="/#impact">Our Impact</a>
-        <% } else if (navRole === 'member') { %>
+        <% if (navRole === 'member') { %>
           <a href="/member/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
           <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Browse Events</a>
           <a href="/member/registrations" class="<%= activeNav === 'registrations' ? 'active' : '' %>">My Registrations</a>
           <a href="/member/volunteer-hours" class="<%= activeNav === 'hours' ? 'active' : '' %>">Volunteer Hours</a>
+          <a href="/member/volunteer-history" class="<%= activeNav === 'history' ? 'active' : '' %>">Volunteer History</a>
         <% } else if (navRole === 'organiser') { %>
           <a href="/organiser/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
-          <a href="/organiser/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Manage Events</a>
+          <a href="/organiser/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Events</a>
           <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>" class="<%= activeNav === 'registrations' ? 'active' : '' %>">Registrations</a>
-          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>" class="<%= activeNav === 'roles' ? 'active' : '' %>">Volunteer Roles</a>
-          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
+          <a href="/organiser/roles" class="<%= activeNav === 'roles' ? 'active' : '' %>">Roles</a>
+          <a href="/organiser/attendance" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
         <% } else if (navRole === 'admin') { %>
           <a href="/admin/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
           <a href="/admin/users" class="<%= activeNav === 'users' ? 'active' : '' %>">Users</a>
           <a href="/admin/categories" class="<%= activeNav === 'categories' ? 'active' : '' %>">Categories</a>
           <a href="/admin/reports" class="<%= activeNav === 'reports' ? 'active' : '' %>">Reports</a>
+        <% } else if (isPublic) { %>
+          <a href="/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Browse Events</a>
+          <a href="/#impact">Our Impact</a>
         <% } %>
       </nav>
     <% } %>
@@ -49,9 +80,6 @@
             Already have an account? <a href="/login">Log in</a>
           <% } %>
         </div>
-      <% } else if (isPublic) { %>
-        <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
-        <a href="/register" class="btn-cc btn-cc-coral btn-cc-sm">Register</a>
       <% } else if (typeof currentUser !== 'undefined' && currentUser) { %>
         <a href="<%= navRole === 'member' ? '/member/dashboard' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="bell-btn" title="Notifications" aria-label="Notifications">🔔<% if (navRole === 'member' && typeof unreadNotificationCount !== 'undefined' && unreadNotificationCount > 0) { %><span class="count"><%= unreadNotificationCount %></span><% } %></a>
         <a href="<%= navRole === 'member' ? '/member/profile' : (navRole === 'organiser' ? '/organiser/dashboard' : '/admin/dashboard') %>" class="nav-avatar">
@@ -59,6 +87,9 @@
           <span class="nav-avatar-name"><%= currentUser.firstName || currentUser.name || 'Account' %></span>
         </a>
         <a href="/logout" class="nav-logout">Log out</a>
+      <% } else { %>
+        <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
+        <a href="/register" class="btn-cc btn-cc-coral btn-cc-sm">Register</a>
       <% } %>
 
       <% if (!hideAuthLinks) { %>
@@ -71,24 +102,20 @@
 
   <% if (!hideAuthLinks) { %>
     <div class="cc-mobile-sheet" id="publicMobileSheet">
-      <% if (isPublic) { %>
-        <a href="/events">Browse Events</a>
-        <a href="/#impact">Our Impact</a>
-        <a href="/login">Log in</a>
-        <a href="/register">Register</a>
-      <% } else if (navRole === 'member') { %>
+      <% if (navRole === 'member') { %>
         <a href="/member/dashboard">Dashboard</a>
         <a href="/events">Browse Events</a>
         <a href="/member/registrations">My Registrations</a>
         <a href="/member/volunteer-hours">Volunteer Hours</a>
+        <a href="/member/volunteer-history">Volunteer History</a>
         <a href="/member/profile">My Profile</a>
         <a href="/logout">Log out</a>
       <% } else if (navRole === 'organiser') { %>
         <a href="/organiser/dashboard">Dashboard</a>
         <a href="/organiser/events">Manage Events</a>
         <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>">Registrations</a>
-        <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>">Volunteer Roles</a>
-        <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>">Attendance</a>
+        <a href="/organiser/roles">Volunteer Roles</a>
+        <a href="/organiser/attendance">Attendance</a>
         <a href="/logout">Log out</a>
       <% } else if (navRole === 'admin') { %>
         <a href="/admin/dashboard">Dashboard</a>
@@ -96,7 +123,17 @@
         <a href="/admin/categories">Categories</a>
         <a href="/admin/reports">Reports</a>
         <a href="/logout">Log out</a>
+      <% } else if (isPublic) { %>
+        <a href="/events">Browse Events</a>
+        <a href="/#impact">Our Impact</a>
+        <a href="/login">Log in</a>
+        <a href="/register">Register</a>
       <% } %>
     </div>
   <% } %>
 </header>
+<% if (showTitleCard) { %>
+  <div class="site-title-card" aria-hidden="true">
+    <img src="/images/<%= titleCardImage %>" alt="">
+  </div>
+<% } %>

@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Organiser';
-    pageHeading = 'Manage Events';
-    pageLead = 'Create, edit and manage capacity for your community events.';
-    pageActions = '<a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>';
+    const pageEyebrow = 'Organiser';
+    const pageHeading = 'Manage Events';
+    const pageLead = 'Create, edit and manage capacity for your community events.';
+    const pageActions = '<a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel">
@@ -47,15 +47,20 @@
               }[r.status] || 'badge-cc-muted';
             %>
             <div class="table-cc-row" style="grid-template-columns:2.2fr 0.9fr 1.1fr 1.4fr 0.9fr 1.4fr">
-              <div>
-                <div style="font-weight:700;color:#17342C"><%= r.name %></div>
-                <div style="font-size:12.5px;color:#8B978F"><%= r.loc %></div>
+              <div class="d-flex align-items-center gap-2 min-w-0">
+                <% if (r.thumb) { %>
+                  <img src="<%= r.thumb %>" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0">
+                <% } %>
+                <div class="min-w-0">
+                  <div style="font-weight:700;color:#12161C"><%= r.name %></div>
+                  <div style="font-size:12.5px;color:#8A93A6"><%= r.loc %></div>
+                </div>
               </div>
               <span class="text-muted-cc" style="font-size:13.5px"><%= r.cat %></span>
               <span class="text-muted-cc" style="font-size:13.5px"><%= r.when %></span>
               <div>
-                <div style="font-size:12px;font-weight:600;color:#65756F">P <%= r.participants_filled %>/<%= r.participant_capacity %></div>
-                <div style="font-size:12px;font-weight:600;color:#65756F">V <%= r.volunteers_filled %>/<%= r.volunteer_capacity %></div>
+                <div style="font-size:12px;font-weight:600;color:#6B7280">P <%= r.participants_filled %>/<%= r.participant_capacity %></div>
+                <div style="font-size:12px;font-weight:600;color:#6B7280">V <%= r.volunteers_filled %>/<%= r.volunteer_capacity %></div>
               </div>
               <span><span class="badge-cc <%= statusClass %>" style="font-size:11.5px;padding:4px 10px"><%= r.status %></span></span>
               <div class="d-flex gap-1 justify-content-end flex-wrap">
@@ -83,8 +88,8 @@
   <div class="modal-cc-dialog" style="width:460px">
     <div class="modal-icon">!</div>
     <div>
-      <div style="font-size:19px;font-weight:800;color:#17342C">Cancel this event?</div>
-      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">Cancelling <b style="color:#22403A" id="modalEventName">this event</b> will permanently remove it and related registrations. This cannot be undone.</div>
+      <div style="font-size:19px;font-weight:800;color:#12161C">Cancel this event?</div>
+      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">Cancelling <b style="color:#33394A" id="modalEventName">this event</b> will permanently remove it and related registrations. This cannot be undone.</div>
     </div>
     <div class="d-flex gap-2 justify-content-end">
       <button type="button" class="btn-cc btn-cc-secondary" data-close-modal>Keep event</button>

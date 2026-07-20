@@ -11,17 +11,17 @@ const { flash, takeFlash } = require("../lib/flash");
 // Same palette as lib/publicEvents.js so category colours stay consistent
 // across the public catalogue and the admin pages.
 const CATEGORY_STYLES = {
-  Environment: { color: "#2E7D4F", badgeBg: "#E7F2EA", badgeFg: "#1E4D33" },
-  "Food Support": { color: "#D99E2B", badgeBg: "#FBF3DF", badgeFg: "#8A5E08" },
+  Environment: { color: "#087F5B", badgeBg: "#E8F7F0", badgeFg: "#056047" },
+  "Food Support": { color: "#F4B83F", badgeBg: "#FFF7DF", badgeFg: "#8A5E08" },
   "Elderly Support": { color: "#C08FBB", badgeBg: "#F3E9F2", badgeFg: "#7A4472" },
   Education: { color: "#7FA8D9", badgeBg: "#E9EDF6", badgeFg: "#3B5384" },
   Fundraising: { color: "#D9A08F", badgeBg: "#FBEAE8", badgeFg: "#9C4038" }
 };
 
 const DEFAULT_CATEGORY_STYLE = {
-  color: "#6E7266",
+  color: "#6B7280",
   badgeBg: "#EDEAE0",
-  badgeFg: "#6E7266"
+  badgeFg: "#6B7280"
 };
 
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -168,13 +168,16 @@ async function getVolunteerHoursSummary(year) {
   };
 }
 
-/** Registration counts per month of `year`, scaled to a 140px-tall bar chart. */
+/** Registration counts per month of `year`, scaled to a 140px-tall bar chart.
+ *  Grouped by the event's own month (not registered_at) so this reflects the
+ *  event calendar rather than when the sign-up action happened. */
 async function getMonthlyRegistrations(year) {
   const [rows] = await pool.query(
-    `SELECT MONTH(registered_at) AS m, COUNT(*) AS cnt
-     FROM event_registrations
-     WHERE YEAR(registered_at) = ?
-     GROUP BY MONTH(registered_at)`,
+    `SELECT MONTH(e.start_datetime) AS m, COUNT(*) AS cnt
+     FROM event_registrations r
+     INNER JOIN events e ON e.event_id = r.event_id
+     WHERE YEAR(e.start_datetime) = ?
+     GROUP BY MONTH(e.start_datetime)`,
     [year]
   );
 
@@ -209,8 +212,8 @@ async function getUserRoles() {
   const total = counts.community_member + counts.organiser + counts.admin;
 
   const roleDefs = [
-    { key: "community_member", label: "Community members", color: "#2E7D4F" },
-    { key: "organiser", label: "Organisers", color: "#D99E2B" },
+    { key: "community_member", label: "Community members", color: "#087F5B" },
+    { key: "organiser", label: "Organisers", color: "#F4B83F" },
     { key: "admin", label: "Admins", color: "#7FA8D9" }
   ];
 

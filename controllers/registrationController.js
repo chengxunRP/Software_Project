@@ -46,7 +46,7 @@ function memberViewUser(user) {
     initials: initialsFromName(user.name),
     role: "Community member",
     email: user.email,
-    avatarBg: "#D99E2B"
+    avatarBg: "#F4B83F"
   };
 }
 
@@ -83,9 +83,9 @@ function statusBadge(status, waitingPosition) {
 }
 
 function badgeColors(tone) {
-  if (tone === "amber") return { badgeBg: "#FBF3DF", badgeFg: "#8A5E08" };
-  if (tone === "grey") return { badgeBg: "#EDEAE0", badgeFg: "#6E7266" };
-  return { badgeBg: "#E7F2EA", badgeFg: "#1E4D33" };
+  if (tone === "amber") return { badgeBg: "#FFF7DF", badgeFg: "#8A5E08" };
+  if (tone === "grey") return { badgeBg: "#EDEAE0", badgeFg: "#6B7280" };
+  return { badgeBg: "#E8F7F0", badgeFg: "#056047" };
 }
 
 function capacityForType(eventRow, participationType) {

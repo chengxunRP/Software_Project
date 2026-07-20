@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Community member';
-    pageHeading = 'My Registrations';
-    pageLead = 'Track your participant and volunteer registrations, waiting-list positions and cancellations.';
-    pageActions = '<a href="/events" class="btn-cc btn-cc-primary btn-cc-sm">+ Find an event</a>';
+    const pageEyebrow = 'Community member';
+    const pageHeading = 'My Registrations';
+    const pageLead = 'Track your participant and volunteer registrations, waiting-list positions and cancellations.';
+    const pageActions = '<a href="/events" class="btn-cc btn-cc-primary btn-cc-sm">+ Find an event</a>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1000">
@@ -23,8 +23,8 @@
       <div class="d-flex flex-column gap-3">
         <% if (!rows.length) { %>
           <div class="empty-state">
-            <div style="width:52px;height:52px;border-radius:50%;background:#E1EEE8;display:flex;align-items:center;justify-content:center;font-size:22px">🗂</div>
-            <div style="font-size:16px;font-weight:700;color:#17342C">Nothing here yet</div>
+            <div style="width:52px;height:52px;border-radius:50%;background:#E2E6ED;display:flex;align-items:center;justify-content:center;font-size:22px">🗂</div>
+            <div style="font-size:16px;font-weight:700;color:#12161C">Nothing here yet</div>
             <div class="text-muted-cc" style="font-size:14px;max-width:36ch">No registrations in this category. Browse the catalogue to join as a Participant or Volunteer.</div>
             <a href="/events" class="btn-cc btn-cc-primary mt-2">Browse Events</a>
           </div>
@@ -37,16 +37,16 @@
               <span class="day" style="font-size:20px"><%= r.day %></span>
             </div>
             <div class="flex-fill min-w-0">
-              <div style="font-size:15.5px;font-weight:700;color:#17342C"><%= r.name %></div>
-              <div style="font-size:13.5px;color:#65756F;margin-top:2px">
-                <span style="font-weight:600;color:#22403A"><%= r.participation_type %></span>
+              <div style="font-size:15.5px;font-weight:700;color:#12161C"><%= r.name %></div>
+              <div style="font-size:13.5px;color:#6B7280;margin-top:2px">
+                <span style="font-weight:600;color:#33394A"><%= r.participation_type %></span>
                 · <%= r.meta %>
               </div>
               <% if (r.waiting_position) { %>
                 <div style="font-size:12.5px;color:#8A6008;font-weight:600;margin-top:2px">Waiting-list position: #<%= r.waiting_position %></div>
               <% } %>
               <% if (r.registered_label) { %>
-                <div style="font-size:12.5px;color:#8B978F;margin-top:2px">Registered: <%= r.registered_label %></div>
+                <div style="font-size:12.5px;color:#8A93A6;margin-top:2px">Registered: <%= r.registered_label %></div>
               <% } %>
               <% if (r.note) { %>
                 <div style="font-size:12.5px;color:#8A6008;font-weight:600"><%= r.note %></div>
@@ -78,8 +78,8 @@
   <div class="modal-cc-dialog">
     <div class="modal-icon">!</div>
     <div>
-      <div style="font-size:19px;font-weight:800;color:#17342C">Cancel this registration?</div>
-      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">You are about to cancel your place at <b style="color:#22403A" id="modalEventName">this event</b>. Your space will be offered to the earliest matching person on the waiting list. This cannot be undone.</div>
+      <div style="font-size:19px;font-weight:800;color:#12161C">Cancel this registration?</div>
+      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">You are about to cancel your place at <b style="color:#33394A" id="modalEventName">this event</b>. Your space will be offered to the earliest matching person on the waiting list. This cannot be undone.</div>
     </div>
     <div class="d-flex gap-2 justify-content-end">
       <button type="button" class="btn-cc btn-cc-secondary" data-close-modal>Keep my place</button>

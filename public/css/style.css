@@ -1,8 +1,15 @@
 /*
  * CommunityConnect SG — design system
- * Emerald / jade / teal / coral visual direction (team-approved refresh).
- * Layout: sticky frosted top pill-nav + gradient page-header bands with
- * overlapping cards + dark footer. No charcoal sidebar.
+ * Photo-driven bright direction with the original emerald green accent
+ * identity restored (design experiment — not yet team-approved, kept local
+ * to the design/travel-photo-theme branch). Surfaces are light/white, the
+ * brand accent is the original green (not the cyan used earlier on this
+ * branch), and real photography (public/images/) stays wired into the
+ * hero, auth panels and event category cards. Photo-backed sections (hero,
+ * page-header band, auth split panel) keep a dark scrim under their photo
+ * for text legibility — that is a property of putting text over a photo,
+ * not a "dark theme" choice, so it does not change when the rest of the
+ * site is bright.
  *
  * Structure of this file:
  *   1. Design tokens        6. Cards
@@ -14,7 +21,7 @@
  */
 
 :root {
-  /* Core palette */
+  /* Core palette — original emerald green accent identity */
   --cc-primary: #087F5B;
   --cc-primary-hover: #066B4C;
   --cc-deep: #056047;
@@ -37,22 +44,22 @@
   --cc-red-dark: #C94238;
   --cc-red-text: #B33328;
 
-  /* Neutrals */
-  --cc-bg: #F8FBFA;
+  /* Neutrals — bright surfaces */
+  --cc-bg: #F7F9FB;
   --cc-white: #FFFFFF;
-  --cc-ink: #17342C;
-  --cc-body: #22403A;
-  --cc-muted: #65756F;
-  --cc-soft: #8B978F;
-  --cc-border: #DCE9E4;
-  --cc-border-input: #CFE0D9;
-  --cc-divider: #E8F2EE;
-  --cc-table-head: #F3FAF7;
-  --cc-track: #E1EEE8;
-  --cc-input-bg: #FBFEFD;
+  --cc-ink: #12161C;
+  --cc-body: #33394A;
+  --cc-muted: #6B7280;
+  --cc-soft: #8A93A6;
+  --cc-border: #E2E6ED;
+  --cc-border-input: #D3D9E3;
+  --cc-divider: #EEF1F5;
+  --cc-table-head: #F4F6F9;
+  --cc-track: #E7EAF0;
+  --cc-input-bg: #FFFFFF;
   --cc-sage: #E8F7F0;
 
-  /* Soft tint / border pairs used by badges & messages */
+  /* Soft tint / border pairs used by badges & messages — original values */
   --cc-green-soft: #E8F7F0;
   --cc-green-border: #B9E3D3;
   --cc-amber-soft: #FFF7DF;
@@ -67,7 +74,7 @@
   --cc-teal-border: #BEEBE2;
   --cc-teal-text: #0F6B5C;
 
-  /* Dark footer / mobile tab bar */
+  /* Dark footer / mobile tab bar — original dark green */
   --cc-footer: #0B2A20;
   --cc-footer-text: #CDE8DD;
   --cc-footer-muted: #9FCDBB;
@@ -80,10 +87,16 @@
   --cc-sidebar-muted: #6FA391;
   --cc-sidebar-text: #CDE8DD;
 
-  /* Gradients */
+  /* Photo scrim — layered under a background-image for text legibility.
+     Stays dark regardless of overall theme brightness (functional, not
+     stylistic — white text needs a dark scrim to read over any photo). */
+  --cc-photo-scrim: linear-gradient(180deg, rgba(6, 7, 10, 0.25) 0%, rgba(6, 7, 10, 0.55) 55%, rgba(6, 7, 10, 0.92) 100%);
+  --cc-photo-scrim-soft: linear-gradient(180deg, rgba(5, 6, 10, 0.15), rgba(5, 6, 10, 0.75));
+
+  /* Gradients — original green/teal */
   --cc-header-gradient: linear-gradient(120deg, #04402F, #056047 55%, #22B8A7);
   --cc-header-gradient-steep: linear-gradient(150deg, #04402F, #056047 55%, #22B8A7);
-  --cc-hero-gradient: linear-gradient(135deg, #04402F 0%, #056047 45%, #22B8A7 100%);
+  --cc-hero-gradient: linear-gradient(180deg, rgba(6, 7, 10, 0.25) 0%, rgba(6, 7, 10, 0.55) 55%, rgba(6, 7, 10, 0.92) 100%);
   --cc-brand-gradient: linear-gradient(135deg, #087F5B, #22B8A7);
   --cc-cta-gradient: linear-gradient(120deg, #E9564D, #FF685D 55%, #F7C766);
   --cc-avatar-gradient: linear-gradient(135deg, #22B8A7, #4A8FC2);
@@ -143,7 +156,7 @@ img {
 
 input::placeholder,
 textarea::placeholder {
-  color: #9AA9A2;
+  color: #9AA3B4;
 }
 
 /* ==================== 2. RESET & TYPOGRAPHY ==================== */
@@ -203,16 +216,13 @@ textarea::placeholder {
 /* ---------- Brand mark ---------- */
 
 .brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: var(--cc-brand-gradient);
-  color: #fff;
-  font-weight: 800;
-  font-size: 17px;
+  background: #fff;
+  padding: 3px;
+  object-fit: contain;
   flex-shrink: 0;
   box-shadow: var(--cc-shadow-nav);
 }
@@ -221,14 +231,13 @@ textarea::placeholder {
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  font-size: 16px;
 }
 
 .brand-mark.xs {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  font-size: 12px;
+  padding: 2px;
   box-shadow: none;
 }
 
@@ -258,10 +267,35 @@ textarea::placeholder {
   position: sticky;
   top: 0;
   z-index: 60;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--cc-border);
+}
+
+/* Title-card banner — sits under the (sticky) nav, scrolls away normally,
+   shown on every page (views/partials/navbar.ejs). */
+.site-title-card {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  position: relative;
+}
+
+.site-title-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+}
+
+.site-title-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
 }
 
 .cc-nav-inner {
@@ -312,7 +346,7 @@ textarea::placeholder {
   border-radius: var(--cc-radius-pill);
   font-size: 14.5px;
   font-weight: 600;
-  color: #3D5148;
+  color: var(--cc-muted);
   background: transparent;
   transition: background 0.15s ease, color 0.15s ease;
   white-space: nowrap;
@@ -325,7 +359,7 @@ textarea::placeholder {
 
 .pill-nav a.active {
   color: var(--cc-deep);
-  background: #CFF0E0;
+  background: var(--cc-teal-soft);
   font-weight: 700;
 }
 
@@ -380,7 +414,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid #fff;
+  border: 1.5px solid var(--cc-input-bg);
 }
 
 .nav-avatar {
@@ -658,7 +692,7 @@ textarea::placeholder {
 .btn-cc:disabled,
 .btn-cc.disabled {
   background: var(--cc-track);
-  color: #9AA9A2;
+  color: #9AA3B4;
   border-color: transparent;
   box-shadow: none;
   cursor: not-allowed;
@@ -699,7 +733,7 @@ textarea::placeholder {
 
 .form-control-cc.is-invalid {
   border-color: var(--cc-red);
-  background: #FFF8F7;
+  background: #FDE7E4;
 }
 
 .form-hint {
@@ -959,7 +993,7 @@ textarea::placeholder {
 
 .event-card-photo {
   height: 140px;
-  background: repeating-linear-gradient(45deg, #E4F0EA 0 12px, #EEF7F2 12px 24px);
+  background: repeating-linear-gradient(45deg, #E9EDF3 0 12px, #F2F4F8 12px 24px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1038,13 +1072,6 @@ textarea::placeholder {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.event-card-emoji {
-  position: relative;
-  z-index: 1;
-  font-size: 42px;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
-}
-
 .event-card-panel.panel-environment {
   background: var(--cc-event-panel-environment);
 }
@@ -1067,6 +1094,33 @@ textarea::placeholder {
 
 .event-card-panel.panel-health {
   background: var(--cc-event-panel-health);
+}
+
+/* Must come after .panel-{category} above: those set the shorthand
+   `background` (gradient fallback), which implicitly resets
+   background-size/position/repeat to their defaults. These two rules need
+   to win that cascade whenever a real photo (has-photo/contain-photo) is
+   showing, or the image renders at natural size and tiles instead of
+   covering the panel. */
+.event-card-panel.has-photo {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Browse Events cards show the full photo uncropped, letterboxed on a
+   neutral fill rather than cover-cropped (views/events.ejs only). */
+.event-card-panel.contain-photo {
+  height: 180px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: var(--cc-table-head);
+}
+
+.event-card-panel.contain-photo::before,
+.event-card-panel.contain-photo::after {
+  display: none;
 }
 
 .event-card-cat-chip {
@@ -1113,7 +1167,7 @@ textarea::placeholder {
 }
 
 .date-chip.amber {
-  background: linear-gradient(135deg, #F4B83F, #F8D488);
+  background: linear-gradient(135deg, #E0A62E, #F3CE7A);
 }
 
 .date-chip.amber .month,
@@ -1122,7 +1176,7 @@ textarea::placeholder {
 }
 
 .date-chip.grey {
-  background: linear-gradient(135deg, #5E7268, #9FB3A9);
+  background: linear-gradient(135deg, #8A93A6, #C3C9D6);
 }
 
 .date-chip.grey .month,
@@ -1302,9 +1356,9 @@ textarea::placeholder {
 
 .tabs-cc a.active,
 .tabs-cc button.active {
-  background: #fff;
+  background: var(--cc-white);
   color: var(--cc-ink);
-  box-shadow: 0 1px 2px rgba(23, 52, 44, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Pagination */
@@ -1326,7 +1380,7 @@ textarea::placeholder {
   font-weight: 700;
   font-size: 14px;
   border: 1px solid var(--cc-border-input);
-  background: #fff;
+  background: var(--cc-white);
   color: var(--cc-body);
 }
 
@@ -1446,7 +1500,7 @@ textarea::placeholder {
   width: 260px;
   height: 260px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
+  background: radial-gradient(circle, rgba(52, 228, 228, 0.14), transparent 70%);
 }
 
 .page-header-band::after {
@@ -1457,7 +1511,7 @@ textarea::placeholder {
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
+  background: radial-gradient(circle, rgba(240, 185, 78, 0.08), transparent 70%);
 }
 
 .page-header-inner {
@@ -1688,7 +1742,10 @@ textarea::placeholder {
 /* Landing page — hero, impact band, sections, how-it-works, categories, CTA */
 
 .hero-section {
-  background: var(--cc-hero-gradient);
+  background: var(--cc-hero-gradient), url("/images/hero-hands-sky.jpg");
+  background-size: cover;
+  background-position: center 30%;
+  background-repeat: no-repeat;
   position: relative;
   overflow: hidden;
 }
@@ -1701,7 +1758,7 @@ textarea::placeholder {
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+  background: radial-gradient(circle, rgba(52, 228, 228, 0.16), transparent 70%);
 }
 
 .hero-section::after {
@@ -1712,7 +1769,7 @@ textarea::placeholder {
   width: 380px;
   height: 380px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
+  background: radial-gradient(circle, rgba(240, 185, 78, 0.1), transparent 70%);
 }
 
 .hero-inner {
@@ -1801,7 +1858,7 @@ textarea::placeholder {
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
   min-height: 360px;
   display: flex;
   align-items: center;
@@ -1809,6 +1866,14 @@ textarea::placeholder {
   box-shadow: var(--cc-shadow-deep);
   position: relative;
   z-index: 1;
+}
+
+.hero-visual-photo {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  object-fit: cover;
+  display: block;
 }
 
 .impact-section {
@@ -1955,7 +2020,7 @@ textarea::placeholder {
 
 .twin-cards .twin-card.participant {
   background: linear-gradient(135deg, #E8F7F0, #CFF0E0);
-  border: 1px solid #CFE6DC;
+  border: 1px solid #B9E3D3;
 }
 
 .twin-cards .twin-card.participant::before {
@@ -2009,7 +2074,7 @@ textarea::placeholder {
 }
 
 .twin-cards .twin-card.volunteer .twin-card-title {
-  color: #8A6008;
+  color: var(--cc-amber-text);
 }
 
 .twin-cards .twin-card p {
@@ -2034,7 +2099,7 @@ textarea::placeholder {
 }
 
 .twin-cards .twin-card.volunteer a {
-  color: #8A6008;
+  color: var(--cc-amber-text);
 }
 
 /* Category grid */
@@ -2163,13 +2228,13 @@ textarea::placeholder {
 
 .cta-band-actions .btn-cc-primary {
   background: #fff;
-  color: var(--cc-coral-deep);
+  color: #B23328;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
 .cta-band-actions .btn-cc-primary:hover {
-  background: var(--cc-amber-soft);
-  color: var(--cc-coral-deep);
+  background: #FBEDC0;
+  color: #B23328;
 }
 
 .cta-band-actions .btn-cc-secondary {
@@ -2245,7 +2310,10 @@ textarea::placeholder {
 }
 
 .auth-split-panel {
-  background: var(--cc-hero-gradient);
+  background: var(--cc-hero-gradient), url("/images/category-environment-alt.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #fff;
   padding: 56px 48px;
   display: flex;
@@ -2335,15 +2403,15 @@ textarea::placeholder {
 }
 
 .notif-dot.muted {
-  background: #A9BCB5;
+  background: var(--cc-soft);
 }
 
 /* Bar chart (volunteer hours / registrations by month) */
 
 .bar-chart {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 10px;
   align-items: end;
   height: 150px;
 }
@@ -2361,7 +2429,7 @@ textarea::placeholder {
   width: 100%;
   max-width: 44px;
   border-radius: 7px 7px 3px 3px;
-  background: #C9E8DA;
+  background: var(--cc-deep-2);
 }
 
 .bar-chart-item .bar.current {
@@ -2409,7 +2477,7 @@ textarea::placeholder {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(11, 42, 32, 0.55);
+  background: rgba(2, 2, 4, 0.75);
   align-items: center;
   justify-content: center;
   z-index: 70;
@@ -2421,7 +2489,7 @@ textarea::placeholder {
 }
 
 .modal-cc-dialog {
-  background: #fff;
+  background: var(--cc-white);
   border-radius: 18px;
   width: 440px;
   max-width: 100%;
@@ -2505,14 +2573,14 @@ textarea::placeholder {
 
 .breadcrumb-cc .sep {
   margin: 0 6px;
-  color: #A9BCB5;
+  color: var(--cc-soft);
 }
 
 .page-photo {
   height: 280px;
   border-radius: 16px;
   border: 1px solid var(--cc-border);
-  background: repeating-linear-gradient(45deg, #E4F0EA 0 14px, #EEF7F2 14px 28px);
+  background: repeating-linear-gradient(45deg, #E9EDF3 0 14px, #F2F4F8 14px 28px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2678,7 +2746,7 @@ textarea::placeholder {
     gap: 6px;
     position: sticky;
     bottom: 0;
-    background: #fff;
+    background: var(--cc-white);
     border-top: 1px solid var(--cc-border);
     padding: 14px 18px 20px;
     z-index: 45;
@@ -2901,7 +2969,10 @@ textarea::placeholder {
 }
 
 .auth-split-panel.teal {
-  background: linear-gradient(120deg, #04402F, #22B8A7 70%);
+  background: var(--cc-hero-gradient), url("/images/impact-seedlings.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .twin-cards.compact {

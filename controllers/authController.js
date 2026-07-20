@@ -25,7 +25,17 @@ function normalizeEmail(email) {
 }
 
 function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const normalized = String(email || "").trim();
+  if (!normalized) return false;
+  if (normalized.includes(" ")) return false;
+  const atIndex = normalized.lastIndexOf("@");
+  if (atIndex <= 0 || atIndex !== normalized.indexOf("@")) return false;
+  const localPart = normalized.slice(0, atIndex);
+  const domainPart = normalized.slice(atIndex + 1);
+  if (!localPart || !domainPart || domainPart.includes(".") === false) return false;
+  const domainParts = domainPart.split(".");
+  if (domainParts.some(function (part) { return !part; })) return false;
+  return true;
 }
 
 // Only SHA-256 hashes of reset tokens are stored — never the raw token.
