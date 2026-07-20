@@ -298,6 +298,52 @@ textarea::placeholder {
   pointer-events: none;
 }
 
+/* Clear title photo — used on Dashboard, Browse Events, My Registrations
+   and Volunteer Hours. Keeps the title-card image fully visible (no green
+   band or fade over it). Page title/actions sit below the photo on a
+   light surface instead. */
+.clear-title-photo .site-title-card {
+  height: 300px;
+}
+
+.clear-title-photo .site-title-card::after {
+  display: none;
+}
+
+.clear-title-photo .page-header-band {
+  margin-top: 0;
+  background: var(--cc-bg);
+  padding: 24px 32px 48px;
+}
+
+.clear-title-photo .page-header-band::before,
+.clear-title-photo .page-header-band::after {
+  display: none;
+}
+
+.clear-title-photo .page-eyebrow {
+  color: var(--cc-primary);
+}
+
+.clear-title-photo .page-header-title {
+  color: var(--cc-ink);
+}
+
+.clear-title-photo .page-header-lead {
+  color: var(--cc-muted);
+}
+
+.clear-title-photo .page-header-actions .btn-cc-primary {
+  background: var(--cc-primary);
+  color: #fff;
+  box-shadow: var(--cc-shadow);
+}
+
+.clear-title-photo .page-header-actions .btn-cc-primary:hover {
+  background: var(--cc-primary-hover);
+  color: #fff;
+}
+
 .cc-nav-inner {
   max-width: 1240px;
   margin: 0 auto;
