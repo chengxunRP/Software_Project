@@ -94,9 +94,6 @@ app.use(async function (req, res, next) {
 
 // Sample preview datasets removed — pages load from MySQL via controllers.
 
-<<<<<<< HEAD
-function publicLocals(req, extra) {
-=======
 const SESSION_ROLE_TO_NAV_ROLE = {
   community_member: "member",
   organiser: "organiser",
@@ -108,17 +105,12 @@ const SESSION_ROLE_TO_NAV_ROLE = {
 // of Log in/Register, and link the bell/avatar to the right dashboard.
 function publicLocals(req, extra) {
   const sessionUser = req && req.session && req.session.user;
->>>>>>> design/travel-photo-theme
   return Object.assign({
     layout: "public",
     activeNav: "",
     pageTitle: "CommunityConnect SG",
-<<<<<<< HEAD
-    currentUser: req.session.user || null,
-=======
     currentUser: sessionUser ? toViewUser(sessionUser) : null,
     role: sessionUser ? (SESSION_ROLE_TO_NAV_ROLE[sessionUser.role] || null) : null,
->>>>>>> design/travel-photo-theme
     messages: []
   }, extra || {});
 }

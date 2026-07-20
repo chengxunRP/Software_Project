@@ -55,19 +55,10 @@
           <a href="/member/volunteer-history" class="<%= activeNav === 'history' ? 'active' : '' %>">Volunteer History</a>
         <% } else if (navRole === 'organiser') { %>
           <a href="/organiser/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
-<<<<<<< HEAD
-          <a href="/organiser/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Manage Events</a>
-          <!--
-          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>" class="<%= activeNav === 'registrations' ? 'active' : '' %>">Registrations</a>
-          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>" class="<%= activeNav === 'roles' ? 'active' : '' %>">Volunteer Roles</a>
-          <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
-          -->
-=======
           <a href="/organiser/events" class="<%= activeNav === 'events' ? 'active' : '' %>">Events</a>
           <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>" class="<%= activeNav === 'registrations' ? 'active' : '' %>">Registrations</a>
           <a href="/organiser/roles" class="<%= activeNav === 'roles' ? 'active' : '' %>">Roles</a>
           <a href="/organiser/attendance" class="<%= activeNav === 'attendance' ? 'active' : '' %>">Attendance</a>
->>>>>>> design/travel-photo-theme
         <% } else if (navRole === 'admin') { %>
           <a href="/admin/dashboard" class="<%= activeNav === 'dashboard' ? 'active' : '' %>">Dashboard</a>
           <a href="/admin/users" class="<%= activeNav === 'users' ? 'active' : '' %>">Users</a>
@@ -105,11 +96,7 @@
           <span class="nav-avatar-name"><%= currentUser.firstName || currentUser.name || 'Account' %></span>
         </a>
         <a href="/logout" class="nav-logout">Log out</a>
-<<<<<<< HEAD
-      <% } else if (isPublic) { %>
-=======
       <% } else { %>
->>>>>>> design/travel-photo-theme
         <a href="/login" class="btn-cc btn-cc-secondary btn-cc-sm">Log in</a>
         <a href="/register" class="btn-cc btn-cc-coral btn-cc-sm">Register</a>
       <% } %>
@@ -135,16 +122,9 @@
       <% } else if (navRole === 'organiser') { %>
         <a href="/organiser/dashboard">Dashboard</a>
         <a href="/organiser/events">Manage Events</a>
-        <!--
         <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/registrations') : '/organiser/registrations' %>">Registrations</a>
-<<<<<<< HEAD
-        <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/roles') : '/organiser/roles' %>">Volunteer Roles</a>
-        <a href="<%= typeof navEventId !== 'undefined' && navEventId ? ('/organiser/events/' + navEventId + '/attendance') : '/organiser/attendance' %>">Attendance</a>
-        -->
-=======
         <a href="/organiser/roles">Volunteer Roles</a>
         <a href="/organiser/attendance">Attendance</a>
->>>>>>> design/travel-photo-theme
         <a href="/logout">Log out</a>
       <% } else if (navRole === 'admin') { %>
         <a href="/admin/dashboard">Dashboard</a>
