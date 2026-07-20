@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Organiser';
-    pageHeading = typeof pageHeading !== 'undefined' ? pageHeading : 'Select an event';
-    pageLead = typeof pageLead !== 'undefined' ? pageLead : '';
-    pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Manage Events</a>';
+    const pageEyebrow = 'Organiser';
+    const pageHeading = (typeof locals.pageHeading !== 'undefined' && locals.pageHeading) ? locals.pageHeading : 'Select an event';
+    const pageLead = (typeof locals.pageLead !== 'undefined' && locals.pageLead) ? locals.pageLead : '';
+    const pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Manage Events</a>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-980">
@@ -29,8 +29,8 @@
         <% events.forEach(function (e) { %>
           <div class="list-row">
             <div class="flex-fill min-w-0">
-              <div style="font-weight:700;color:#17342C"><%= e.event_name %></div>
-              <div style="font-size:12.5px;color:#8B978F"><%= e.dateLabel %><%= e.location ? ' · ' + e.location : '' %></div>
+              <div style="font-weight:700;color:#12161C"><%= e.event_name %></div>
+              <div style="font-size:12.5px;color:#8A93A6"><%= e.dateLabel %><%= e.location ? ' · ' + e.location : '' %></div>
             </div>
             <a href="<%= e.href %>" class="btn-cc btn-cc-primary btn-cc-xs"><%= actionLabel %></a>
           </div>

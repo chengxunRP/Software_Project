@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Admin';
-    pageHeading = 'System Reports';
-    pageLead = 'Performance metrics across categories and events.';
-    pageActions = '';
+    const pageEyebrow = 'Admin';
+    const pageHeading = 'System Reports';
+    const pageLead = 'Performance metrics across categories and events.';
+    const pageActions = '';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1060">
@@ -43,17 +43,17 @@
             <div class="table-cc-row" style="grid-template-columns:1.6fr 0.9fr 1.1fr 1.1fr 1.1fr 1.3fr">
               <div class="d-flex align-items-center gap-2">
                 <span style="width:11px;height:11px;border-radius:4px;background:<%= c.color %>;flex-shrink:0"></span>
-                <span style="font-weight:700;color:#17342C"><%= c.name %></span>
+                <span style="font-weight:700;color:#12161C"><%= c.name %></span>
               </div>
-              <span style="font-weight:600;color:#22403A"><%= c.events %></span>
-              <span style="font-weight:600;color:#22403A"><%= c.regs %></span>
-              <span style="font-weight:600;color:#22403A"><%= c.att %></span>
-              <span style="font-weight:600;color:#22403A"><%= c.hours %></span>
+              <span style="font-weight:600;color:#33394A"><%= c.events %></span>
+              <span style="font-weight:600;color:#33394A"><%= c.regs %></span>
+              <span style="font-weight:600;color:#33394A"><%= c.att %></span>
+              <span style="font-weight:600;color:#33394A"><%= c.hours %></span>
               <div class="d-flex align-items-center gap-2">
                 <div class="cap-bar-track flex-fill" style="max-width:100px">
                   <div class="cap-bar-fill" style="width:<%= c.fill %>;background:<%= c.color %>"></div>
                 </div>
-                <span style="font-size:13px;font-weight:700;color:#17342C"><%= c.fill %></span>
+                <span style="font-size:13px;font-weight:700;color:#12161C"><%= c.fill %></span>
               </div>
             </div>
           <% }) %>
@@ -68,10 +68,10 @@
           <div class="list-row">
             <span style="width:26px;height:26px;border-radius:8px;background:#E8F7F0;color:#056047;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex-shrink:0"><%= t.rank %></span>
             <div class="flex-fill min-w-0">
-              <div style="font-weight:600;color:#17342C"><%= t.name %></div>
-              <div style="font-size:12.5px;color:#8B978F"><%= t.date %></div>
+              <div style="font-weight:600;color:#12161C"><%= t.name %></div>
+              <div style="font-size:12.5px;color:#8A93A6"><%= t.date %></div>
             </div>
-            <span style="font-weight:700;color:#17342C"><%= t.attendees %> attended</span>
+            <span style="font-weight:700;color:#12161C"><%= t.attendees %> attended</span>
           </div>
         <% }) %>
       </div>

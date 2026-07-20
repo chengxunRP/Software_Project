@@ -20,6 +20,7 @@ const { toViewUser } = require("./lib/userDisplay");
 const memberController = require("./controllers/memberController");
 const organiserController = require("./controllers/organiserController");
 const adminController = require("./controllers/adminController");
+const { upload } = require("./lib/eventImageUpload");
 
 
 const app = express();
@@ -93,12 +94,31 @@ app.use(async function (req, res, next) {
 
 // Sample preview datasets removed — pages load from MySQL via controllers.
 
+<<<<<<< HEAD
 function publicLocals(req, extra) {
+=======
+const SESSION_ROLE_TO_NAV_ROLE = {
+  community_member: "member",
+  organiser: "organiser",
+  admin: "admin"
+};
+
+// Public marketing pages (/, /events, /events/:id) keep the "public" layout
+// even for a signed-in user — but must still show their avatar/logout instead
+// of Log in/Register, and link the bell/avatar to the right dashboard.
+function publicLocals(req, extra) {
+  const sessionUser = req && req.session && req.session.user;
+>>>>>>> design/travel-photo-theme
   return Object.assign({
     layout: "public",
     activeNav: "",
     pageTitle: "CommunityConnect SG",
+<<<<<<< HEAD
     currentUser: req.session.user || null,
+=======
+    currentUser: sessionUser ? toViewUser(sessionUser) : null,
+    role: sessionUser ? (SESSION_ROLE_TO_NAV_ROLE[sessionUser.role] || null) : null,
+>>>>>>> design/travel-photo-theme
     messages: []
   }, extra || {});
 }
@@ -297,12 +317,10 @@ app.get("/events/:id", async function (req, res) {
     }
 
     const panel = registrationPanelState(event, currentRegistration);
-    const viewUser = sessionUser ? toViewUser(sessionUser) : null;
 
     res.render("event-details", publicLocals(req, {
       activeNav: "events",
       pageTitle: event.event_name + " · CommunityConnect SG",
-      currentUser: viewUser,
       event: event,
       roles: roles,
       currentRegistration: currentRegistration,
@@ -326,6 +344,7 @@ app.get("/events/:id", async function (req, res) {
 // ---------- Community member routes (MySQL) ----------
 app.get("/member/dashboard", requireCommunityMember, memberController.dashboard);
 app.get("/member/volunteer-hours", requireCommunityMember, memberController.volunteerHours);
+app.get("/member/volunteer-history", requireCommunityMember, memberController.volunteerHistory);
 app.get("/member/profile", requireCommunityMember, memberController.profile);
 app.post("/member/notifications/:id/read", requireCommunityMember, memberController.markNotificationRead);
 app.post("/member/notifications/read-all", requireCommunityMember, memberController.markAllNotificationsRead);
@@ -343,9 +362,9 @@ app.get("/organiser/registrations", requireOrganiser, organiserController.regist
 app.get("/organiser/roles", requireOrganiser, organiserController.rolesHub);
 app.get("/organiser/attendance", requireOrganiser, organiserController.attendanceHub);
 app.get("/organiser/events/new", requireOrganiser, organiserController.newEventForm);
-app.post("/organiser/events", requireOrganiser, organiserController.createEvent);
+app.post("/organiser/events", requireOrganiser, upload.single("event_image"), organiserController.createEvent);
 app.get("/organiser/events/:id/edit", requireOrganiser, organiserController.editEventForm);
-app.post("/organiser/events/:id/edit", requireOrganiser, organiserController.updateEvent);
+app.post("/organiser/events/:id/edit", requireOrganiser, upload.single("event_image"), organiserController.updateEvent);
 app.post("/organiser/events/:id/delete", requireOrganiser, organiserController.deleteEvent);
 app.get("/organiser/events/:id/registrations", requireOrganiser, organiserController.manageRegistrations);
 app.get("/organiser/events/:id/roles", requireOrganiser, organiserController.roleAssignment);
@@ -361,7 +380,7 @@ app.get("/organiser/events/:id/roles", requireOrganiser, organiserController.rol
 //                 volunteer_roles, attendance
 // Response     -> renders the attendance page with real data (no attendance
 //                 marking yet — POST /organiser/events/:id/attendance is next step)
-const AVATAR_COLORS = ["#7FA8D9", "#D99E2B", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
+const AVATAR_COLORS = ["#7FA8D9", "#F4B83F", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
 
 app.get("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
   const eventId = req.params.id;
@@ -442,7 +461,7 @@ app.get("/organiser/events/:id/attendance", isOrganiser, async function (req, re
     role: "organiser",
     activeNav: "attendance",
     pageTitle: "Attendance · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
     navEventId: event.event_id,
     event: {
       id: event.event_id,

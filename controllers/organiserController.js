@@ -18,13 +18,29 @@ const { toViewUser } = require("../lib/userDisplay");
 const { flash, takeFlash } = require("../lib/flash");
 const notifications = require("../lib/notifications");
 const notificationEmails = require("../services/notificationEmailService");
+const { toPublicImagePath } = require("../lib/eventImageUpload");
 
 const ALLOWED_EVENT_STATUSES = ["Draft", "Open", "Full", "Closed", "Cancelled", "Completed"];
 const FORM_STATUS_VALUES = ["Published", "Draft", "Registration closed"];
 
-const AVATAR_COLORS = ["#7FA8D9", "#D99E2B", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
+const AVATAR_COLORS = ["#7FA8D9", "#F4B83F", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+// Mirrors the category fallback in views/partials/event-card-panel.ejs so an
+// event with no explicit events.image still resolves to the same photo the
+// public catalogue shows for that category.
+const CATEGORY_DEFAULT_IMAGE = {
+  "Environment": "/images/category-environment.jpg",
+  "Food Support": "/images/category-food.jpg",
+  "Elderly Support": "/images/category-elderly.jpg",
+  "Education": "/images/category-education.jpg",
+  "Fundraising": "/images/category-fundraising.jpg"
+};
+
+function resolveEventImage(image, categoryName) {
+  return image || CATEGORY_DEFAULT_IMAGE[categoryName] || "";
+}
 
 function pad2(n) {
   return String(n).padStart(2, "0");
@@ -76,7 +92,7 @@ function capacityMeta(filled, capacity) {
     full: full,
     capLabel: safeFilled + " of " + safeCapacity + " spaces filled",
     capNote: full ? "Full · waitlist open" : left + " left",
-    capColor: full ? "#B0433B" : pct >= 80 ? "#D99E2B" : "#2E7D4F",
+    capColor: full ? "#B0433B" : pct >= 80 ? "#F4B83F" : "#087F5B",
     statusLabel: full ? "Full" : "Open"
   };
 }
@@ -103,7 +119,7 @@ function dualCapacityMeta(pFilled, pCap, vFilled, vCap, pWait, vWait) {
       : (!participants.full ? participants.left + " participant spaces left" : volunteers.left + " volunteer spaces left"),
     capColor: participants.full && volunteers.full
       ? "#B0433B"
-      : (participants.full || volunteers.full || combined.pct >= 80 ? "#D99E2B" : "#2E7D4F"),
+      : (participants.full || volunteers.full || combined.pct >= 80 ? "#F4B83F" : "#087F5B"),
     participantWaitlistCount: pWait || 0,
     volunteerWaitlistCount: vWait || 0
   };
@@ -230,6 +246,10 @@ async function validateEventPayload(body, options) {
     return { ok: false, error: "Please choose a valid event status." };
   }
 
+  const imageValue = options.imageValue != null
+    ? options.imageValue
+    : (body.image ? String(body.image).trim() || null : null);
+
   return {
     ok: true,
     data: {
@@ -243,7 +263,7 @@ async function validateEventPayload(body, options) {
       volunteer_capacity: volunteerCapacity,
       registration_deadline: registrationDeadline,
       status: dbStatus,
-      image: body.image ? String(body.image).trim() || null : null
+      image: imageValue
     }
   };
 }
@@ -447,12 +467,19 @@ async function dashboard(req, res) {
     const volunteerHoursTotal = Number(hoursRow.total_hours) || 0;
 
     const year = now.getFullYear();
+    // Grouped by the event's own month (not registered_at, i.e. not when the
+    // sign-up action happened) — an organiser wants to see how registrations
+    // are distributed across their event calendar, and this way a new
+    // sign-up shows up immediately under the month its event is actually
+    // happening in.
     const [monthlyRegRows] = await pool.query(
-      `SELECT MONTH(r.registered_at) AS m, COUNT(*) AS cnt
+      `SELECT MONTH(e.start_datetime) AS m, COUNT(*) AS cnt
        FROM event_registrations r
        INNER JOIN events e ON e.event_id = r.event_id
-       WHERE e.organiser_id = ? AND YEAR(r.registered_at) = ?
-       GROUP BY MONTH(r.registered_at)`,
+       WHERE e.organiser_id = ?
+         AND YEAR(e.start_datetime) = ?
+         AND r.status IN ('Confirmed', 'Waitlisted', 'Attended', 'Absent')
+       GROUP BY MONTH(e.start_datetime)`,
       [organiserId, year]
     );
     const monthlyCounts = new Array(12).fill(0);
@@ -630,7 +657,7 @@ async function listEvents(req, res) {
   try {
     const [rows] = await pool.query(
       `SELECT e.event_id, e.event_name, e.location, e.start_datetime, e.status,
-              e.participant_capacity, e.volunteer_capacity,
+              e.participant_capacity, e.volunteer_capacity, e.image,
               c.category_name,
               COALESCE(pc.total, 0) AS participants_filled,
               COALESCE(vc.total, 0) AS volunteers_filled
@@ -658,6 +685,7 @@ async function listEvents(req, res) {
         name: r.event_name,
         loc: r.location,
         cat: r.category_name,
+        thumb: resolveEventImage(r.image, r.category_name),
         when: start.dateOnly + " · " + start.timePart,
         participants_filled: Number(r.participants_filled) || 0,
         participant_capacity: r.participant_capacity,
@@ -700,7 +728,8 @@ async function newEventForm(req, res) {
         participant_capacity: "",
         volunteer_capacity: "",
         registration_deadline: "",
-        status: "Draft"
+        status: "Draft",
+        image: ""
       },
       categories: categories,
       messages: takeFlash(req)
@@ -721,7 +750,7 @@ async function editEventForm(req, res) {
       `SELECT e.event_id, e.organiser_id, e.category_id, e.event_name, e.description,
               e.start_datetime, e.end_datetime, e.location,
               e.participant_capacity, e.volunteer_capacity,
-              e.registration_deadline, e.status,
+              e.registration_deadline, e.status, e.image,
               COALESCE(pc.total, 0) AS participants_filled,
               COALESCE(vc.total, 0) AS volunteers_filled
        FROM events e
@@ -765,6 +794,7 @@ async function editEventForm(req, res) {
         volunteer_capacity: row.volunteer_capacity,
         registration_deadline: toDatetimeLocalValue(row.registration_deadline),
         status: eventFormStatusValue(row.status),
+        image: row.image || "",
         participants_filled: participantsFilled,
         volunteers_filled: volunteersFilled,
         participants: capacityMeta(participantsFilled, row.participant_capacity),
@@ -947,13 +977,13 @@ async function roleAssignment(req, res) {
       const assigned = role.people.length;
       const hasSpace = assigned < role.required;
       const remaining = role.required - assigned;
-      let capBg = "#E7F2EA";
-      let capFg = "#1E4D33";
+      let capBg = "#E8F7F0";
+      let capFg = "#056047";
       if (!hasSpace) {
         capBg = "#FBEAE8";
         capFg = "#B0433B";
       } else if (role.required > 0 && (assigned / role.required) >= 0.8) {
-        capBg = "#FBF3DF";
+        capBg = "#FFF7DF";
         capFg = "#8A5E08";
       }
       return {
@@ -1027,7 +1057,11 @@ async function createEvent(req, res) {
   const organiserId = req.session.user.user_id;
 
   try {
-    const validated = await validateEventPayload(req.body, {});
+    const uploadedImagePath = req.file ? toPublicImagePath(req.file) : null;
+    const rawImageInput = Object.prototype.hasOwnProperty.call(req.body, "image") ? String(req.body.image || "").trim() : "";
+    const imageValue = uploadedImagePath || (rawImageInput || null);
+
+    const validated = await validateEventPayload(req.body, { imageValue: imageValue });
     if (!validated.ok) {
       return reRenderEventForm(req, res, "create", Object.assign({
         event_name: req.body.event_name || "",
@@ -1039,7 +1073,8 @@ async function createEvent(req, res) {
         participant_capacity: req.body.participant_capacity || "",
         volunteer_capacity: req.body.volunteer_capacity || "",
         registration_deadline: req.body.registration_deadline || "",
-        status: req.body.status || "Draft"
+        status: req.body.status || "Draft",
+        image: imageValue || ""
       }, {}), validated.error);
     }
 
@@ -1113,10 +1148,14 @@ async function updateEvent(req, res) {
 
     const participantsFilled = Number(existing.participants_filled) || 0;
     const volunteersFilled = Number(existing.volunteers_filled) || 0;
+    const uploadedImagePath = req.file ? toPublicImagePath(req.file) : null;
+    const rawImageInput = Object.prototype.hasOwnProperty.call(req.body, "image") ? String(req.body.image || "").trim() : "";
+    const imageValue = uploadedImagePath || ((rawImageInput !== "" ? rawImageInput : null));
 
     const validated = await validateEventPayload(req.body, {
       participantFilled: participantsFilled,
-      volunteerFilled: volunteersFilled
+      volunteerFilled: volunteersFilled,
+      imageValue: imageValue
     });
     if (!validated.ok) {
       return reRenderEventForm(req, res, "edit", Object.assign({
@@ -1131,6 +1170,7 @@ async function updateEvent(req, res) {
         volunteer_capacity: req.body.volunteer_capacity || "",
         registration_deadline: req.body.registration_deadline || "",
         status: req.body.status || "Draft",
+        image: imageValue || "",
         participants_filled: participantsFilled,
         volunteers_filled: volunteersFilled,
         participants: capacityMeta(participantsFilled, Number(req.body.participant_capacity) || 0),

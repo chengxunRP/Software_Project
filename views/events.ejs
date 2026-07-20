@@ -17,13 +17,13 @@
   <%- include('partials/navbar') %>
 
   <%
-    pageEyebrow = 'Event catalogue';
-    pageHeading = 'Find your next community event';
-    pageLead = filtersActive
+    const pageEyebrow = 'Event catalogue';
+    const pageHeading = 'Find your next community event';
+    const pageLead = filtersActive
       ? ('Showing ' + events.length + ' matching event' + (events.length === 1 ? '' : 's') + ' (' + databaseEventTotal + ' in the database). Join as a Participant or Volunteer.')
       : (events.length + ' event' + (events.length === 1 ? '' : 's') + ' across Singapore. Join as a Participant or Volunteer.');
   %>
-  <%- include('partials/page-header') %>
+  <%- include('partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="section-wrap wide overlap-panel">
@@ -82,7 +82,7 @@
 
       <% if (!events.length) { %>
         <div class="card-cc" style="padding:28px;text-align:center">
-          <div style="font-size:16px;font-weight:700;color:#17342C">
+          <div style="font-size:16px;font-weight:700;color:#12161C">
             <%= filtersActive ? 'No events match your filters.' : 'No upcoming events are currently available.' %>
           </div>
           <div class="text-muted-cc mt-1" style="font-size:14.5px">
@@ -97,7 +97,7 @@
           <% events.forEach(function (ev) { %>
             <div class="col-md-6 col-lg-4">
               <div class="event-card">
-                <%- include('partials/event-card-panel', { category: ev.category }) %>
+                <%- include('partials/event-card-panel', { category: ev.category, image: ev.image, containPhoto: true }) %>
                 <div class="event-card-body">
                   <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
                     <span class="badge-cc badge-cc-cat" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>

@@ -3,14 +3,14 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Admin';
-    pageHeading = 'Event Category Management';
-    pageLead = 'Manage the event categories organisers use when creating events.';
-    pageActions = '';
+    const pageEyebrow = 'Admin';
+    const pageHeading = 'Event Category Management';
+    const pageLead = 'Manage the event categories organisers use when creating events.';
+    const pageActions = '';
     if (typeof formMode === 'undefined') formMode = 'create';
     if (typeof form === 'undefined') form = { category_id: '', category_name: '', description: '' };
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1040">
@@ -29,10 +29,10 @@
               <div class="table-cc-row" style="grid-template-columns:1.6fr 2.2fr 0.9fr 0.9fr 1.1fr">
                 <div class="d-flex align-items-center gap-2">
                   <span style="width:12px;height:12px;border-radius:4px;background:<%= c.color %>;flex-shrink:0"></span>
-                  <span style="font-weight:700;color:#17342C"><%= c.name %></span>
+                  <span style="font-weight:700;color:#12161C"><%= c.name %></span>
                 </div>
                 <span class="text-muted-cc" style="font-size:13px;padding-right:14px"><%= c.desc %></span>
-                <span style="font-weight:600;color:#22403A"><%= c.eventCount %></span>
+                <span style="font-weight:600;color:#33394A"><%= c.eventCount %></span>
                 <span>
                   <span class="badge-cc <%= c.status === 'Active' ? 'badge-cc-active' : 'badge-cc-archived' %>" style="font-size:11.5px;padding:4px 10px"><%= c.status %></span>
                 </span>

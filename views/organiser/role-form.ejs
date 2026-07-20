@@ -9,12 +9,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Organiser';
-    pageHeading = isEdit ? 'Edit Volunteer Role' : 'Add Volunteer Role';
-    pageLead = 'Define volunteer duties for this event.';
-    pageActions = '<a href="/organiser/events/' + event.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Cancel</a>';
+    const pageEyebrow = 'Organiser';
+    const pageHeading = isEdit ? 'Edit Volunteer Role' : 'Add Volunteer Role';
+    const pageLead = 'Define volunteer duties for this event.';
+    const pageActions = '<a href="/organiser/events/' + event.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Cancel</a>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1040">

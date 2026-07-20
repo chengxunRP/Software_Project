@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Community member';
-    pageHeading = 'My Volunteer Hours';
-    pageLead = 'Hours earned when you volunteered, tracked by month and by event.';
-    pageActions = '';
+    const pageEyebrow = 'Community member';
+    const pageHeading = 'My Volunteer Hours';
+    const pageLead = 'Hours earned when you volunteered, tracked by month and by event.';
+    const pageActions = '';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1000">
@@ -30,19 +30,6 @@
         </div>
       </div>
 
-      <div class="card-cc" style="padding:24px">
-        <div class="h-card mb-3">Monthly contribution — <%= summary.chartYear %></div>
-        <div class="bar-chart">
-          <% months.forEach(function (m) { %>
-            <div class="bar-chart-item">
-              <span class="val <%= m.current ? 'current' : '' %>"><%= m.val %></span>
-              <div class="bar <%= m.current ? 'current' : '' %>" style="height:<%= m.h %>px"></div>
-              <span class="label"><%= m.label %></span>
-            </div>
-          <% }) %>
-        </div>
-      </div>
-
       <div class="table-cc">
         <div class="panel-header">
           <span class="h-card">Event history</span>
@@ -56,16 +43,16 @@
           <% } %>
           <% history.forEach(function (h) { %>
             <div class="table-cc-row" style="grid-template-columns:2.2fr 1.1fr 1.3fr 0.9fr 0.8fr">
-              <span style="font-weight:600;color:#17342C"><%= h.name %></span>
+              <span style="font-weight:600;color:#12161C"><%= h.name %></span>
               <span class="text-muted-cc"><%= h.date %></span>
               <span class="text-muted-cc"><%= h.loc %></span>
               <span>
                 <span class="badge-cc <%= h.status === 'Absent' ? 'badge-cc-absent' : 'badge-cc-attended' %>" style="font-size:11.5px;padding:4px 10px"><%= h.status %></span>
               </span>
-              <span style="text-align:right;font-weight:700;color:#17342C"><%= h.hours %></span>
+              <span style="text-align:right;font-weight:700;color:#12161C"><%= h.hours %></span>
             </div>
           <% }) %>
-          <div class="d-flex justify-content-end p-3" style="font-size:14px;font-weight:700;color:#17342C;background:#F3FAF7">
+          <div class="d-flex justify-content-end p-3" style="font-size:14px;font-weight:700;color:#12161C;background:#E8F7F0">
             Total &nbsp;<span style="color:#087F5B"><%= summary.totalHours %> hours</span>
           </div>
         </div>

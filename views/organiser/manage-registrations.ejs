@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Organiser';
-    pageHeading = 'Manage Registrations';
-    pageLead = 'Review confirmed participants, confirmed volunteers and both waiting lists for this event.';
-    pageActions = '';
+    const pageEyebrow = 'Organiser';
+    const pageHeading = 'Manage Registrations';
+    const pageLead = 'Review confirmed participants, confirmed volunteers and both waiting lists for this event.';
+    const pageActions = '<a href="/organiser/registrations" class="btn-cc btn-cc-secondary btn-cc-sm">Back to registrations</a>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1020">
@@ -42,7 +42,7 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Participants <span style="color:#8B978F;font-weight:600;font-size:14px">(showing <%= confirmedParticipants.length %> of <%= summary.confirmedParticipants %>)</span></span>
+          <span class="h-card">Participants <span style="color:#8A93A6;font-weight:600;font-size:14px">(showing <%= confirmedParticipants.length %> of <%= summary.confirmedParticipants %>)</span></span>
         </div>
         <div class="table-scroll">
           <div class="table-cc-head" style="grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr">
@@ -52,7 +52,7 @@
             <div class="table-cc-row" style="grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr">
               <div class="d-flex align-items-center gap-2">
                 <span class="avatar-cc sm" style="background:<%= c.avBg %>"><%= c.initials %></span>
-                <span style="font-weight:600;color:#17342C"><%= c.name %></span>
+                <span style="font-weight:600;color:#12161C"><%= c.name %></span>
               </div>
               <span class="text-muted-cc" style="font-size:13px"><%= c.contact %></span>
               <span class="text-muted-cc" style="font-size:13.5px"><%= c.date %></span>
@@ -67,7 +67,7 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Volunteers <span style="color:#8B978F;font-weight:600;font-size:14px">(showing <%= confirmedVolunteers.length %> of <%= summary.confirmedVolunteers %>)</span></span>
+          <span class="h-card">Volunteers <span style="color:#8A93A6;font-weight:600;font-size:14px">(showing <%= confirmedVolunteers.length %> of <%= summary.confirmedVolunteers %>)</span></span>
           <a href="/organiser/events/<%= event.id %>/roles" class="btn-cc btn-cc-secondary btn-cc-xs">Assign roles</a>
         </div>
         <div class="table-scroll">
@@ -78,7 +78,7 @@
             <div class="table-cc-row" style="grid-template-columns:1.8fr 1.6fr 1.1fr 1fr 1.1fr">
               <div class="d-flex align-items-center gap-2">
                 <span class="avatar-cc sm" style="background:<%= c.avBg %>"><%= c.initials %></span>
-                <span style="font-weight:600;color:#17342C"><%= c.name %></span>
+                <span style="font-weight:600;color:#12161C"><%= c.name %></span>
               </div>
               <span class="text-muted-cc" style="font-size:13px"><%= c.contact %></span>
               <span class="text-muted-cc" style="font-size:13.5px"><%= c.date %></span>
@@ -93,7 +93,7 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Participant waiting list <span style="color:#8B978F;font-weight:600;font-size:14px">(<%= summary.participantWaitlist %>)</span></span>
+          <span class="h-card">Participant waiting list <span style="color:#8A93A6;font-weight:600;font-size:14px">(<%= summary.participantWaitlist %>)</span></span>
         </div>
         <% if (!participantWaitlist.length) { %>
           <div class="list-row text-muted-cc" style="font-size:13.5px">No one on the participant waiting list.</div>
@@ -103,8 +103,8 @@
             <span style="width:30px;height:30px;border-radius:9px;background:#FFF7DF;color:#8A6008;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0"><%= w.pos %></span>
             <span class="avatar-cc sm" style="background:<%= w.avBg %>"><%= w.initials %></span>
             <div class="flex-fill">
-              <div style="font-weight:600;color:#17342C"><%= w.name %></div>
-              <div style="font-size:12.5px;color:#8B978F"><%= w.contact %> · joined <%= w.date %></div>
+              <div style="font-weight:600;color:#12161C"><%= w.name %></div>
+              <div style="font-size:12.5px;color:#8A93A6"><%= w.contact %> · joined <%= w.date %></div>
             </div>
             <span class="badge-cc badge-cc-waitlist">Waitlist #<%= w.pos %></span>
           </div>
@@ -113,7 +113,7 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Volunteer waiting list <span style="color:#8B978F;font-weight:600;font-size:14px">(<%= summary.volunteerWaitlist %>)</span></span>
+          <span class="h-card">Volunteer waiting list <span style="color:#8A93A6;font-weight:600;font-size:14px">(<%= summary.volunteerWaitlist %>)</span></span>
         </div>
         <% if (!volunteerWaitlist.length) { %>
           <div class="list-row text-muted-cc" style="font-size:13.5px">No one on the volunteer waiting list.</div>
@@ -123,8 +123,8 @@
             <span style="width:30px;height:30px;border-radius:9px;background:#FFF7DF;color:#8A6008;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0"><%= w.pos %></span>
             <span class="avatar-cc sm" style="background:<%= w.avBg %>"><%= w.initials %></span>
             <div class="flex-fill">
-              <div style="font-weight:600;color:#17342C"><%= w.name %></div>
-              <div style="font-size:12.5px;color:#8B978F"><%= w.contact %> · joined <%= w.date %></div>
+              <div style="font-weight:600;color:#12161C"><%= w.name %></div>
+              <div style="font-size:12.5px;color:#8A93A6"><%= w.contact %> · joined <%= w.date %></div>
             </div>
             <span class="badge-cc badge-cc-waitlist">Waitlist #<%= w.pos %></span>
           </div>
@@ -141,7 +141,7 @@
   <div class="modal-cc-dialog">
     <div class="modal-icon">!</div>
     <div>
-      <div style="font-size:19px;font-weight:800;color:#17342C">Remove this registration?</div>
+      <div style="font-size:19px;font-weight:800;color:#12161C">Remove this registration?</div>
       <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">Removing <b id="modalEventName">this person</b> will free a place for the matching waiting list. Preview only — no backend action.</div>
     </div>
     <div class="d-flex gap-2 justify-content-end">

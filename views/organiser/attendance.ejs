@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Organiser';
-    pageHeading = 'Attendance Management';
-    pageLead = 'Record attendance for participants and volunteers at this event.';
-    pageActions = '';
+    const pageEyebrow = 'Organiser';
+    const pageHeading = 'Attendance Management';
+    const pageLead = 'Record attendance for participants and volunteers at this event.';
+    const pageActions = '<a href="/organiser/attendance" class="btn-cc btn-cc-secondary btn-cc-sm">Back to attendance</a>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-980">
@@ -43,7 +43,7 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Check-in <span style="color:#8B978F;font-weight:600;font-size:14px">(showing <%= rows.length %> of <%= summary.registered %>)</span></span>
+          <span class="h-card">Check-in <span style="color:#8A93A6;font-weight:600;font-size:14px">(showing <%= rows.length %> of <%= summary.registered %>)</span></span>
         </div>
         <% if (!rows.length) { %>
           <div class="list-row">
@@ -54,8 +54,8 @@
           <div class="list-row" data-attendance-row>
             <span class="avatar-cc sm" style="background:<%= r.avBg %>"><%= r.initials %></span>
             <div class="flex-fill min-w-0">
-              <div style="font-weight:600;color:#17342C"><%= r.name %></div>
-              <div style="font-size:12.5px;color:#8B978F"><%= r.participation_type %><%= r.role !== '—' ? ' · ' + r.role : '' %></div>
+              <div style="font-weight:600;color:#12161C"><%= r.name %></div>
+              <div style="font-size:12.5px;color:#8A93A6"><%= r.participation_type %><%= r.role !== '—' ? ' · ' + r.role : '' %></div>
             </div>
             <span class="badge-cc <%= r.status === 'Attended' ? 'badge-cc-attended' : (r.status === 'Absent' ? 'badge-cc-absent' : 'badge-cc-pending') %>" data-attendance-badge style="font-size:11.5px;padding:4px 11px"><%= r.status %></span>
             <% if (r.status === 'Pending') { %>

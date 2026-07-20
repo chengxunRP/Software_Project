@@ -3,11 +3,11 @@
   <%- include('partials/navbar') %>
 
   <%
-    pageEyebrow = 'Event details';
-    pageHeading = event.event_name;
-    pageLead = 'Organised by ' + event.organiser;
+    const pageEyebrow = 'Event details';
+    const pageHeading = event.event_name;
+    const pageLead = 'Organised by ' + event.organiser;
   %>
-  <%- include('partials/page-header') %>
+  <%- include('partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="section-wrap overlap-panel" style="max-width:1120px">
@@ -19,7 +19,7 @@
 
       <div class="details-grid">
         <div class="d-flex flex-column gap-4">
-          <%- include('partials/event-card-panel', { category: event.category }) %>
+          <%- include('partials/event-card-panel', { category: event.category, image: event.image }) %>
 
           <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
             <span class="badge-cc badge-cc-cat" style="background:<%= event.badgeBg %>;color:<%= event.badgeFg %>"><%= event.category %></span>
@@ -35,7 +35,7 @@
           <div class="card-cc">
             <div class="card-cc-body" style="padding:24px">
               <h2 class="h-card mb-3" style="font-size:18px">About this event</h2>
-              <p class="mb-0" style="font-size:15px;line-height:1.7;color:#22403A"><%= event.description %></p>
+              <p class="mb-0" style="font-size:15px;line-height:1.7;color:#33394A"><%= event.description %></p>
             </div>
           </div>
 
@@ -50,8 +50,8 @@
                   <% const roleNear = !roleFull && r.capacity && (r.filled / r.capacity) >= 0.8; %>
                   <div class="d-flex align-items-center justify-content-between gap-3 p-3 role-row">
                     <div>
-                      <div style="font-size:15px;font-weight:700;color:#17342C"><%= r.name %></div>
-                      <div style="font-size:13.5px;color:#65756F"><%= r.description %></div>
+                      <div style="font-size:15px;font-weight:700;color:#12161C"><%= r.name %></div>
+                      <div style="font-size:13.5px;color:#6B7280"><%= r.description %></div>
                     </div>
                     <span class="badge-cc" style="background:<%= roleFull ? '#FFF0EE' : (roleNear ? '#FFF7DF' : '#E8F7F0') %>;color:<%= roleFull ? '#E9564D' : (roleNear ? '#8A6008' : '#087F5B') %>">
                       <%= r.filled %> of <%= r.capacity %> filled
@@ -74,12 +74,12 @@
                 <div class="d-flex justify-content-between gap-2"><span class="text-muted-cc fw-medium">Registration closes</span><span class="fw-semibold text-ink text-end"><%= event.deadlineLabel %></span></div>
               </div>
 
-              <hr class="my-3" style="border-color:#E1EEE8;opacity:1">
+              <hr class="my-3" style="border-color:#E2E6ED;opacity:1">
 
               <div class="d-flex flex-column gap-3 mb-3">
                 <div>
                   <div class="cap-bar-meta" style="font-size:13px">
-                    <span style="color:#65756F">Participants: <%= event.participants_filled %> of <%= event.participant_capacity %> confirmed</span>
+                    <span style="color:#6B7280">Participants: <%= event.participants_filled %> of <%= event.participant_capacity %> confirmed</span>
                     <span style="color:<%= event.participants.capColor %>"><%= event.participants.full ? ('Full · waitlist' + (event.participantWaitlistCount ? ' (' + event.participantWaitlistCount + ')' : ' available')) : (event.participants.left + ' left') %></span>
                   </div>
                   <div class="cap-bar-track" style="height:7px">
@@ -88,7 +88,7 @@
                 </div>
                 <div>
                   <div class="cap-bar-meta" style="font-size:13px">
-                    <span style="color:#65756F">Volunteers: <%= event.volunteers_filled %> of <%= event.volunteer_capacity %> confirmed</span>
+                    <span style="color:#6B7280">Volunteers: <%= event.volunteers_filled %> of <%= event.volunteer_capacity %> confirmed</span>
                     <span style="color:<%= event.volunteers.capColor %>"><%= event.volunteers.full ? ('Full · waitlist' + (event.volunteerWaitlistCount ? ' (' + event.volunteerWaitlistCount + ')' : ' available')) : (event.volunteers.left + ' left') %></span>
                   </div>
                   <div class="cap-bar-track" style="height:7px">
@@ -101,7 +101,7 @@
 
               <% if (currentRegistration && (currentRegistration.status === 'Confirmed' || currentRegistration.status === 'Waitlisted' || currentRegistration.status === 'Attended' || currentRegistration.status === 'Absent')) { %>
                 <div class="d-flex flex-column gap-3">
-                  <div style="font-size:15px;font-weight:700;color:#17342C">Your registration</div>
+                  <div style="font-size:15px;font-weight:700;color:#12161C">Your registration</div>
                   <div class="d-flex flex-column gap-2" style="font-size:14px">
                     <div class="d-flex justify-content-between gap-2">
                       <span class="text-muted-cc">Participation</span>
@@ -143,15 +143,15 @@
                     <label class="status-option">
                       <input type="radio" name="participation_type" value="Participant" checked data-participation-type>
                       <div>
-                        <div style="font-size:14px;font-weight:700;color:#17342C">🙋 Join as Participant</div>
-                        <div style="font-size:12px;color:#8B978F"><%= event.participants.full ? 'Participant places are full — join the participant waiting list' : event.participants.left + ' participant spaces remaining' %></div>
+                        <div style="font-size:14px;font-weight:700;color:#12161C">Join as Participant</div>
+                        <div style="font-size:12px;color:#8A93A6"><%= event.participants.full ? 'Participant places are full — join the participant waiting list' : event.participants.left + ' participant spaces remaining' %></div>
                       </div>
                     </label>
                     <label class="status-option">
                       <input type="radio" name="participation_type" value="Volunteer" data-participation-type>
                       <div>
-                        <div style="font-size:14px;font-weight:700;color:#17342C">🤝 Volunteer for This Event</div>
-                        <div style="font-size:12px;color:#8B978F"><%= event.volunteers.full ? 'Volunteer places are full — join the volunteer waiting list' : event.volunteers.left + ' volunteer spaces remaining' %></div>
+                        <div style="font-size:14px;font-weight:700;color:#12161C">Volunteer for This Event</div>
+                        <div style="font-size:12px;color:#8A93A6"><%= event.volunteers.full ? 'Volunteer places are full — join the volunteer waiting list' : event.volunteers.left + ' volunteer spaces remaining' %></div>
                       </div>
                     </label>
                   </div>
@@ -180,7 +180,7 @@
               </form>
               <% } else { %>
                 <div class="d-flex flex-column gap-2">
-                  <div style="font-size:14.5px;font-weight:700;color:#17342C"><%= registrationUnavailableReason || 'Registration is not available' %></div>
+                  <div style="font-size:14.5px;font-weight:700;color:#12161C"><%= registrationUnavailableReason || 'Registration is not available' %></div>
                   <p class="mb-0 text-muted-cc" style="font-size:13.5px;line-height:1.55">This event cannot accept new registrations right now.</p>
                 </div>
               <% } %>
@@ -211,8 +211,8 @@
   <div class="modal-cc-dialog">
     <div class="modal-icon">!</div>
     <div>
-      <div style="font-size:19px;font-weight:800;color:#17342C">Cancel this registration?</div>
-      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">You are about to cancel your place at <b style="color:#22403A" id="modalEventName">this event</b>. Your space will be offered to the earliest matching person on the waiting list. This cannot be undone.</div>
+      <div style="font-size:19px;font-weight:800;color:#12161C">Cancel this registration?</div>
+      <div class="text-muted-cc mt-2" style="font-size:14.5px;line-height:1.55">You are about to cancel your place at <b style="color:#33394A" id="modalEventName">this event</b>. Your space will be offered to the earliest matching person on the waiting list. This cannot be undone.</div>
     </div>
     <div class="d-flex gap-2 justify-content-end">
       <button type="button" class="btn-cc btn-cc-secondary" data-close-modal>Keep my place</button>

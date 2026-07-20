@@ -14,7 +14,7 @@ const passwordResetService = require("../services/passwordResetService");
 const ALLOWED_ROLES = ["community_member", "organiser", "admin"];
 const ALLOWED_STATUSES = ["Active", "Suspended"];
 
-const AVATAR_COLORS = ["#7FA8D9", "#D99E2B", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
+const AVATAR_COLORS = ["#7FA8D9", "#F4B83F", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
 
 function mapUserRow(row, index) {
   return {

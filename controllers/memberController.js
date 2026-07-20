@@ -7,21 +7,21 @@ const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Se
 const WEEKDAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const TONE_COLORS = {
-  green: { badgeBg: "#E7F2EA", badgeFg: "#1E4D33" },
-  amber: { badgeBg: "#FBF3DF", badgeFg: "#8A5E08" },
-  grey: { badgeBg: "#EDEAE0", badgeFg: "#6E7266" }
+  green: { badgeBg: "#E8F7F0", badgeFg: "#056047" },
+  amber: { badgeBg: "#FFF7DF", badgeFg: "#8A5E08" },
+  grey: { badgeBg: "#EDEAE0", badgeFg: "#6B7280" }
 };
 
 // Mirrors lib/publicEvents.js CATEGORY_STYLES — kept local per the design
 // preservation rules (no shared export exists for this small colour map).
 const CATEGORY_STYLES = {
-  Environment: { badgeBg: "#E7F2EA", badgeFg: "#1E4D33" },
-  "Food Support": { badgeBg: "#FBF3DF", badgeFg: "#8A5E08" },
+  Environment: { badgeBg: "#E8F7F0", badgeFg: "#056047" },
+  "Food Support": { badgeBg: "#FFF7DF", badgeFg: "#8A5E08" },
   "Elderly Support": { badgeBg: "#F3E9F2", badgeFg: "#7A4472" },
   Education: { badgeBg: "#E9EDF6", badgeFg: "#3B5384" },
   Fundraising: { badgeBg: "#FBEAE8", badgeFg: "#9C4038" }
 };
-const DEFAULT_CATEGORY_STYLE = { badgeBg: "#EDEAE0", badgeFg: "#6E7266" };
+const DEFAULT_CATEGORY_STYLE = { badgeBg: "#EDEAE0", badgeFg: "#6B7280" };
 
 const NOTIFICATION_TYPE_TONE = {
   Registration: "success",
@@ -375,20 +375,18 @@ async function volunteerHours(req, res) {
     let absentCount = 0;
     let monthHours = 0;
     let monthEvents = 0;
-    const monthlyHours = new Array(12).fill(0);
 
     const history = rows.map(function (row) {
       const start = row.start_datetime instanceof Date ? row.start_datetime : new Date(row.start_datetime);
-      const isAttended = row.attendance_status === "Attended";
       const hours = Number(row.volunteer_hours) || 0;
+      // A 0-hour "Attended" record defaults to Absent — 0 volunteer hours
+      // means no volunteering was actually completed.
+      const isAttended = row.attendance_status === "Attended" && hours > 0;
 
       if (isAttended) {
         attendedCount += 1;
         totalHours += hours;
         if (!Number.isNaN(start.getTime())) {
-          if (start.getFullYear() === currentYear) {
-            monthlyHours[start.getMonth()] += hours;
-          }
           if (start.getFullYear() === currentYear && start.getMonth() === currentMonth) {
             monthHours += hours;
             monthEvents += 1;
@@ -412,17 +410,6 @@ async function volunteerHours(req, res) {
       ? Math.round((attendedCount / totalAttendance) * 100) + "%"
       : "0%";
 
-    const maxMonthHours = Math.max.apply(null, monthlyHours);
-    const months = MONTH_SHORT.map(function (label, index) {
-      const val = monthlyHours[index];
-      return {
-        label: label,
-        val: formatHours(val),
-        h: maxMonthHours > 0 ? Math.round((val / maxMonthHours) * 140) : 0,
-        current: index === currentMonth
-      };
-    });
-
     res.render("member/volunteer-hours", {
       layout: "app",
       role: "member",
@@ -441,7 +428,6 @@ async function volunteerHours(req, res) {
         monthLabel: MONTH_SHORT[currentMonth],
         chartYear: currentYear
       },
-      months: months,
       history: history
     });
   } catch (err) {
@@ -455,6 +441,159 @@ async function volunteerHours(req, res) {
       statusCode: 500,
       errorTitle: "Something went wrong",
       errorMessage: "We could not load your volunteer hours. Please try again shortly."
+    });
+  }
+}
+
+const MONTH_LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/**
+ * Full log of the member's past Volunteer registrations: Attended, Absent
+ * or Cancelled. Distinct from volunteerHours (which only covers recorded
+ * attendance) — this also surfaces Cancelled registrations, and supports
+ * filtering by category / exact date / month / year / event-name search.
+ * A recorded "Attended" row with 0 volunteer_hours displays as Absent.
+ */
+async function volunteerHistory(req, res) {
+  const userId = req.session.user.user_id;
+
+  const filters = {
+    search: (req.query.search || "").trim(),
+    category: (req.query.category || "").trim(),
+    date: (req.query.date || "").trim(),
+    month: (req.query.month || "").trim(),
+    year: (req.query.year || "").trim()
+  };
+
+  try {
+    const where = [
+      "r.user_id = ?",
+      "(r.status = 'Cancelled' OR a.registration_id IS NOT NULL)"
+    ];
+    const params = [userId];
+
+    if (filters.category) {
+      where.push("c.category_id = ?");
+      params.push(Number(filters.category));
+    }
+    if (filters.date) {
+      where.push("DATE(e.start_datetime) = ?");
+      params.push(filters.date);
+    }
+    if (filters.month) {
+      where.push("MONTH(e.start_datetime) = ?");
+      params.push(Number(filters.month));
+    }
+    if (filters.year) {
+      where.push("YEAR(e.start_datetime) = ?");
+      params.push(Number(filters.year));
+    }
+    if (filters.search) {
+      where.push("e.event_name LIKE ?");
+      params.push("%" + filters.search + "%");
+    }
+
+    const [rows] = await pool.query(
+      `SELECT
+         r.status AS reg_status,
+         r.participation_type,
+         e.event_name,
+         e.start_datetime,
+         e.end_datetime,
+         e.location,
+         c.category_id,
+         c.category_name,
+         a.attendance_status,
+         a.volunteer_hours
+       FROM event_registrations r
+       INNER JOIN events e ON e.event_id = r.event_id
+       INNER JOIN event_categories c ON c.category_id = e.category_id
+       LEFT JOIN attendance a ON a.registration_id = r.registration_id
+       WHERE ${where.join(" AND ")}
+       ORDER BY e.start_datetime DESC`,
+      params
+    );
+
+    const [yearRows] = await pool.query(
+      `SELECT DISTINCT YEAR(e.start_datetime) AS yr
+       FROM event_registrations r
+       INNER JOIN events e ON e.event_id = r.event_id
+       LEFT JOIN attendance a ON a.registration_id = r.registration_id
+       WHERE r.user_id = ?
+         AND (r.status = 'Cancelled' OR a.registration_id IS NOT NULL)
+       ORDER BY yr DESC`,
+      [userId]
+    );
+
+    const [categories] = await pool.query(
+      "SELECT category_id, category_name FROM event_categories ORDER BY category_name ASC"
+    );
+
+    const history = rows.map(function (row) {
+      const hours = Number(row.volunteer_hours) || 0;
+      const style = CATEGORY_STYLES[row.category_name] || DEFAULT_CATEGORY_STYLE;
+
+      let status = "Absent";
+      let badgeClass = "badge-cc-absent";
+      let hoursDisplay = "—";
+      const isVolunteer = row.participation_type === "Volunteer";
+
+      if (row.reg_status === "Cancelled") {
+        status = "Cancelled";
+        badgeClass = "badge-cc-cancelled";
+      } else if (isVolunteer) {
+        // A 0-hour "Attended" volunteer record defaults to Absent — 0 hours
+        // means no volunteering was actually completed. Participants don't
+        // earn hours at all, so that rule doesn't apply to them below.
+        if (row.attendance_status === "Attended" && hours > 0) {
+          status = "Attended";
+          badgeClass = "badge-cc-attended";
+          hoursDisplay = formatHours(hours) + " hrs";
+        }
+      } else if (row.attendance_status === "Attended") {
+        status = "Attended";
+        badgeClass = "badge-cc-attended";
+      }
+
+      return {
+        name: row.event_name,
+        meta: timeLabel(row.start_datetime) + "–" + timeLabel(row.end_datetime) + " · " + row.participation_type,
+        date: dateLabel(row.start_datetime),
+        location: row.location,
+        category: row.category_name,
+        categoryBg: style.badgeBg,
+        categoryFg: style.badgeFg,
+        participationType: row.participation_type,
+        status: status,
+        badgeClass: badgeClass,
+        hours: hoursDisplay
+      };
+    });
+
+    res.render("member/volunteer-history", {
+      layout: "app",
+      role: "member",
+      activeNav: "history",
+      pageTitle: "Volunteer History · Community member",
+      currentUser: toViewUser(req.session.user),
+      messages: takeFlash(req),
+      filters: filters,
+      categories: categories,
+      months: MONTH_LONG,
+      years: yearRows.map(function (row) { return Number(row.yr); }),
+      history: history
+    });
+  } catch (err) {
+    console.error("memberController.volunteerHistory failed:", err.message);
+    res.status(500).render("error", {
+      layout: "public",
+      activeNav: "",
+      pageTitle: "Something went wrong · CommunityConnect SG",
+      currentUser: null,
+      messages: [],
+      statusCode: 500,
+      errorTitle: "Something went wrong",
+      errorMessage: "We could not load your volunteer history. Please try again shortly."
     });
   }
 }
@@ -494,6 +633,7 @@ async function profile(req, res) {
 module.exports = {
   dashboard: dashboard,
   volunteerHours: volunteerHours,
+  volunteerHistory: volunteerHistory,
   profile: profile,
   markNotificationRead: markNotificationRead,
   markAllNotificationsRead: markAllNotificationsRead

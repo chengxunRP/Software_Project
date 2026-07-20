@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Admin';
-    pageHeading = 'Admin Dashboard';
-    pageLead = 'Platform-wide activity across users, events and volunteer hours.';
-    pageActions = '<span style="font-size:13px;color:#CDE8DD">Data as of ' + asOf + '</span>';
+    const pageEyebrow = 'Admin';
+    const pageHeading = 'Admin Dashboard';
+    const pageLead = 'Platform-wide activity across users, events and volunteer hours.';
+    const pageActions = '<span style="font-size:13px;color:#D6F5F5">Data as of ' + asOf + '</span>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1080">
@@ -58,8 +58,8 @@
             <% userRoles.forEach(function (u) { %>
               <div class="mb-3">
                 <div class="d-flex justify-content-between" style="font-size:13.5px">
-                  <span style="font-weight:600;color:#22403A"><%= u.label %></span>
-                  <span style="font-weight:700;color:#17342C"><%= u.count %></span>
+                  <span style="font-weight:600;color:#33394A"><%= u.label %></span>
+                  <span style="font-weight:700;color:#12161C"><%= u.count %></span>
                 </div>
                 <div class="cap-bar-track mt-1">
                   <div class="cap-bar-fill" style="width:<%= u.pct %>%;background:<%= u.color %>"></div>
@@ -73,8 +73,8 @@
             <% hoursByCat.forEach(function (h) { %>
               <div class="d-flex align-items-center gap-2 mb-2" style="font-size:13.5px">
                 <span style="width:10px;height:10px;border-radius:3px;background:<%= h.color %>;flex-shrink:0"></span>
-                <span style="font-weight:600;color:#22403A;flex:1"><%= h.label %></span>
-                <span style="font-weight:700;color:#17342C"><%= h.val %></span>
+                <span style="font-weight:600;color:#33394A;flex:1"><%= h.label %></span>
+                <span style="font-weight:700;color:#12161C"><%= h.val %></span>
               </div>
             <% }) %>
           </div>
