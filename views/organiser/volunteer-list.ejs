@@ -2,8 +2,8 @@
 <div class="app-shell" id="appShell">
   <%- include('../partials/sidebar') %>
   <main class="app-main">
-    <% topbarTitle = 'Event Volunteers'; %>
-    <% topbarActions = '<a href="/organiser/events/' + event.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Back to roles</a>'; %>
+    <% const topbarTitle = 'Event Volunteers'; %>
+    <% const topbarActions = '<a href="/organiser/events/' + event.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Back to roles</a>'; %>
     <%- include('../partials/navbar') %>
 
     <div class="app-content max-1040">
@@ -25,7 +25,7 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Volunteers <span style="color:#8B8778;font-weight:600;font-size:14px">(<%= volunteers.length %>)</span></span>
+          <span class="h-card">Volunteers <span style="color:#8A93A6;font-weight:600;font-size:14px">(<%= volunteers.length %>)</span></span>
         </div>
         <% if (volunteers.length) { %>
           <div class="table-scroll">
@@ -34,7 +34,7 @@
             </div>
             <% volunteers.forEach(function (v) { %>
               <div class="table-cc-row" style="grid-template-columns:1.6fr 1.8fr 1fr 1.3fr">
-                <span style="font-weight:600;color:#23271F"><%= v.volunteer_name %></span>
+                <span style="font-weight:600;color:#12161C"><%= v.volunteer_name %></span>
                 <span class="text-muted-cc" style="font-size:13px"><%= v.email %></span>
                 <span>
                   <span class="badge-cc <%= statusBadgeClass[v.registration_status] || 'badge-cc-muted' %>">
@@ -42,7 +42,7 @@
                   </span>
                 </span>
                 <% if (v.assigned_role_name) { %>
-                  <span style="font-weight:600;color:#23271F"><%= v.assigned_role_name %></span>
+                  <span style="font-weight:600;color:#12161C"><%= v.assigned_role_name %></span>
                 <% } else { %>
                   <span class="text-muted-cc" style="font-style:italic;font-size:13px">Not yet assigned</span>
                 <% } %>
@@ -50,7 +50,7 @@
             <% }) %>
           </div>
         <% } else { %>
-          <div class="px-4 py-3" style="font-size:13px;color:#8B8778;font-style:italic">No volunteers registered yet.</div>
+          <div class="px-4 py-3" style="font-size:13px;color:#8A93A6;font-style:italic">No volunteers registered yet.</div>
         <% } %>
       </div>
     </div>

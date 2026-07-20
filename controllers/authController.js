@@ -2,11 +2,12 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const pool = require("../config/database");
 const { flash, takeFlash } = require("../lib/flash");
-const { toSessionUser, dashboardPathForRole } = require("../lib/userDisplay");
+const passwordResetService = require("../services/passwordResetService");
 
 const BCRYPT_ROUNDS = 10;
 const PASSWORD_MIN_LENGTH = 8;
-const RESET_TOKEN_HOURS = 1;
+const GENERIC_RESET_MESSAGE =
+  "If an account with that email exists, a password reset link has been sent.";
 
 function authLocals(extra) {
   return Object.assign({
@@ -24,12 +25,22 @@ function normalizeEmail(email) {
 }
 
 function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const normalized = String(email || "").trim();
+  if (!normalized) return false;
+  if (normalized.includes(" ")) return false;
+  const atIndex = normalized.lastIndexOf("@");
+  if (atIndex <= 0 || atIndex !== normalized.indexOf("@")) return false;
+  const localPart = normalized.slice(0, atIndex);
+  const domainPart = normalized.slice(atIndex + 1);
+  if (!localPart || !domainPart || domainPart.includes(".") === false) return false;
+  const domainParts = domainPart.split(".");
+  if (domainParts.some(function (part) { return !part; })) return false;
+  return true;
 }
 
 // Only SHA-256 hashes of reset tokens are stored — never the raw token.
 function hashResetToken(rawToken) {
-  return crypto.createHash("sha256").update(rawToken).digest("hex");
+  return passwordResetService.hashResetToken(rawToken);
 }
 
 // ---------- Registration ----------
@@ -115,10 +126,10 @@ function showLogin(req, res) {
 async function login(req, res) {
   const email = normalizeEmail(req.body.email);
   const password = String(req.body.password || "");
-  const genericError = "Unable to sign in with the details provided. Please check your information and try again.";
+  const invalidCredentials = "Unable to sign in with the details provided. Please check your information and try again.";
 
-  function backToLogin(message) {
-    return res.status(401).render("login", authLocals({
+  function backToLogin(message, statusCode) {
+    return res.status(statusCode || 401).render("login", authLocals({
       activeNav: "login",
       pageTitle: "Log in · CommunityConnect SG",
       messages: [{ type: "error", text: message }],
@@ -134,46 +145,63 @@ async function login(req, res) {
     const [rows] = await pool.query(
       `SELECT user_id, name, email, password, role, account_status, created_at
        FROM users
-       WHERE email = ?
+       WHERE LOWER(email) = LOWER(?)
        LIMIT 1`,
       [email]
     );
 
     const user = rows[0];
-    // Same generic message whether the email or the password was wrong.
     if (!user) {
-      return backToLogin(genericError);
+      return backToLogin(invalidCredentials);
     }
 
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (!passwordMatches) {
-      return backToLogin(genericError);
+      return backToLogin(invalidCredentials);
     }
 
     if (user.account_status !== "Active") {
-      return backToLogin("Your account has been suspended. Please contact a CommunityConnect administrator.");
+      return backToLogin(
+        "Your account has been suspended. Please contact a CommunityConnect administrator."
+      );
     }
 
-    const sessionUser = toSessionUser(user);
-
-    // Regenerate the session ID after authentication (prevents session fixation).
+    // Never store the password or hash in the session.
     req.session.regenerate(function (regenErr) {
       if (regenErr) {
-        console.error("session regenerate failed:", regenErr.message);
-        return backToLogin("We could not start your session. Please try again.");
+        console.error("Session regenerate failed:", regenErr.message);
+        return backToLogin("We could not start your session. Please try again.", 500);
       }
-      req.session.user = sessionUser;
+
+      req.session.user = {
+        user_id: user.user_id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      };
       flash(req, "success", "Welcome back! You have signed in successfully.");
+
       req.session.save(function (saveErr) {
         if (saveErr) {
-          console.error("session save failed:", saveErr.message);
+          console.error("Session save failed:", saveErr.message);
+          return backToLogin("Unable to complete sign in. Please try again.", 500);
         }
-        return res.redirect(dashboardPathForRole(sessionUser.role));
+
+        if (user.role === "admin") {
+          return res.redirect("/admin/dashboard");
+        }
+        if (user.role === "organiser") {
+          return res.redirect("/organiser/dashboard");
+        }
+        return res.redirect("/member/dashboard");
       });
     });
   } catch (err) {
-    console.error("login failed:", err.message);
-    return backToLogin(genericError);
+    console.error("Login database or unexpected error:", err.message);
+    return backToLogin(
+      "We could not complete sign in because of a server problem. Please try again.",
+      500
+    );
   }
 }
 
@@ -182,7 +210,7 @@ function logout(req, res) {
     if (err) {
       console.error("logout failed:", err.message);
     }
-    res.clearCookie("connect.sid");
+    res.clearCookie("communityconnect.sid");
     return res.redirect("/login");
   });
 }
@@ -199,8 +227,6 @@ function showForgotPassword(req, res) {
 
 async function requestPasswordReset(req, res) {
   const email = normalizeEmail(req.body.email);
-  // Same response whether or not the account exists — do not confirm accounts.
-  const genericMessage = "If an account exists for that email address, a password reset has been prepared.";
 
   if (!email || !isValidEmail(email)) {
     flash(req, "error", "Please enter a valid email address.");
@@ -209,7 +235,7 @@ async function requestPasswordReset(req, res) {
 
   try {
     const [rows] = await pool.query(
-      "SELECT user_id, email, account_status FROM users WHERE email = ? LIMIT 1",
+      "SELECT user_id, name, email, account_status FROM users WHERE email = ? LIMIT 1",
       [email]
     );
     const user = rows[0];
@@ -217,63 +243,85 @@ async function requestPasswordReset(req, res) {
     if (user && user.account_status === "Active") {
       const rawToken = crypto.randomBytes(32).toString("hex");
       const tokenHash = hashResetToken(rawToken);
-      const expiresAt = new Date(Date.now() + RESET_TOKEN_HOURS * 60 * 60 * 1000);
+      const expiresMinutes = passwordResetService.getPasswordResetExpiresMinutes();
 
       // Invalidate previous unused tokens so only the newest link works.
       await pool.query(
-        "UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = ? AND used_at IS NULL",
+        "UPDATE password_reset_tokens SET used_at = UTC_TIMESTAMP() WHERE user_id = ? AND used_at IS NULL",
         [user.user_id]
       );
       await pool.query(
-        "INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)",
-        [user.user_id, tokenHash, expiresAt]
+        `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+         VALUES (?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? MINUTE))`,
+        [user.user_id, tokenHash, expiresMinutes]
       );
 
-      // No email service is configured for this CA2 project (per CLAUDE.md
-      // stack). In development the link goes to the server console only —
-      // never into the browser response.
-      if (process.env.NODE_ENV !== "production") {
-        console.log(
-          "[password-reset] Development-only reset link for " + user.email + ": " +
-          "/reset-password?token=" + rawToken
-        );
+      const resetUrl = passwordResetService.buildPasswordResetUrl(rawToken);
+      try {
+        await passwordResetService.sendPasswordResetEmail({
+          to: user.email,
+          name: user.name,
+          resetUrl: resetUrl,
+          expiresMinutes: expiresMinutes
+        });
+      } catch (mailErr) {
+        // Same public response whether delivery fails — do not reveal account existence.
+        console.error("Password reset email failed:", mailErr && mailErr.message
+          ? mailErr.message
+          : "unknown error");
       }
     }
 
-    flash(req, "success", genericMessage + " Development note: the reset link is printed in the server console.");
+    flash(req, "success", GENERIC_RESET_MESSAGE);
     return res.redirect("/forgot-password");
   } catch (err) {
     console.error("requestPasswordReset failed:", err.message);
-    flash(req, "error", "We could not start a password reset. Please try again.");
+    // Still use the same generic success message to avoid account enumeration.
+    flash(req, "success", GENERIC_RESET_MESSAGE);
     return res.redirect("/forgot-password");
   }
 }
 
-async function findValidToken(connectionOrPool, rawToken) {
-  const [rows] = await connectionOrPool.query(
-    `SELECT token_id, user_id, expires_at, used_at
-     FROM password_reset_tokens
-     WHERE token_hash = ?
-     LIMIT 1`,
-    [hashResetToken(rawToken)]
-  );
-  const row = rows[0];
-  if (!row || row.used_at || new Date(row.expires_at) < new Date()) {
+async function findValidToken(connectionOrPool, rawToken, forUpdate) {
+  if (!passwordResetService.isValidRawResetToken(rawToken)) {
     return null;
   }
-  return row;
+
+  const sql = `
+    SELECT token_id, user_id, expires_at, used_at
+    FROM password_reset_tokens
+    WHERE token_hash = ?
+      AND used_at IS NULL
+      AND expires_at > UTC_TIMESTAMP()
+    LIMIT 1
+    ${forUpdate ? "FOR UPDATE" : ""}
+  `;
+  const [rows] = await connectionOrPool.query(sql, [hashResetToken(rawToken)]);
+  return rows[0] || null;
 }
 
 async function showResetPassword(req, res) {
   const token = String(req.query.token || "").trim();
-  if (!token) {
+  if (!passwordResetService.isValidRawResetToken(token)) {
     flash(req, "error", "This password-reset link is invalid or has expired.");
     return res.redirect("/forgot-password");
   }
 
   try {
-    const valid = await findValidToken(pool, token);
+    const valid = await findValidToken(pool, token, false);
     if (!valid) {
+      flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
+      return res.redirect("/forgot-password");
+    }
+
+    const [[userRow]] = await pool.query(
+      `SELECT user_id, account_status
+       FROM users
+       WHERE user_id = ?
+       LIMIT 1`,
+      [valid.user_id]
+    );
+    if (!userRow || userRow.account_status !== "Active") {
       flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
       return res.redirect("/forgot-password");
     }
@@ -296,7 +344,7 @@ async function resetPassword(req, res) {
   const password = String(req.body.password || "");
   const confirmPassword = String(req.body.confirm_password || "");
 
-  if (!token) {
+  if (!passwordResetService.isValidRawResetToken(token)) {
     flash(req, "error", "This password-reset link is invalid or has expired.");
     return res.redirect("/forgot-password");
   }
@@ -314,8 +362,22 @@ async function resetPassword(req, res) {
     connection = await pool.getConnection();
     await connection.beginTransaction();
 
-    const valid = await findValidToken(connection, token);
+    const valid = await findValidToken(connection, token, true);
     if (!valid) {
+      await connection.rollback();
+      flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
+      return res.redirect("/forgot-password");
+    }
+
+    const [[userRow]] = await connection.query(
+      `SELECT user_id, account_status
+       FROM users
+       WHERE user_id = ?
+       LIMIT 1
+       FOR UPDATE`,
+      [valid.user_id]
+    );
+    if (!userRow || userRow.account_status !== "Active") {
       await connection.rollback();
       flash(req, "error", "This password-reset link is invalid or has expired. Please request a new one.");
       return res.redirect("/forgot-password");
@@ -328,7 +390,7 @@ async function resetPassword(req, res) {
     );
     // Mark this token used and invalidate any other outstanding tokens.
     await connection.query(
-      "UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = ? AND used_at IS NULL",
+      "UPDATE password_reset_tokens SET used_at = UTC_TIMESTAMP() WHERE user_id = ? AND used_at IS NULL",
       [valid.user_id]
     );
 

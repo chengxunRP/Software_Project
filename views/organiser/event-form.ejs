@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Organiser';
-    pageHeading = formMode === 'create' ? 'Add Event' : 'Edit Event';
-    pageLead = 'Set event details, schedule and separate participant and volunteer capacities.';
-    pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><a href="/organiser/events" class="btn-cc btn-cc-primary btn-cc-sm">Save event</a>';
+    const pageEyebrow = 'Organiser';
+    const pageHeading = formMode === 'create' ? 'Add Event' : 'Edit Event';
+    const pageLead = 'Set event details, schedule and separate participant and volunteer capacities.';
+    const pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Discard changes</a><button type="submit" form="eventForm" class="btn-cc btn-cc-primary btn-cc-sm">Save event</button>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-1060">
@@ -20,7 +20,7 @@
 
       <%- include('../partials/messages') %>
 
-      <form data-preview-only class="details-grid" style="grid-template-columns:1fr 320px">
+      <form id="eventForm" method="POST" action="<%= formMode === 'create' ? '/organiser/events' : '/organiser/events/' + event.id + '/edit' %>" enctype="multipart/form-data" class="details-grid" style="grid-template-columns:1fr 320px">
         <div class="d-flex flex-column gap-3">
           <div class="card-cc" style="border-radius:16px;padding:26px">
             <div class="h-card mb-3" style="font-size:15px">Event details</div>
@@ -42,10 +42,23 @@
                 <input class="form-control-cc" type="text" id="location" name="location" value="<%= event.location || '' %>">
               </div>
             </div>
-            <div>
+            <div class="mb-3">
               <label class="form-label-cc" for="description">Description <span class="req">*</span></label>
               <textarea class="form-control-cc" id="description" name="description" rows="5"><%= event.description || '' %></textarea>
               <div class="form-hint">Shown on the public event page. Include what to bring and who the event suits.</div>
+            </div>
+            <div>
+              <label class="form-label-cc" for="event_image">Event image</label>
+              <input class="form-control-cc" type="file" id="event_image" name="event_image" accept="image/*">
+              <input class="form-control-cc mt-2" type="text" id="image" name="image" list="eventImageSuggestions" value="<%= event.image || '' %>" placeholder="https://example.com/event.jpg">
+              <datalist id="eventImageSuggestions">
+                <option value="/images/category-environment.jpg">
+                <option value="/images/category-food.jpg">
+                <option value="/images/category-elderly.jpg">
+                <option value="/images/category-education.jpg">
+                <option value="/images/category-fundraising.jpg">
+              </datalist>
+              <div class="form-hint">Upload a new image here, or paste a public image URL if you prefer. Leave both blank to use the category default.</div>
             </div>
           </div>
 
@@ -94,8 +107,8 @@
                 <label class="status-option <%= selected ? 'active' : '' %>">
                   <input type="radio" name="status" value="<%= s.value %>" <%= selected ? 'checked' : '' %>>
                   <div>
-                    <div style="font-size:14px;font-weight:700;color:<%= selected ? '#1E4D33' : '#23271F' %>"><%= s.label %></div>
-                    <div style="font-size:12px;color:<%= selected ? '#4E6B57' : '#8B8778' %>"><%= s.note %></div>
+                    <div style="font-size:14px;font-weight:700;color:<%= selected ? '#056047' : '#12161C' %>"><%= s.label %></div>
+                    <div style="font-size:12px;color:<%= selected ? '#33394A' : '#8A93A6' %>"><%= s.note %></div>
                   </div>
                 </label>
               <% }) %>
@@ -108,7 +121,7 @@
             <div class="d-flex flex-column gap-3 mb-2">
               <div>
                 <div class="cap-bar-meta" style="font-size:13px">
-                  <span style="color:#6E7266">Participants <%= event.participants_filled %> of <%= event.participant_capacity %></span>
+                  <span style="color:#6B7280">Participants <%= event.participants_filled %> of <%= event.participant_capacity %></span>
                   <span style="color:<%= event.participants.capColor %>"><%= event.participants.full ? 'Full' : (event.participants.left + ' left') %></span>
                 </div>
                 <div class="cap-bar-track" style="height:7px">
@@ -117,7 +130,7 @@
               </div>
               <div>
                 <div class="cap-bar-meta" style="font-size:13px">
-                  <span style="color:#6E7266">Volunteers <%= event.volunteers_filled %> of <%= event.volunteer_capacity %></span>
+                  <span style="color:#6B7280">Volunteers <%= event.volunteers_filled %> of <%= event.volunteer_capacity %></span>
                   <span style="color:<%= event.volunteers.capColor %>"><%= event.volunteers.full ? 'Full' : (event.volunteers.left + ' left') %></span>
                 </div>
                 <div class="cap-bar-track" style="height:7px">

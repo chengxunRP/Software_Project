@@ -3,12 +3,12 @@
   <%- include('../partials/navbar') %>
 
   <%
-    pageEyebrow = 'Organiser';
-    pageHeading = 'Attendance Management';
-    pageLead = 'Record attendance for participants and volunteers at this event.';
-    pageActions = '';
+    const pageEyebrow = 'Organiser';
+    const pageHeading = 'Attendance Management';
+    const pageLead = 'Record attendance for participants and volunteers at this event.';
+    const pageActions = '<a href="/organiser/attendance" class="btn-cc btn-cc-secondary btn-cc-sm">Back to attendance</a>';
   %>
-  <%- include('../partials/page-header') %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
   <main class="site-main">
     <div class="site-content overlap-panel max-980">
@@ -31,7 +31,7 @@
         </div>
         <div class="stat-card" style="padding:18px 20px">
           <span class="stat-label" style="font-size:12.5px">Absent</span>
-          <span class="stat-value" style="font-size:26px;color:#B0433B"><%= summary.absent %></span>
+          <span class="stat-value" style="font-size:26px;color:#E9564D"><%= summary.absent %></span>
         </div>
         <div class="stat-card" style="padding:18px 20px">
           <span class="stat-label" style="font-size:12.5px">Pending</span>
@@ -43,15 +43,19 @@
 
       <div class="table-cc">
         <div class="panel-header">
-          <span class="h-card">Check-in <span style="color:#8B8778;font-weight:600;font-size:14px">(showing <%= rows.length %> of <%= summary.registered %>)</span></span>
-          <button type="button" class="btn-cc btn-cc-primary btn-cc-xs">Finalise attendance</button>
+          <span class="h-card">Check-in <span style="color:#8A93A6;font-weight:600;font-size:14px">(showing <%= rows.length %> of <%= summary.registered %>)</span></span>
         </div>
+        <% if (!rows.length) { %>
+          <div class="list-row">
+            <div class="text-muted-cc" style="font-size:13.5px">No attendance records have been recorded.</div>
+          </div>
+        <% } %>
         <% rows.forEach(function (r) { %>
           <div class="list-row" data-attendance-row>
             <span class="avatar-cc sm" style="background:<%= r.avBg %>"><%= r.initials %></span>
             <div class="flex-fill min-w-0">
-              <div style="font-weight:600;color:#23271F"><%= r.name %></div>
-              <div style="font-size:12.5px;color:#8B8778"><%= r.participation_type %><%= r.role !== '—' ? ' · ' + r.role : '' %></div>
+              <div style="font-weight:600;color:#12161C"><%= r.name %></div>
+              <div style="font-size:12.5px;color:#8A93A6"><%= r.participation_type %><%= r.role !== '—' ? ' · ' + r.role : '' %></div>
             </div>
             <span class="badge-cc <%= r.status === 'Attended' ? 'badge-cc-attended' : (r.status === 'Absent' ? 'badge-cc-absent' : 'badge-cc-pending') %>" data-attendance-badge style="font-size:11.5px;padding:4px 11px"><%= r.status %></span>
             <% if (r.status === 'Pending') { %>
@@ -65,6 +69,19 @@
                   <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
                   <input type="hidden" name="attendance_status" value="Absent">
                   <button type="submit" class="btn-cc btn-cc-xs btn-cc-secondary">Mark Absent</button>
+                </form>
+              </div>
+            <% } else { %>
+              <div class="d-flex gap-2">
+                <% if (r.canCheckOut) { %>
+                  <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance/checkout">
+                    <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
+                    <button type="submit" class="btn-cc btn-cc-xs btn-cc-secondary">Check out</button>
+                  </form>
+                <% } %>
+                <form method="POST" action="/organiser/events/<%= event.event_id %>/attendance/undo" onsubmit="return confirm('Undo this attendance record?');">
+                  <input type="hidden" name="registration_id" value="<%= r.registration_id %>">
+                  <button type="submit" class="btn-cc btn-cc-xs btn-cc-outline">Undo</button>
                 </form>
               </div>
             <% } %>

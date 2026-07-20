@@ -9,6 +9,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/database");
 const { isOrganiser } = require("../middleware/auth");
+const { toViewUser } = require("../lib/userDisplay");
 
 // Loads a volunteer role together with its parent event, and confirms the
 // logged-in organiser owns that event. Joining on both role_id AND event_id
@@ -24,7 +25,7 @@ async function loadOwnedRole(eventId, roleId, organiserId) {
     [roleId, eventId]
   );
   const role = rows[0];
-  if (!role || role.organiser_id !== organiserId) {
+  if (!role || Number(role.organiser_id) !== Number(organiserId)) {
     return null;
   }
   return role;
@@ -46,7 +47,7 @@ async function loadAssignmentData(eventId, roleId) {
   );
 
   const [assigned] = await db.query(
-    `SELECT u.user_id, u.name, u.email
+    `SELECT er.registration_id, u.user_id, u.name, u.email
      FROM volunteer_assignments va
      JOIN event_registrations er ON er.registration_id = va.registration_id
      JOIN users u ON u.user_id = er.user_id
@@ -60,7 +61,10 @@ async function loadAssignmentData(eventId, roleId) {
      FROM event_registrations er
      JOIN users u ON u.user_id = er.user_id
      LEFT JOIN volunteer_assignments va ON va.registration_id = er.registration_id
-     WHERE er.event_id = ? AND er.status = 'Confirmed' AND va.assignment_id IS NULL
+     WHERE er.event_id = ?
+       AND er.participation_type = 'Volunteer'
+       AND er.status = 'Confirmed'
+       AND va.assignment_id IS NULL
      ORDER BY u.name ASC`,
     [eventId]
   );
@@ -87,7 +91,7 @@ router.get("/organiser/events/:id/roles/new", isOrganiser, async function (req, 
     return res.status(404).send("Event not found.");
   }
   // Ownership check — an organiser may only manage roles on their own events.
-  if (event.organiser_id !== req.session.user.user_id) {
+  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
     return res.status(403).send("You do not have permission to manage this event.");
   }
 
@@ -96,8 +100,11 @@ router.get("/organiser/events/:id/roles/new", isOrganiser, async function (req, 
     role: "organiser",
     activeNav: "roles",
     pageTitle: "Add Volunteer Role · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
+    navEventId: event.event_id,
     event: event,
+    formMode: "create",
+    role_id: null,
     role_name: "",
     description: "",
     required_volunteers: "",
@@ -127,7 +134,7 @@ router.post("/organiser/events/:id/roles", isOrganiser, async function (req, res
   if (!event) {
     return res.status(404).send("Event not found.");
   }
-  if (event.organiser_id !== req.session.user.user_id) {
+  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
     return res.status(403).send("You do not have permission to manage this event.");
   }
 
@@ -148,8 +155,11 @@ router.post("/organiser/events/:id/roles", isOrganiser, async function (req, res
       role: "organiser",
       activeNav: "roles",
       pageTitle: "Add Volunteer Role · Organiser",
-      currentUser: req.session.user,
+      currentUser: toViewUser(req.session.user),
+      navEventId: event.event_id,
       event: event,
+      formMode: "create",
+      role_id: null,
       role_name: role_name,
       description: description,
       required_volunteers: req.body.required_volunteers,
@@ -173,8 +183,11 @@ router.post("/organiser/events/:id/roles", isOrganiser, async function (req, res
       role: "organiser",
       activeNav: "roles",
       pageTitle: "Add Volunteer Role · Organiser",
-      currentUser: req.session.user,
+      currentUser: toViewUser(req.session.user),
+      navEventId: event.event_id,
       event: event,
+      formMode: "create",
+      role_id: null,
       role_name: role_name,
       description: description,
       required_volunteers: req.body.required_volunteers,
@@ -205,7 +218,7 @@ router.get("/organiser/events/:eventId/volunteers", isOrganiser, async function 
   if (!event) {
     return res.status(404).send("Event not found.");
   }
-  if (event.organiser_id !== req.session.user.user_id) {
+  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
     return res.status(403).send("You do not have permission to view this event.");
   }
 
@@ -229,7 +242,8 @@ router.get("/organiser/events/:eventId/volunteers", isOrganiser, async function 
     role: "organiser",
     activeNav: "roles",
     pageTitle: "Event Volunteers · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
+    navEventId: event.event_id,
     event: event,
     volunteers: volunteers,
     messages: [],
@@ -259,7 +273,8 @@ router.get("/organiser/events/:eventId/roles/:roleId/assign", isOrganiser, async
     role: "organiser",
     activeNav: "roles",
     pageTitle: "Assign Volunteers · Organiser",
-    currentUser: req.session.user,
+    currentUser: toViewUser(req.session.user),
+    navEventId: Number(eventId),
     volunteerRole: volunteerRole,
     assignedCount: data.assignedCount,
     assigned: data.assigned,
@@ -301,7 +316,8 @@ router.post("/organiser/events/:eventId/roles/:roleId/assign", isOrganiser, asyn
       role: "organiser",
       activeNav: "roles",
       pageTitle: "Assign Volunteers · Organiser",
-      currentUser: req.session.user,
+      currentUser: toViewUser(req.session.user),
+      navEventId: Number(eventId),
       volunteerRole: volunteerRole,
       assignedCount: data.assignedCount,
       assigned: data.assigned,
@@ -332,7 +348,10 @@ router.post("/organiser/events/:eventId/roles/:roleId/assign", isOrganiser, asyn
       `SELECT er.registration_id
        FROM event_registrations er
        LEFT JOIN volunteer_assignments va ON va.registration_id = er.registration_id
-       WHERE er.event_id = ? AND er.status = 'Confirmed' AND va.assignment_id IS NULL
+       WHERE er.event_id = ?
+         AND er.participation_type = 'Volunteer'
+         AND er.status = 'Confirmed'
+         AND va.assignment_id IS NULL
          AND er.registration_id IN (?)`,
       [eventId, selectedIds]
     );
@@ -367,6 +386,170 @@ router.post("/organiser/events/:eventId/roles/:roleId/assign", isOrganiser, asyn
   }
 
   res.redirect("/organiser/events/" + eventId + "/roles/" + roleId + "/assign");
+});
+
+// POST /organiser/events/:eventId/roles/:roleId/unassign
+// Removes one assignment so a role can be edited/deleted safely, or a volunteer
+// reassigned. Ownership via session + loadOwnedRole (no organiser_id form field).
+router.post("/organiser/events/:eventId/roles/:roleId/unassign", isOrganiser, async function (req, res) {
+  const eventId = req.params.eventId;
+  const roleId = req.params.roleId;
+  const volunteerRole = await loadOwnedRole(eventId, roleId, req.session.user.user_id);
+  if (!volunteerRole) {
+    return res.status(404).send("Role not found.");
+  }
+
+  const registration_id = parseInt(req.body.registration_id, 10);
+  if (!Number.isInteger(registration_id) || registration_id < 1) {
+    req.session.flash = { type: "error", text: "Select a valid volunteer to unassign." };
+    return res.redirect("/organiser/events/" + eventId + "/roles/" + roleId + "/assign");
+  }
+
+  const [result] = await db.query(
+    `DELETE va FROM volunteer_assignments va
+     INNER JOIN event_registrations er ON er.registration_id = va.registration_id
+     WHERE va.role_id = ? AND va.registration_id = ? AND er.event_id = ?`,
+    [roleId, registration_id, eventId]
+  );
+
+  if (!result.affectedRows) {
+    req.session.flash = { type: "error", text: "That volunteer is not assigned to this role." };
+  }
+
+  res.redirect("/organiser/events/" + eventId + "/roles/" + roleId + "/assign");
+});
+
+// GET /organiser/events/:eventId/roles/:roleId/edit
+router.get("/organiser/events/:eventId/roles/:roleId/edit", isOrganiser, async function (req, res) {
+  const eventId = req.params.eventId;
+  const roleId = req.params.roleId;
+  const volunteerRole = await loadOwnedRole(eventId, roleId, req.session.user.user_id);
+  if (!volunteerRole) {
+    return res.status(404).send("Role not found.");
+  }
+
+  res.render("organiser/role-form", {
+    layout: "app",
+    role: "organiser",
+    activeNav: "roles",
+    pageTitle: "Edit Volunteer Role · Organiser",
+    currentUser: toViewUser(req.session.user),
+    navEventId: Number(eventId),
+    event: {
+      event_id: volunteerRole.event_id,
+      event_name: volunteerRole.event_name
+    },
+    formMode: "edit",
+    role_id: volunteerRole.role_id,
+    role_name: volunteerRole.role_name,
+    description: volunteerRole.description || "",
+    required_volunteers: volunteerRole.required_volunteers,
+    messages: []
+  });
+});
+
+// POST /organiser/events/:eventId/roles/:roleId/edit
+router.post("/organiser/events/:eventId/roles/:roleId/edit", isOrganiser, async function (req, res) {
+  const eventId = req.params.eventId;
+  const roleId = req.params.roleId;
+  const volunteerRole = await loadOwnedRole(eventId, roleId, req.session.user.user_id);
+  if (!volunteerRole) {
+    return res.status(404).send("Role not found.");
+  }
+
+  const role_name = (req.body.role_name || "").trim();
+  const description = (req.body.description || "").trim();
+  const required_volunteers = parseInt(req.body.required_volunteers, 10);
+
+  const errors = [];
+  if (!role_name) {
+    errors.push("Role name is required.");
+  } else if (role_name.length > 100) {
+    errors.push("Role name must be 100 characters or fewer.");
+  }
+  if (!Number.isInteger(required_volunteers) || required_volunteers < 1) {
+    errors.push("Required volunteers must be a whole number of 1 or more.");
+  }
+
+  const [[{ assignedCount }]] = await db.query(
+    "SELECT COUNT(*) AS assignedCount FROM volunteer_assignments WHERE role_id = ?",
+    [roleId]
+  );
+  if (Number.isInteger(required_volunteers) && required_volunteers < Number(assignedCount)) {
+    errors.push("Volunteers needed cannot be below the " + assignedCount + " already assigned.");
+  }
+
+  function renderEdit(messages) {
+    return res.status(400).render("organiser/role-form", {
+      layout: "app",
+      role: "organiser",
+      activeNav: "roles",
+      pageTitle: "Edit Volunteer Role · Organiser",
+      currentUser: toViewUser(req.session.user),
+      navEventId: Number(eventId),
+      event: {
+        event_id: volunteerRole.event_id,
+        event_name: volunteerRole.event_name
+      },
+      formMode: "edit",
+      role_id: volunteerRole.role_id,
+      role_name: role_name,
+      description: description,
+      required_volunteers: req.body.required_volunteers,
+      messages: messages
+    });
+  }
+
+  if (errors.length) {
+    return renderEdit(errors.map(function (text) { return { type: "error", text: text }; }));
+  }
+
+  try {
+    await db.query(
+      `UPDATE volunteer_roles
+       SET role_name = ?, description = ?, required_volunteers = ?
+       WHERE role_id = ? AND event_id = ?`,
+      [role_name, description || null, required_volunteers, roleId, eventId]
+    );
+  } catch (err) {
+    const friendlyMessage = err.code === "ER_DUP_ENTRY"
+      ? "A role with that name already exists for this event."
+      : "Something went wrong while saving the role. Please try again.";
+    return renderEdit([{ type: "error", text: friendlyMessage }]);
+  }
+
+  res.redirect("/organiser/events/" + eventId + "/roles");
+});
+
+// POST /organiser/events/:eventId/roles/:roleId/delete
+router.post("/organiser/events/:eventId/roles/:roleId/delete", isOrganiser, async function (req, res) {
+  const eventId = req.params.eventId;
+  const roleId = req.params.roleId;
+  const volunteerRole = await loadOwnedRole(eventId, roleId, req.session.user.user_id);
+  if (!volunteerRole) {
+    return res.status(404).send("Role not found.");
+  }
+
+  const [[{ assignedCount }]] = await db.query(
+    "SELECT COUNT(*) AS assignedCount FROM volunteer_assignments WHERE role_id = ?",
+    [roleId]
+  );
+
+  // Safe delete: refuse while volunteers are still assigned (avoid silent CASCADE surprise).
+  if (Number(assignedCount) > 0) {
+    req.session.flash = {
+      type: "error",
+      text: "This role still has " + assignedCount + " assigned volunteer(s). Unassign them before deleting the role."
+    };
+    return res.redirect("/organiser/events/" + eventId + "/roles");
+  }
+
+  await db.query(
+    "DELETE FROM volunteer_roles WHERE role_id = ? AND event_id = ?",
+    [roleId, eventId]
+  );
+
+  res.redirect("/organiser/events/" + eventId + "/roles");
 });
 
 module.exports = router;

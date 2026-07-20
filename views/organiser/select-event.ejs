@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
+
+  <%
+    const pageEyebrow = 'Organiser';
+    const pageHeading = (typeof locals.pageHeading !== 'undefined' && locals.pageHeading) ? locals.pageHeading : 'Select an event';
+    const pageLead = (typeof locals.pageLead !== 'undefined' && locals.pageLead) ? locals.pageLead : '';
+    const pageActions = '<a href="/organiser/events" class="btn-cc btn-cc-secondary btn-cc-sm">Manage Events</a>';
+  %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel max-980">
+      <%- include('../partials/messages') %>
+
+      <div class="card-cc overflow-hidden">
+        <div class="panel-header">
+          <span class="h-card">Select an event</span>
+        </div>
+        <% if (!events.length) { %>
+          <div class="list-row">
+            <div class="text-muted-cc" style="font-size:13.5px">You have no events yet. Create an event first, then return here.</div>
+          </div>
+          <div class="px-4 pb-4">
+            <a href="/organiser/events/new" class="btn-cc btn-cc-primary btn-cc-sm">+ Add Event</a>
+          </div>
+        <% } %>
+        <% events.forEach(function (e) { %>
+          <div class="list-row">
+            <div class="flex-fill min-w-0">
+              <div style="font-weight:700;color:#12161C"><%= e.event_name %></div>
+              <div style="font-size:12.5px;color:#8A93A6"><%= e.dateLabel %><%= e.location ? ' · ' + e.location : '' %></div>
+            </div>
+            <a href="<%= e.href %>" class="btn-cc btn-cc-primary btn-cc-xs"><%= actionLabel %></a>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

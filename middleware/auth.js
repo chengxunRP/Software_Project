@@ -1,9 +1,9 @@
 // Server-side role checks. Client-side hiding of buttons/links is never
-// sufficient on its own — every protected route must also check here.
+// sufficient on its own â€” every protected route must also check here.
 //
 // Account roles (users.role ENUM): community_member | organiser | admin
 // req.session.user is set by the login controller (Feature 1) and contains
-// only { user_id, name, email, role, account_status, joined } — never a password.
+// only { user_id, name, email, role, account_status, joined } â€” never a password.
 
 const { flash } = require("../lib/flash");
 const { dashboardPathForRole } = require("../lib/userDisplay");
@@ -25,17 +25,13 @@ function isOrganiser(req, res, next) {
   next();
 }
 
-function isAdmin(req, res, next) {
-  return requireAdmin(req, res, next);
-}
-
 // Renders the shared error page with a friendly access-denied message.
 function accessDenied(req, res) {
   return res.status(403).render("error", {
     layout: "public",
     activeNav: "",
-    pageTitle: "Access denied · CommunityConnect SG",
-    currentUser: null,
+    pageTitle: "Access denied Â· CommunityConnect SG",
+    currentUser: req.session.user || null,
     messages: [],
     statusCode: 403,
     errorTitle: "You do not have permission to access this page",
@@ -73,7 +69,6 @@ function redirectIfLoggedIn(req, res, next) {
 module.exports = {
   isLoggedIn,
   isOrganiser,
-  isAdmin,
   requireRole,
   requireCommunityMember,
   requireOrganiser,

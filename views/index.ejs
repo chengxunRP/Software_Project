@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="hero-visual">
-        <span class="hero-visual-emoji" aria-hidden="true">🌿</span>
+        <img class="hero-visual-photo" src="/images/impact-seedlings.jpg" alt="Volunteers holding seedlings together">
       </div>
     </div>
   </section>
@@ -38,7 +38,7 @@
       </div>
       <div class="impact-stat">
         <div class="value"><%= impactStats.activeOrganisers %></div>
-        <div class="label">Active organisers</div>
+        <div class="label">Active <%= impactStats.activeOrganisers === 1 ? 'organiser' : 'organisers' %></div>
       </div>
     </div>
   </section>
@@ -55,7 +55,7 @@
 
       <% if (!featuredEvents || !featuredEvents.length) { %>
         <div class="card-cc" style="padding:28px">
-          <div style="font-size:16px;font-weight:700;color:#23271F">No upcoming events are currently available.</div>
+          <div style="font-size:16px;font-weight:700;color:#12161C">No upcoming events are currently available.</div>
           <div class="text-muted-cc mt-1">Check back soon or browse the full catalogue for other events.</div>
           <a href="/events" class="btn-cc btn-cc-primary mt-3">Browse Events</a>
         </div>
@@ -64,7 +64,7 @@
           <% featuredEvents.forEach(function (ev) { %>
             <div class="col-md-6 col-lg-4">
               <div class="event-card">
-                <%- include('partials/event-card-panel', { category: ev.category }) %>
+                <%- include('partials/event-card-panel', { category: ev.category, image: ev.image }) %>
                 <div class="event-card-body">
                   <span class="badge-cc badge-cc-cat align-self-start" style="background:<%= ev.badgeBg %>;color:<%= ev.badgeFg %>"><%= ev.category %></span>
                   <div class="event-card-title"><%= ev.event_name %></div>
@@ -130,7 +130,6 @@
       <div class="twin-cards mt-4">
         <div class="twin-card participant">
           <div class="twin-card-head">
-            <div class="twin-card-icon">🙋</div>
             <div class="twin-card-title">Join as a Participant</div>
           </div>
           <p>Take part in activities, workshops and community programmes. Ideal when you want to attend and enjoy the event.</p>
@@ -138,7 +137,6 @@
         </div>
         <div class="twin-card volunteer">
           <div class="twin-card-head">
-            <div class="twin-card-icon">🤝</div>
             <div class="twin-card-title">Help as a Volunteer</div>
           </div>
           <p>Support organisers with roles like packing, befriending or tutoring. Volunteer hours are recorded when you attend.</p>
@@ -155,12 +153,12 @@
         <h2 class="h-section">Browse by category</h2>
       </div>
       <div class="category-grid">
-        <a href="/events?category=1" class="category-tile"><span class="icon">🌿</span><span>Environment</span></a>
-        <a href="/events?category=2" class="category-tile"><span class="icon">🍲</span><span>Food Support</span></a>
-        <a href="/events?category=3" class="category-tile"><span class="icon">🤝</span><span>Elderly Support</span></a>
-        <a href="/events?category=4" class="category-tile"><span class="icon">📚</span><span>Education</span></a>
-        <a href="/events?category=5" class="category-tile"><span class="icon">💛</span><span>Fundraising</span></a>
-        <a href="/events" class="category-tile"><span class="icon">💚</span><span>All events</span></a>
+        <a href="/events?category=1" class="category-tile"><span>Environment</span></a>
+        <a href="/events?category=2" class="category-tile"><span>Food Support</span></a>
+        <a href="/events?category=3" class="category-tile"><span>Elderly Support</span></a>
+        <a href="/events?category=4" class="category-tile"><span>Education</span></a>
+        <a href="/events?category=5" class="category-tile"><span>Fundraising</span></a>
+        <a href="/events" class="category-tile"><span>All events</span></a>
       </div>
     </div>
   </section>

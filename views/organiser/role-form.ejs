@@ -1,21 +1,32 @@
 <%- include('../partials/header') %>
-<div class="app-shell" id="appShell">
-  <%- include('../partials/sidebar') %>
-  <main class="app-main">
-    <% topbarTitle = 'Add Volunteer Role'; %>
-    <% topbarActions = '<a href="/organiser/events/' + event.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Cancel</a>'; %>
-    <%- include('../partials/navbar') %>
+<%
+  const isEdit = typeof formMode !== 'undefined' && formMode === 'edit';
+  const formAction = isEdit
+    ? '/organiser/events/' + event.event_id + '/roles/' + role_id + '/edit'
+    : '/organiser/events/' + event.event_id + '/roles';
+%>
+<div class="site-page app-shell" id="appShell">
+  <%- include('../partials/navbar') %>
 
-    <div class="app-content max-1040">
+  <%
+    const pageEyebrow = 'Organiser';
+    const pageHeading = isEdit ? 'Edit Volunteer Role' : 'Add Volunteer Role';
+    const pageLead = 'Define volunteer duties for this event.';
+    const pageActions = '<a href="/organiser/events/' + event.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Cancel</a>';
+  %>
+  <%- include('../partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
+
+  <main class="site-main">
+    <div class="site-content overlap-panel max-1040">
       <div class="breadcrumb-cc mb-0">
         <a href="/organiser/events/<%= event.event_id %>/roles" style="font-weight:600">← <%= event.event_name %></a>
         <span class="sep">/</span>
-        Add Volunteer Role
+        <%= isEdit ? 'Edit Volunteer Role' : 'Add Volunteer Role' %>
       </div>
 
       <%- include('../partials/messages') %>
 
-      <form method="POST" action="/organiser/events/<%= event.event_id %>/roles" class="card-cc" style="border-radius:16px;padding:26px;max-width:560px">
+      <form method="POST" action="<%= formAction %>" class="card-cc" style="border-radius:16px;padding:26px;max-width:560px">
         <div class="mb-3">
           <label class="form-label-cc" for="role_name">Role name <span class="req">*</span></label>
           <input class="form-control-cc" type="text" id="role_name" name="role_name" maxlength="100" value="<%= role_name %>" required>
@@ -31,11 +42,14 @@
         </div>
         <div class="d-flex gap-2 justify-content-end">
           <a href="/organiser/events/<%= event.event_id %>/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Cancel</a>
-          <button type="submit" class="btn-cc btn-cc-primary btn-cc-sm">Save role</button>
+          <button type="submit" class="btn-cc btn-cc-primary btn-cc-sm"><%= isEdit ? 'Save changes' : 'Save role' %></button>
         </div>
       </form>
     </div>
   </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/mobile-tabbar') %>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>

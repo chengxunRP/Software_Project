@@ -7,13 +7,14 @@ const {
   formatJoined,
   toViewUser
 } = require("../lib/userDisplay");
+const passwordResetService = require("../services/passwordResetService");
 
 // Server-side allow-lists — role/status values from the browser are only
 // accepted when they match these exactly.
 const ALLOWED_ROLES = ["community_member", "organiser", "admin"];
 const ALLOWED_STATUSES = ["Active", "Suspended"];
 
-const AVATAR_COLORS = ["#7FA8D9", "#D99E2B", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
+const AVATAR_COLORS = ["#7FA8D9", "#F4B83F", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
 
 function mapUserRow(row, index) {
   return {
@@ -158,8 +159,7 @@ async function updateUserStatus(req, res) {
 
 /**
  * Admin "reset access": issues a one-time reset token through the same
- * password_reset_tokens flow used by forgot-password. The old password is
- * never shown, and the link is printed to the server console (no mailer).
+ * password_reset_tokens flow used by forgot-password, then emails the link.
  */
 async function adminResetAccess(req, res) {
   const userId = Number(req.params.id);
@@ -171,7 +171,7 @@ async function adminResetAccess(req, res) {
 
   try {
     const [rows] = await pool.query(
-      "SELECT user_id, email, account_status FROM users WHERE user_id = ? LIMIT 1",
+      "SELECT user_id, name, email, account_status FROM users WHERE user_id = ? LIMIT 1",
       [userId]
     );
     if (!rows.length) {
@@ -186,26 +186,34 @@ async function adminResetAccess(req, res) {
     }
 
     const rawToken = crypto.randomBytes(32).toString("hex");
-    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+    const tokenHash = passwordResetService.hashResetToken(rawToken);
+    const expiresMinutes = passwordResetService.getPasswordResetExpiresMinutes();
 
     await pool.query(
-      "UPDATE password_reset_tokens SET used_at = NOW() WHERE user_id = ? AND used_at IS NULL",
+      "UPDATE password_reset_tokens SET used_at = UTC_TIMESTAMP() WHERE user_id = ? AND used_at IS NULL",
       [user.user_id]
     );
     await pool.query(
-      "INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)",
-      [user.user_id, tokenHash, expiresAt]
+      `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+       VALUES (?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? MINUTE))`,
+      [user.user_id, tokenHash, expiresMinutes]
     );
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log(
-        "[admin-reset] Development-only reset link for " + user.email + ": " +
-        "/reset-password?token=" + rawToken
-      );
+    try {
+      await passwordResetService.sendPasswordResetEmail({
+        to: user.email,
+        name: user.name,
+        resetUrl: passwordResetService.buildPasswordResetUrl(rawToken),
+        expiresMinutes: expiresMinutes
+      });
+      flash(req, "success", "A password-reset email was sent for " + user.email + ".");
+    } catch (mailErr) {
+      console.error("adminResetAccess email failed:", mailErr && mailErr.message
+        ? mailErr.message
+        : "unknown error");
+      flash(req, "success", "A password-reset token was created for " + user.email
+        + ". The email could not be sent; ask the user to use Forgot password, or check email configuration.");
     }
-
-    flash(req, "success", "A password-reset link was created for " + user.email + ". Development note: the link is printed in the server console.");
     return res.redirect("/admin/users");
   } catch (err) {
     console.error("adminResetAccess failed:", err.message);

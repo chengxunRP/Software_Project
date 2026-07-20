@@ -2,8 +2,8 @@
 <div class="app-shell" id="appShell">
   <%- include('../partials/sidebar') %>
   <main class="app-main">
-    <% topbarTitle = 'Assign Volunteers'; %>
-    <% topbarActions = '<a href="/organiser/events/' + volunteerRole.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Back to roles</a>'; %>
+    <% const topbarTitle = 'Assign Volunteers'; %>
+    <% const topbarActions = '<a href="/organiser/events/' + volunteerRole.event_id + '/roles" class="btn-cc btn-cc-secondary btn-cc-sm">Back to roles</a>'; %>
     <%- include('../partials/navbar') %>
 
     <div class="app-content max-1040">
@@ -20,12 +20,12 @@
       <div class="card-cc" style="border-radius:16px;padding:26px;margin-bottom:16px">
         <div class="panel-header" style="padding:0 0 12px 0;border:none">
           <div>
-            <div style="font-size:15.5px;font-weight:700;color:#23271F"><%= volunteerRole.role_name %></div>
+            <div style="font-size:15.5px;font-weight:700;color:#12161C"><%= volunteerRole.role_name %></div>
             <% if (volunteerRole.description) { %>
-              <div style="font-size:13px;color:#6E7266"><%= volunteerRole.description %></div>
+              <div style="font-size:13px;color:#6B7280"><%= volunteerRole.description %></div>
             <% } %>
           </div>
-          <span class="badge-cc" style="background:<%= isFull ? '#FBEAE8' : '#E7F2EA' %>;color:<%= isFull ? '#B0433B' : '#1E4D33' %>">
+          <span class="badge-cc" style="background:<%= isFull ? '#FFF0EE' : '#E8F7F0' %>;color:<%= isFull ? '#E9564D' : '#056047' %>">
             Assigned: <%= assignedCount %> / <%= volunteerRole.required_volunteers %>
           </span>
         </div>
@@ -33,12 +33,16 @@
         <% if (assigned.length) { %>
           <% assigned.forEach(function (person) { %>
             <div class="list-row">
-              <span style="font-weight:600;color:#23271F;flex:1"><%= person.name %></span>
-              <span style="font-size:12.5px;color:#8B8778"><%= person.email %></span>
+              <span style="font-weight:600;color:#12161C;flex:1"><%= person.name %></span>
+              <span style="font-size:12.5px;color:#8A93A6"><%= person.email %></span>
+              <form method="POST" action="/organiser/events/<%= volunteerRole.event_id %>/roles/<%= volunteerRole.role_id %>/unassign">
+                <input type="hidden" name="registration_id" value="<%= person.registration_id %>">
+                <button type="submit" class="btn-cc btn-cc-secondary btn-cc-xs">Unassign</button>
+              </form>
             </div>
           <% }) %>
         <% } else { %>
-          <div class="px-4 py-3" style="font-size:13px;color:#8B8778;font-style:italic">No volunteers assigned to this role yet.</div>
+          <div class="px-4 py-3" style="font-size:13px;color:#8A93A6;font-style:italic">No volunteers assigned to this role yet.</div>
         <% } %>
       </div>
 
@@ -46,17 +50,17 @@
         <div class="h-card mb-3" style="font-size:15px">Assign confirmed volunteers</div>
 
         <% if (isFull) { %>
-          <div class="px-4 py-3" style="font-size:13.5px;color:#B0433B;font-weight:600">Role is at capacity — no more volunteers can be assigned.</div>
+          <div class="px-4 py-3" style="font-size:13.5px;color:#E9564D;font-weight:600">Role is at capacity — no more volunteers can be assigned.</div>
         <% } else if (!eligible.length) { %>
-          <div class="px-4 py-3" style="font-size:13px;color:#8B8778;font-style:italic">No confirmed volunteers are available to assign right now.</div>
+          <div class="px-4 py-3" style="font-size:13px;color:#8A93A6;font-style:italic">No confirmed volunteers are available to assign right now.</div>
         <% } else { %>
           <form method="POST" action="/organiser/events/<%= volunteerRole.event_id %>/roles/<%= volunteerRole.role_id %>/assign">
             <div class="d-flex flex-column gap-2 mb-3">
               <% eligible.forEach(function (person) { %>
                 <label class="list-row" style="cursor:pointer">
                   <input type="checkbox" name="registration_ids" value="<%= person.registration_id %>">
-                  <span style="font-weight:600;color:#23271F;flex:1"><%= person.name %></span>
-                  <span style="font-size:12.5px;color:#8B8778"><%= person.email %></span>
+                  <span style="font-weight:600;color:#12161C;flex:1"><%= person.name %></span>
+                  <span style="font-size:12.5px;color:#8A93A6"><%= person.email %></span>
                 </label>
               <% }) %>
             </div>
