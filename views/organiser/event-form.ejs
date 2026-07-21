@@ -107,8 +107,8 @@
                 <label class="status-option <%= selected ? 'active' : '' %>">
                   <input type="radio" name="status" value="<%= s.value %>" <%= selected ? 'checked' : '' %>>
                   <div>
-                    <div style="font-size:14px;font-weight:700;color:<%= selected ? '#056047' : '#12161C' %>"><%= s.label %></div>
-                    <div style="font-size:12px;color:<%= selected ? '#33394A' : '#8A93A6' %>"><%= s.note %></div>
+                    <div class="status-option-title" style="font-size:14px;font-weight:700"><%= s.label %></div>
+                    <div class="status-option-note" style="font-size:12px"><%= s.note %></div>
                   </div>
                 </label>
               <% }) %>

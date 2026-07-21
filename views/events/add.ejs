@@ -79,7 +79,7 @@
                 <label class="status-option <%= event.status === option.value ? 'active' : '' %>">
                   <input type="radio" name="status" value="<%= option.value %>" <%= event.status === option.value ? 'checked' : '' %>>
                   <div>
-                    <div style="font-size:14px;font-weight:700;color:<%= event.status === option.value ? '#1E4D33' : '#23271F' %>"><%= option.label %></div>
+                    <div class="status-option-title-alt" style="font-size:14px;font-weight:700"><%= option.label %></div>
                   </div>
                 </label>
               <% }) %>

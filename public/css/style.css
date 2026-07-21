@@ -2511,13 +2511,41 @@ textarea::placeholder {
   cursor: pointer;
 }
 
-.status-option.active {
+.status-option.active,
+.status-option:has(input[type="radio"]:checked) {
   border-color: var(--cc-primary);
   background: var(--cc-green-soft);
 }
 
 .status-option input {
   accent-color: var(--cc-primary);
+}
+
+.status-option-title {
+  color: #12161c;
+}
+
+.status-option-note {
+  color: #8a93a6;
+}
+
+.status-option.active .status-option-title,
+.status-option:has(input[type="radio"]:checked) .status-option-title {
+  color: #056047;
+}
+
+.status-option.active .status-option-note,
+.status-option:has(input[type="radio"]:checked) .status-option-note {
+  color: #33394a;
+}
+
+.status-option-title-alt {
+  color: #23271f;
+}
+
+.status-option.active .status-option-title-alt,
+.status-option:has(input[type="radio"]:checked) .status-option-title-alt {
+  color: #1e4d33;
 }
 
 .modal-cc {

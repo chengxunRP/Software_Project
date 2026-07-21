@@ -148,4 +148,37 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  // Status option radio toggle — ensure the card highlight (.active) follows the checked radio
+  (function () {
+    var statusRadios = document.querySelectorAll('.status-option input[type=radio]');
+    if (!statusRadios || statusRadios.length === 0) return;
+
+    function syncStatusOptions() {
+      // remove active from all
+      var allLabels = document.querySelectorAll('.status-option');
+      allLabels.forEach(function (lab) { lab.classList.remove('active'); });
+      // add active to the label of the checked radio(s)
+      statusRadios.forEach(function (r) {
+        if (r.checked) {
+          var lab = r.closest('.status-option');
+          if (lab) lab.classList.add('active');
+        }
+      });
+    }
+
+    statusRadios.forEach(function (r) {
+      r.addEventListener('change', syncStatusOptions);
+      // also react to clicks on the label (for some browsers)
+      var parent = r.closest('.status-option');
+      if (parent) parent.addEventListener('click', function () {
+        // delay slightly to allow the radio checked state to update
+        setTimeout(syncStatusOptions, 0);
+      });
+    });
+
+    // initialise UI state on page load
+    syncStatusOptions();
+  })();
+
 });
