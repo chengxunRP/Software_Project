@@ -79,6 +79,9 @@ function statusBadge(status, waitingPosition) {
   if (status === "Waitlisted" && waitingPosition) {
     return "Waitlist #" + waitingPosition;
   }
+  if (status === "Confirmed") {
+    return "Registered";
+  }
   return status;
 }
 
@@ -436,9 +439,10 @@ async function registerForEvent(req, res) {
 
 async function listMyRegistrations(req, res) {
   const user = req.currentUser;
-  const tab = req.query.tab || "Confirmed";
-  const tabs = ["Confirmed", "Waitlisted", "Cancelled", "Attended"];
-  const activeTab = tabs.indexOf(tab) !== -1 ? tab : "Confirmed";
+  const requestedTab = req.query.tab || "Registered";
+  const legacyTab = requestedTab === "Confirmed" ? "Registered" : requestedTab;
+  const tabs = ["Registered", "Waitlisted", "Cancelled", "Attended"];
+  const activeTab = tabs.indexOf(legacyTab) !== -1 ? legacyTab : "Registered";
 
   try {
     const [allRows] = await pool.query(
@@ -468,7 +472,7 @@ async function listMyRegistrations(req, res) {
 
     const now = new Date();
     const tabCounts = {
-      Confirmed: 0,
+      Registered: 0,
       Waitlisted: 0,
       Cancelled: 0,
       Attended: 0
@@ -477,6 +481,8 @@ async function listMyRegistrations(req, res) {
     const formatted = allRows.map(function (row) {
       if (row.status === "Attended" || row.status === "Absent") {
         tabCounts.Attended += 1;
+      } else if (row.status === "Confirmed") {
+        tabCounts.Registered += 1;
       } else if (Object.prototype.hasOwnProperty.call(tabCounts, row.status)) {
         tabCounts[row.status] += 1;
       }
@@ -531,6 +537,10 @@ async function listMyRegistrations(req, res) {
     if (activeTab === "Attended") {
       rows = formatted.filter(function (r) {
         return r.status === "Attended" || r.status === "Absent";
+      });
+    } else if (activeTab === "Registered") {
+      rows = formatted.filter(function (r) {
+        return r.status === "Confirmed";
       });
     } else {
       rows = formatted.filter(function (r) {

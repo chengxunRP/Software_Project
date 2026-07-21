@@ -487,67 +487,116 @@ app.get("/organiser/events/:id/attendance", isOrganiser, async function (req, re
 app.post("/organiser/events/:id/attendance", isOrganiser, async function (req, res) {
   const eventId = req.params.id;
   const attendancePath = "/organiser/events/" + eventId + "/attendance";
+  let connection;
 
-  const [eventRows] = await pool.query(
-    "SELECT event_id, organiser_id FROM events WHERE event_id = ?",
-    [eventId]
-  );
-  const event = eventRows[0];
+  try {
+    const [eventRows] = await pool.query(
+      "SELECT event_id, organiser_id FROM events WHERE event_id = ?",
+      [eventId]
+    );
+    const event = eventRows[0];
 
-  if (!event) {
-    return res.status(404).send("Event not found.");
-  }
-  if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
-    return res.status(403).send("You do not have permission to manage this event.");
-  }
+    if (!event) {
+      return res.status(404).send("Event not found.");
+    }
+    if (Number(event.organiser_id) !== Number(req.session.user.user_id)) {
+      return res.status(403).send("You do not have permission to manage this event.");
+    }
 
-  const registration_id = parseInt(req.body.registration_id, 10);
-  const attendance_status = req.body.attendance_status;
+    const registration_id = parseInt(req.body.registration_id, 10);
+    const attendance_status = req.body.attendance_status;
 
-  if (!Number.isInteger(registration_id) || registration_id < 1) {
-    req.session.flash = { type: "error", text: "Select a valid registration." };
+    if (!Number.isInteger(registration_id) || registration_id < 1) {
+      req.session.flash = { type: "error", text: "Select a valid registration." };
+      return res.redirect(attendancePath);
+    }
+    if (attendance_status !== "Attended" && attendance_status !== "Absent") {
+      req.session.flash = { type: "error", text: "Attendance status must be Attended or Absent." };
+      return res.redirect(attendancePath);
+    }
+
+    connection = await pool.getConnection();
+    await connection.beginTransaction();
+
+    // Registration must belong to this event and be attendance-eligible.
+    const [regRows] = await connection.query(
+      `SELECT registration_id, participation_type, status
+       FROM event_registrations
+       WHERE registration_id = ? AND event_id = ?
+         AND status IN ('Confirmed', 'Attended', 'Absent')
+       LIMIT 1`,
+      [registration_id, eventId]
+    );
+    if (!regRows[0]) {
+      await connection.rollback();
+      req.session.flash = { type: "error", text: "That registration is not eligible for attendance on this event." };
+      return res.redirect(attendancePath);
+    }
+
+    const [existingRows] = await connection.query(
+      "SELECT attendance_id FROM attendance WHERE registration_id = ?",
+      [registration_id]
+    );
+
+    if (existingRows.length > 0) {
+      await connection.rollback();
+      req.session.flash = { type: "error", text: "Attendance has already been recorded for this registration." };
+      return res.redirect(attendancePath);
+    }
+
+    const [eventDetailRows] = await connection.query(
+      "SELECT start_datetime, end_datetime FROM events WHERE event_id = ? LIMIT 1",
+      [eventId]
+    );
+    const eventDetail = eventDetailRows[0] || {};
+    let volunteerHours = 0;
+
+    if (attendance_status === "Attended" && regRows[0].participation_type === "Volunteer") {
+      const startTime = eventDetail.start_datetime instanceof Date
+        ? eventDetail.start_datetime
+        : new Date(eventDetail.start_datetime);
+      const endTime = eventDetail.end_datetime instanceof Date
+        ? eventDetail.end_datetime
+        : new Date(eventDetail.end_datetime);
+
+      if (!Number.isNaN(startTime.getTime()) && !Number.isNaN(endTime.getTime()) && endTime > startTime) {
+        volunteerHours = Number(((endTime - startTime) / (1000 * 60 * 60)).toFixed(2));
+      }
+    }
+
+    const checkInSql = attendance_status === "Attended" ? "NOW()" : "NULL";
+    await connection.query(
+      `INSERT INTO attendance
+         (registration_id, attendance_status, check_in_time, check_out_time, volunteer_hours, recorded_by, recorded_at)
+       VALUES (?, ?, ${checkInSql}, NULL, ?, ?, NOW())`,
+      [registration_id, attendance_status, volunteerHours, req.session.user.user_id]
+    );
+
+    await connection.query(
+      `UPDATE event_registrations
+       SET status = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE registration_id = ?`,
+      [attendance_status, registration_id]
+    );
+
+    await connection.commit();
+    res.redirect(attendancePath);
+  } catch (err) {
+    if (connection) {
+      try {
+        await connection.rollback();
+      } catch (rollbackErr) {
+        console.error("Attendance rollback failed:", rollbackErr.message);
+      }
+    }
+    console.error("Attendance recording failed:", err.message);
+    req.session.flash = { type: "error", text: "We could not record attendance. Please try again." };
     return res.redirect(attendancePath);
+  } finally {
+    if (connection) {
+      connection.release();
+    }
   }
-  if (attendance_status !== "Attended" && attendance_status !== "Absent") {
-    req.session.flash = { type: "error", text: "Attendance status must be Attended or Absent." };
-    return res.redirect(attendancePath);
-  }
-
-  // Registration must belong to this event and be attendance-eligible.
-  const [regRows] = await pool.query(
-    `SELECT registration_id, participation_type, status
-     FROM event_registrations
-     WHERE registration_id = ? AND event_id = ?
-       AND status IN ('Confirmed', 'Attended', 'Absent')
-     LIMIT 1`,
-    [registration_id, eventId]
-  );
-  if (!regRows[0]) {
-    req.session.flash = { type: "error", text: "That registration is not eligible for attendance on this event." };
-    return res.redirect(attendancePath);
-  }
-
-  const [existingRows] = await pool.query(
-    "SELECT attendance_id FROM attendance WHERE registration_id = ?",
-    [registration_id]
-  );
-
-  if (existingRows.length > 0) {
-    req.session.flash = { type: "error", text: "Attendance has already been recorded for this registration." };
-    return res.redirect(attendancePath);
-  }
-
-  // Participant hours must remain 0. Volunteer hour aggregation is Feature 6 —
-  // store 0 here so Feature 5 does not invent contribution totals.
-  const checkInSql = attendance_status === "Attended" ? "NOW()" : "NULL";
-  await pool.query(
-    `INSERT INTO attendance
-       (registration_id, attendance_status, check_in_time, check_out_time, volunteer_hours, recorded_by, recorded_at)
-     VALUES (?, ?, ${checkInSql}, NULL, 0, ?, NOW())`,
-    [registration_id, attendance_status, req.session.user.user_id]
-  );
-
-  res.redirect(attendancePath);
 });
 
 // POST /organiser/events/:id/attendance/checkout
@@ -662,6 +711,13 @@ app.post("/organiser/events/:id/attendance/undo", isOrganiser, async function (r
      INNER JOIN event_registrations er ON er.registration_id = a.registration_id
      WHERE a.registration_id = ? AND er.event_id = ?`,
     [registration_id, eventId]
+  );
+
+  await pool.query(
+    `UPDATE event_registrations
+     SET status = 'Confirmed', updated_at = CURRENT_TIMESTAMP
+     WHERE registration_id = ?`,
+    [registration_id]
   );
 
   res.redirect(attendancePath);
