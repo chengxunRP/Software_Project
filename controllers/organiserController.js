@@ -22,6 +22,8 @@ const { toPublicImagePath } = require("../lib/eventImageUpload");
 
 const ALLOWED_EVENT_STATUSES = ["Draft", "Open", "Full", "Closed", "Cancelled", "Completed"];
 const FORM_STATUS_VALUES = ["Published", "Draft", "Registration closed"];
+/** manage-events.ejs "All statuses" filter options (matches manageEventsStatusLabel output). */
+const FORM_STATUS_FILTER_VALUES = ["Published", "Draft", "Full", "Completed", "Cancelled"];
 
 const AVATAR_COLORS = ["#7FA8D9", "#F4B83F", "#C08FBB", "#8FBF9A", "#D9A08F", "#B9C98F"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -653,6 +655,26 @@ async function dashboard(req, res) {
 // GET /organiser/events
 async function listEvents(req, res) {
   const organiserId = req.session.user.user_id;
+  const search = String(req.query.search || "").trim();
+  const categoryId = parseInt(req.query.category_id, 10) || null;
+  const statusLabel = FORM_STATUS_FILTER_VALUES.includes(req.query.status) ? req.query.status : "";
+
+  const whereParts = ["e.organiser_id = ?"];
+  const params = [organiserId];
+
+  if (search) {
+    whereParts.push("(e.event_name LIKE ? OR e.location LIKE ?)");
+    const term = `%${search}%`;
+    params.push(term, term);
+  }
+  if (categoryId) {
+    whereParts.push("e.category_id = ?");
+    params.push(categoryId);
+  }
+  if (statusLabel) {
+    whereParts.push("e.status = ?");
+    params.push(statusLabel === "Published" ? "Open" : statusLabel);
+  }
 
   try {
     const [rows] = await pool.query(
@@ -673,9 +695,9 @@ async function listEvents(req, res) {
          WHERE participation_type = 'Volunteer' AND status = 'Confirmed'
          GROUP BY event_id
        ) vc ON vc.event_id = e.event_id
-       WHERE e.organiser_id = ?
+       WHERE ${whereParts.join(" AND ")}
        ORDER BY e.start_datetime DESC`,
-      [organiserId]
+      params
     );
 
     const eventRows = rows.map(function (r) {
@@ -702,6 +724,9 @@ async function listEvents(req, res) {
       pageTitle: "Manage Events · Organiser",
       rows: eventRows,
       categories: categories,
+      search: search,
+      selectedStatus: statusLabel,
+      selectedCategoryId: categoryId || "",
       messages: takeFlash(req)
     }));
   } catch (err) {
