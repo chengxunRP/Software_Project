@@ -6,6 +6,8 @@
     const pageEyebrow = 'Event details';
     const pageHeading = event.event_name;
     const pageLead = 'Organised by ' + event.organiser;
+    const participantEnabled = Number(event.participant_capacity) > 0;
+    const volunteerEnabled = Number(event.volunteer_capacity) > 0;
   %>
   <%- include('partials/page-header', { pageEyebrow: (typeof pageEyebrow !== 'undefined' ? pageEyebrow : ''), pageHeading: (typeof pageHeading !== 'undefined' ? pageHeading : ''), pageLead: (typeof pageLead !== 'undefined' ? pageLead : ''), pageActions: (typeof pageActions !== 'undefined' ? pageActions : '') }) %>
 
@@ -78,6 +80,7 @@
 
               <div class="d-flex flex-column gap-3 mb-3">
                 <div>
+                  <% if (participantEnabled) { %>
                   <div class="cap-bar-meta" style="font-size:13px">
                     <span style="color:#6B7280">Participants: <%= event.participants_filled %> of <%= event.participant_capacity %> confirmed</span>
                     <span style="color:<%= event.participants.capColor %>"><%= event.participants.full ? ('Full · waitlist' + (event.participantWaitlistCount ? ' (' + event.participantWaitlistCount + ')' : ' available')) : (event.participants.left + ' left') %></span>
@@ -85,8 +88,15 @@
                   <div class="cap-bar-track" style="height:7px">
                     <div class="cap-bar-fill" style="width:<%= event.participants.pct %>%;background:<%= event.participants.capColor %>"></div>
                   </div>
+                  <% } else { %>
+                  <div class="cap-bar-meta" style="font-size:13px">
+                    <span style="color:#6B7280">Participants</span>
+                    <span class="text-muted-cc">Not available for this event</span>
+                  </div>
+                  <% } %>
                 </div>
                 <div>
+                  <% if (volunteerEnabled) { %>
                   <div class="cap-bar-meta" style="font-size:13px">
                     <span style="color:#6B7280">Volunteers: <%= event.volunteers_filled %> of <%= event.volunteer_capacity %> confirmed</span>
                     <span style="color:<%= event.volunteers.capColor %>"><%= event.volunteers.full ? ('Full · waitlist' + (event.volunteerWaitlistCount ? ' (' + event.volunteerWaitlistCount + ')' : ' available')) : (event.volunteers.left + ' left') %></span>
@@ -94,6 +104,12 @@
                   <div class="cap-bar-track" style="height:7px">
                     <div class="cap-bar-fill" style="width:<%= event.volunteers.pct %>%;background:<%= event.volunteers.capColor %>"></div>
                   </div>
+                  <% } else { %>
+                  <div class="cap-bar-meta" style="font-size:13px">
+                    <span style="color:#6B7280">Volunteers</span>
+                    <span class="text-muted-cc">Not available for this event</span>
+                  </div>
+                  <% } %>
                 </div>
               </div>
 
@@ -140,20 +156,28 @@
                 <div>
                   <div class="form-label-cc mb-2">How would you like to join?</div>
                   <div class="d-flex flex-column gap-2">
+                    <% if (participantEnabled) { %>
                     <label class="status-option">
-                      <input type="radio" name="participation_type" value="Participant" checked data-participation-type>
+                      <input type="radio" name="participation_type" value="Participant" <%= participantEnabled ? 'checked' : '' %> data-participation-type>
                       <div>
                         <div style="font-size:14px;font-weight:700;color:#12161C">Join as Participant</div>
                         <div style="font-size:12px;color:#8A93A6"><%= event.participants.full ? 'Participant places are full — join the participant waiting list' : event.participants.left + ' participant spaces remaining' %></div>
                       </div>
                     </label>
+                    <% } else { %>
+                    <div class="text-muted-cc" style="font-size:12.5px">Participants not required for this event</div>
+                    <% } %>
+                    <% if (volunteerEnabled) { %>
                     <label class="status-option">
-                      <input type="radio" name="participation_type" value="Volunteer" data-participation-type>
+                      <input type="radio" name="participation_type" value="Volunteer" <%= !participantEnabled ? 'checked' : '' %> data-participation-type>
                       <div>
                         <div style="font-size:14px;font-weight:700;color:#12161C">Volunteer for This Event</div>
                         <div style="font-size:12px;color:#8A93A6"><%= event.volunteers.full ? 'Volunteer places are full — join the volunteer waiting list' : event.volunteers.left + ' volunteer spaces remaining' %></div>
                       </div>
                     </label>
+                    <% } else { %>
+                    <div class="text-muted-cc" style="font-size:12.5px">Volunteers not required for this event</div>
+                    <% } %>
                   </div>
                 </div>
 
@@ -192,8 +216,12 @@
 
     <% if (canRegister) { %>
     <div class="mobile-sticky-cta">
+      <% if (participantEnabled) { %>
       <a href="#registrationForm" class="btn-cc btn-cc-coral btn-cc-block">Join as Participant</a>
-      <a href="#registrationForm" class="btn-cc btn-cc-outline btn-cc-block">Volunteer for This Event</a>
+      <% } %>
+      <% if (volunteerEnabled) { %>
+      <a href="#registrationForm" class="btn-cc <%= participantEnabled ? 'btn-cc-outline' : 'btn-cc-coral' %> btn-cc-block">Volunteer for This Event</a>
+      <% } %>
     </div>
     <% } else if (currentRegistration && (currentRegistration.status === 'Confirmed' || currentRegistration.status === 'Waitlisted')) { %>
     <div class="mobile-sticky-cta">
