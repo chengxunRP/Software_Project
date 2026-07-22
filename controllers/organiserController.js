@@ -731,7 +731,7 @@ async function listEvents(req, res) {
 
     const categories = await loadCategories();
 
-    res.render("organiser/manage-events", organiserLocals(req.session.user, "events", {
+    const viewData = organiserLocals(req.session.user, "events", {
       pageTitle: "Manage Events · Organiser",
       rows: eventRows,
       categories: categories,
@@ -739,7 +739,9 @@ async function listEvents(req, res) {
       selectedStatus: statusLabel,
       selectedCategoryId: categoryId || "",
       messages: takeFlash(req)
-    }));
+    });
+
+    res.render("organiser/manage-events", viewData);
   } catch (err) {
     console.error("organiserController.listEvents failed:", err.message);
     res.status(500).send("We could not load your events. Please try again shortly.");
