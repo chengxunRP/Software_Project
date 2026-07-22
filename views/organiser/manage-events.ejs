@@ -12,19 +12,24 @@
 
   <main class="site-main">
     <div class="site-content overlap-panel">
-      <div class="d-flex gap-2 align-items-center flex-wrap">
-        <input type="text" class="form-control-cc" style="max-width:320px;padding:10px 14px;border-radius:10px;font-size:14px;background:#fff" placeholder="Search events…" data-preview-only>
-        <select class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
-          <option>All statuses</option><option>Published</option><option>Draft</option><option>Full</option><option>Completed</option><option>Cancelled</option>
+      <form method="get" action="/organiser/events" class="d-flex gap-2 align-items-center flex-wrap" id="manageEventsFilterForm">
+        <input type="text" name="search" value="<%= search || '' %>" class="form-control-cc" style="max-width:320px;padding:10px 14px;border-radius:10px;font-size:14px;background:#fff" placeholder="Search events…">
+        <select name="status" class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
+          <option value="" <%= !selectedStatus ? 'selected' : '' %>>All statuses</option>
+          <option value="Published" <%= selectedStatus === 'Published' ? 'selected' : '' %>>Published</option>
+          <option value="Draft" <%= selectedStatus === 'Draft' ? 'selected' : '' %>>Draft</option>
+          <option value="Full" <%= selectedStatus === 'Full' ? 'selected' : '' %>>Full</option>
+          <option value="Completed" <%= selectedStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
+          <option value="Cancelled" <%= selectedStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
         </select>
-        <select class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
-          <option>All categories</option>
+        <select name="category_id" class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
+          <option value="" <%= !selectedCategoryId ? 'selected' : '' %>>All categories</option>
           <% categories.forEach(function (c) { %>
-            <option><%= c.name %></option>
+            <option value="<%= c.category_id %>" <%= String(selectedCategoryId) === String(c.category_id) ? 'selected' : '' %>><%= c.name %></option>
           <% }) %>
         </select>
         <span class="ms-auto text-soft" style="font-size:13.5px">Showing <%= rows.length %> of <%= rows.length %> events</span>
-      </div>
+      </form>
 
       <%- include('../partials/messages') %>
 
@@ -110,6 +115,16 @@
         if (deleteForm) {
           deleteForm.action = "/organiser/events/" + btn.getAttribute("data-delete-event-id") + "/delete";
         }
+      });
+    });
+  })();
+
+  (function () {
+    var filterForm = document.getElementById("manageEventsFilterForm");
+    if (!filterForm) return;
+    filterForm.querySelectorAll("select[name]").forEach(function (select) {
+      select.addEventListener("change", function () {
+        filterForm.submit();
       });
     });
   })();
