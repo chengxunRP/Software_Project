@@ -77,15 +77,16 @@
             <div class="form-grid-2 mb-3">
               <div>
                 <label class="form-label-cc" for="participant_capacity">Participant capacity <span class="req">*</span></label>
-                <input class="form-control-cc" type="number" id="participant_capacity" name="participant_capacity" value="<%= event.participant_capacity || '' %>">
-                <div class="form-hint">Ordinary community participants. A participant waiting list opens when this is full.</div>
+                <input class="form-control-cc" type="number" id="participant_capacity" name="participant_capacity" min="0" value="<%= (event.participant_capacity === 0 || event.participant_capacity) ? event.participant_capacity : '' %>">
+                <div class="form-hint">Ordinary community participants. A participant waiting list opens when this is full. Enter 0 if this event does not accept this participation type.</div>
               </div>
               <div>
                 <label class="form-label-cc" for="volunteer_capacity">Volunteer capacity <span class="req">*</span></label>
-                <input class="form-control-cc" type="number" id="volunteer_capacity" name="volunteer_capacity" value="<%= event.volunteer_capacity || '' %>">
-                <div class="form-hint">Helpers assisting at the event. A volunteer waiting list opens when this is full.</div>
+                <input class="form-control-cc" type="number" id="volunteer_capacity" name="volunteer_capacity" min="0" value="<%= (event.volunteer_capacity === 0 || event.volunteer_capacity) ? event.volunteer_capacity : '' %>">
+                <div class="form-hint">Helpers assisting at the event. A volunteer waiting list opens when this is full. Enter 0 if this event does not accept this participation type.</div>
               </div>
             </div>
+            <div class="form-hint mb-3">Every event must accept Participants, Volunteers, or both.</div>
             <div>
               <label class="form-label-cc" for="registration_deadline">Registration deadline <span class="req">*</span></label>
               <input class="form-control-cc" type="datetime-local" id="registration_deadline" name="registration_deadline" value="<%= event.registration_deadline || '' %>">

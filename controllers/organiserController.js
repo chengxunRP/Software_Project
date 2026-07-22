@@ -169,9 +169,17 @@ function fromDatetimeLocalValue(value) {
     + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
 }
 
-function parsePositiveInt(value) {
-  const n = Number(value);
-  if (!Number.isInteger(n) || n <= 0) return null;
+/**
+ * Parses a participation-type capacity: whole numbers >= 0 only. A capacity
+ * of 0 is valid on its own (it disables that participation type) — the
+ * "at least one type must be enabled" rule is checked separately once both
+ * capacities are known, so both can't be 0 at the same time.
+ */
+function parseNonNegativeInt(value) {
+  const raw = String(value === undefined || value === null ? "" : value).trim();
+  if (raw === "") return null;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 0) return null;
   return n;
 }
 
@@ -185,8 +193,8 @@ async function validateEventPayload(body, options) {
   const description = String(body.description || "").trim();
   const location = String(body.location || "").trim();
   const categoryId = Number(body.category_id);
-  const participantCapacity = parsePositiveInt(body.participant_capacity);
-  const volunteerCapacity = parsePositiveInt(body.volunteer_capacity);
+  const participantCapacity = parseNonNegativeInt(body.participant_capacity);
+  const volunteerCapacity = parseNonNegativeInt(body.volunteer_capacity);
   const startDatetime = fromDatetimeLocalValue(body.start_datetime);
   const endDatetime = fromDatetimeLocalValue(body.end_datetime);
   const registrationDeadline = fromDatetimeLocalValue(body.registration_deadline);
@@ -208,7 +216,10 @@ async function validateEventPayload(body, options) {
     return { ok: false, error: "Registration deadline must be before the event start." };
   }
   if (participantCapacity === null || volunteerCapacity === null) {
-    return { ok: false, error: "Participant and volunteer capacities must be positive whole numbers." };
+    return { ok: false, error: "Participant and volunteer capacities must be whole numbers of 0 or more." };
+  }
+  if (participantCapacity === 0 && volunteerCapacity === 0) {
+    return { ok: false, error: "Enter a capacity of at least 1 for Participants, Volunteers, or both." };
   }
   if (FORM_STATUS_VALUES.indexOf(formStatus) === -1 && ALLOWED_EVENT_STATUSES.indexOf(formStatus) === -1) {
     return { ok: false, error: "Please choose a valid event status." };
@@ -720,7 +731,7 @@ async function listEvents(req, res) {
 
     const categories = await loadCategories();
 
-    res.render("organiser/manage-events", organiserLocals(req.session.user, "events", {
+    const viewData = organiserLocals(req.session.user, "events", {
       pageTitle: "Manage Events · Organiser",
       rows: eventRows,
       categories: categories,
@@ -728,7 +739,9 @@ async function listEvents(req, res) {
       selectedStatus: statusLabel,
       selectedCategoryId: categoryId || "",
       messages: takeFlash(req)
-    }));
+    });
+
+    res.render("organiser/manage-events", viewData);
   } catch (err) {
     console.error("organiserController.listEvents failed:", err.message);
     res.status(500).send("We could not load your events. Please try again shortly.");

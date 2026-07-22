@@ -115,6 +115,7 @@
                     <span><%= ev.location %></span>
                   </div>
                   <div class="mt-auto">
+                    <% if (Number(ev.participant_capacity) > 0) { %>
                     <div class="cap-bar">
                       <div class="cap-bar-meta">
                         <span>Participants <%= ev.participants_filled %>/<%= ev.participant_capacity %></span>
@@ -124,6 +125,10 @@
                         <div class="cap-bar-fill" style="width:<%= ev.participants.pct %>%;background:<%= ev.participants.capColor %>"></div>
                       </div>
                     </div>
+                    <% } else { %>
+                    <div class="cap-bar-meta"><span>Participants</span><span class="text-muted-cc">Not available</span></div>
+                    <% } %>
+                    <% if (Number(ev.volunteer_capacity) > 0) { %>
                     <div class="cap-bar mt-2">
                       <div class="cap-bar-meta">
                         <span>Volunteers <%= ev.volunteers_filled %>/<%= ev.volunteer_capacity %></span>
@@ -133,6 +138,9 @@
                         <div class="cap-bar-fill" style="width:<%= ev.volunteers.pct %>%;background:<%= ev.volunteers.capColor %>"></div>
                       </div>
                     </div>
+                    <% } else { %>
+                    <div class="cap-bar-meta mt-2"><span>Volunteers</span><span class="text-muted-cc">Not available</span></div>
+                    <% } %>
                     <a href="/events/<%= ev.id %>" class="btn-cc btn-cc-outline btn-cc-block mt-3">View Details</a>
                   </div>
                 </div>

@@ -13,22 +13,24 @@
   <main class="site-main">
     <div class="site-content overlap-panel">
       <form method="get" action="/organiser/events" class="d-flex gap-2 align-items-center flex-wrap" id="manageEventsFilterForm">
-        <input type="text" name="search" value="<%= search || '' %>" class="form-control-cc" style="max-width:320px;padding:10px 14px;border-radius:10px;font-size:14px;background:#fff" placeholder="Search events…">
+        <input type="text" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" class="form-control-cc" style="max-width:320px;padding:10px 14px;border-radius:10px;font-size:14px;background:#fff" placeholder="Search events…">
         <select name="status" class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
-          <option value="" <%= !selectedStatus ? 'selected' : '' %>>All statuses</option>
-          <option value="Published" <%= selectedStatus === 'Published' ? 'selected' : '' %>>Published</option>
-          <option value="Draft" <%= selectedStatus === 'Draft' ? 'selected' : '' %>>Draft</option>
-          <option value="Full" <%= selectedStatus === 'Full' ? 'selected' : '' %>>Full</option>
-          <option value="Completed" <%= selectedStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
-          <option value="Cancelled" <%= selectedStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+          <% const activeStatus = typeof selectedStatus !== 'undefined' ? selectedStatus : ''; %>
+          <option value="" <%= !activeStatus ? 'selected' : '' %>>All statuses</option>
+          <option value="Published" <%= activeStatus === 'Published' ? 'selected' : '' %>>Published</option>
+          <option value="Draft" <%= activeStatus === 'Draft' ? 'selected' : '' %>>Draft</option>
+          <option value="Full" <%= activeStatus === 'Full' ? 'selected' : '' %>>Full</option>
+          <option value="Completed" <%= activeStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
+          <option value="Cancelled" <%= activeStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
         </select>
         <select name="category_id" class="form-select-cc" style="width:auto;padding:10px 12px;border-radius:10px;font-size:14px;background:#fff">
-          <option value="" <%= !selectedCategoryId ? 'selected' : '' %>>All categories</option>
-          <% categories.forEach(function (c) { %>
-            <option value="<%= c.category_id %>" <%= String(selectedCategoryId) === String(c.category_id) ? 'selected' : '' %>><%= c.name %></option>
+          <% const activeCategoryId = typeof selectedCategoryId !== 'undefined' ? selectedCategoryId : ''; %>
+          <option value="" <%= !activeCategoryId ? 'selected' : '' %>>All categories</option>
+          <% (categories || []).forEach(function (c) { %>
+            <option value="<%= c.category_id %>" <%= String(activeCategoryId) === String(c.category_id) ? 'selected' : '' %>><%= c.name %></option>
           <% }) %>
         </select>
-        <span class="ms-auto text-soft" style="font-size:13.5px">Showing <%= rows.length %> of <%= rows.length %> events</span>
+        <span class="ms-auto text-soft" style="font-size:13.5px">Showing <%= (rows || []).length %> of <%= (rows || []).length %> events</span>
       </form>
 
       <%- include('../partials/messages') %>
@@ -38,10 +40,10 @@
           <div class="table-cc-head" style="grid-template-columns:2.2fr 0.9fr 1.1fr 1.4fr 0.9fr 1.4fr">
             <span>Event</span><span>Category</span><span>Date & time</span><span>Capacity</span><span>Status</span><span style="text-align:right">Actions</span>
           </div>
-          <% if (!rows.length) { %>
+          <% if (!(rows || []).length) { %>
             <div class="p-4 text-muted-cc" style="font-size:13.5px">No events are currently available.</div>
           <% } %>
-          <% rows.forEach(function (r) { %>
+          <% (rows || []).forEach(function (r) { %>
             <%
               const statusClass = {
                 Published: 'badge-cc-published',

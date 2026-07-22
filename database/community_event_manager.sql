@@ -150,8 +150,9 @@ CREATE TABLE `events` (
   KEY `idx_events_start_datetime` (`start_datetime`),
   CONSTRAINT `fk_events_category` FOREIGN KEY (`category_id`) REFERENCES `event_categories` (`category_id`),
   CONSTRAINT `fk_events_organiser` FOREIGN KEY (`organiser_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `chk_events_participant_capacity` CHECK ((`participant_capacity` > 0)),
-  CONSTRAINT `chk_events_volunteer_capacity` CHECK ((`volunteer_capacity` > 0))
+  CONSTRAINT `chk_events_participant_capacity_nonneg` CHECK ((`participant_capacity` >= 0)),
+  CONSTRAINT `chk_events_volunteer_capacity_nonneg` CHECK ((`volunteer_capacity` >= 0)),
+  CONSTRAINT `chk_events_capacity_not_both_zero` CHECK ((`participant_capacity` > 0) or (`volunteer_capacity` > 0))
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

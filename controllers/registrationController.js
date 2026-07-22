@@ -302,8 +302,14 @@ async function registerForEvent(req, res) {
       }
     }
 
-    const confirmedCount = await countConfirmed(connection, eventId, participationType);
     const capacity = capacityForType(eventRow, participationType);
+    if (capacity <= 0) {
+      await connection.rollback();
+      flash(req, "error", "This participation type is not available for this event.");
+      return res.redirect("/events/" + eventId);
+    }
+
+    const confirmedCount = await countConfirmed(connection, eventId, participationType);
     const hasSpace = confirmedCount < capacity;
 
     let newStatus = "Confirmed";
